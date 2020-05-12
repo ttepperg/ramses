@@ -1,0 +1,24 @@
+This is a fork of the Ramses code on my Bitbucket account,
+obtained via:
+
+$> git clone https://tepper@bitbucket.org/tepper/ramses.git
+
+
+It is the (ideally) latest version of Ramses available
+through Bitbucket:
+
+$> git clone https://bitbucket.org/rteyssie/ramses
+
+I try my best to keep the latter up-to-date via:
+
+$> git remote update; git status
+
+And in case of new commits:
+
+$> git pull
+
+NOTE: This copy may containf my own changes in the form
+of patches, which are however not sent for pull requests
+from the main repo.
+It may be tricky to keep up to date but I'll try...
+
