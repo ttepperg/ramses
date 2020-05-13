@@ -1,0 +1,26 @@
+Author: Dr. Thorsten Tepper Garcia
+
+Date: 13 MAY 2020
+
+About:
+
+This subdirectory contains a number of patches
+to files originally in pm.
+
+init_sink.f90:
+- added kpc2cm, km2cm conversion factors
+- added scale_m
+- scaled ic_sink input values to code units
+- added input value 'sid' to last column
+- changed slevel to levelmin in lines 258-9
+- swapped lines 261 and 262:
+		103  continue
+     	 sinkint_level=levelmin
+	to:
+     	 sinkint_level=levelmin
+		103  continue
+
+	as otherwise sinkint_level remains uninitialised.
+- moved output sink properties to screen to end of subroutine
+- added direct force scheme information to output to screen
+	

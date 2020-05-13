@@ -1,0 +1,16 @@
+Author: Dr. Thorsten Tepper Garcia
+
+Date: 12 MAY 2020
+
+About:
+
+This subdirectory contains a number of patches
+to files originally in amr.
+
+units.f90:
+- added km2cm conversion factor
+- added scale_m
+- automatically set scale_t when poisson=.true. to
+	ensure that G=1 in user units for all gravity runs
+- provide information to stdout about relevant units
+
