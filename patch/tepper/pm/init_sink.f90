@@ -117,9 +117,9 @@ subroutine init_sink
 
      if(IOGROUPSIZEREP>0)then
         call title(((myid-1)/IOGROUPSIZEREP)+1,ncharcpu)
-        fileloc='output_'//TRIM(nchar)//'/group_'//TRIM(ncharcpu)//'/sink_'//TRIM(nchar)//'.csv'
+        fileloc=TRIM(output_dir)//'output_'//TRIM(nchar)//'/group_'//TRIM(ncharcpu)//'/sink_'//TRIM(nchar)//'.csv'
      else
-        fileloc='output_'//TRIM(nchar)//'/sink_'//TRIM(nchar)//'.csv'
+        fileloc=TRIM(output_dir)//'output_'//TRIM(nchar)//'/sink_'//TRIM(nchar)//'.csv'
      endif
 
      ! Wait for the token
@@ -299,7 +299,7 @@ subroutine init_sink
      do isink=nsinkold+1,nsink
         write(*,'(I8,2X,10(2X,E12.5))')idsink(isink),msink(isink),xsink(isink,1:ndim),&
              vsink(isink,1:ndim),lsink(isink,1:ndim)
-        if(direct_force_sink(isink))write(*,*)'Direct force scheme for sink ',&
+        if(direct_force_sink(isink))write(*,*)'Direct force scheme for sink with ID: ',&
         &idsink(isink)
      end do
   end if

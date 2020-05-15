@@ -1,6 +1,6 @@
 Author: Dr. Thorsten Tepper Garcia
 
-Date: 12 MAY 2020
+Date: 12 MAY 2020 - 
 
 About:
 
@@ -8,9 +8,26 @@ This subdirectory contains a number of patches
 to files originally in amr.
 
 units.f90:
-- added km2cm conversion factor
-- added scale_m
+- added km2cm conversion factor from amr/constants.f90
+- added scale_m (type real(db))
 - automatically set scale_t when poisson=.true. to
 	ensure that G=1 in user units for all gravity runs
 - provide information to stdout about relevant units
 
+amr_parameters.f90:
+- added output parameter 'output_dir' (type character(len=80))
+	which allows to redirect the output to any location
+
+read_params.f90:
+!!!This is a modified copy of the patch/init/dice/read_params.f90!!!
+- added variable 'output_dir' to namelist block 'output_params'
+- added TRIM(output_dir) to filename strings where relevant
+- added variable 'print_when_io' to namelist block 'run_params'
+
+output_amr.f90:
+- added TRIM(output_dir) to filename strings where relevant; this should
+	propagate through all the output routines via the 'filename'
+	variable
+
+init_amr.f90:
+- added TRIM(output_dir) to filename strings where relevant
