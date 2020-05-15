@@ -1,6 +1,6 @@
 Author: Dr. Thorsten Tepper Garcia
 
-Date: 13 MAY 2020
+Date: 13 MAY 2020 - 
 
 About:
 
@@ -8,8 +8,8 @@ This subdirectory contains a number of patches
 to files originally in pm.
 
 init_sink.f90:
-- added kpc2cm, km2cm conversion factors
-- added scale_m
+- added kpc2cm, km2cm conversion factors from amr/constants.f90
+- added scale_m (type real(db))
 - scaled ic_sink input values to code units
 - added input value 'sid' to last column
 - changed slevel to levelmin in lines 258-9
@@ -23,4 +23,12 @@ init_sink.f90:
 	as otherwise sinkint_level remains uninitialised.
 - moved output sink properties to screen to end of subroutine
 - added direct force scheme information to output to screen
-	
+- added TRIM(output_dir) to filename strings where relevant
+
+output_sink.f90:
+- changed output file header string 'msink' to 'mass' for
+	convenience when analysing sims with Pynbody
+
+init_part.f90:
+!!!This is a modified copy of the patch/init/dice/read_params.f90!!!
+- added TRIM(output_dir) to filename strings where relevant

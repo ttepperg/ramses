@@ -1,0 +1,11 @@
+Author: Dr. Thorsten Tepper Garcia
+
+Date: 14 MAY 2020 - 
+
+About:
+
+This subdirectory contains a number of patches
+to files originally in poisson
+
+init_poisson.f90:
+- added TRIM(output_dir) to filename strings where relevant
