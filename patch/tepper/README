@@ -7,6 +7,10 @@ About:
 This directory contains a number of patches, organised
 in subdirectories with names identical to the directories
 where the original source files are located.
+The idea is to preserve ramses' package structure to
+facilitate updating my patches whenever the code gets
+updated, and conversely, to suggest changes to the main code
+(and request the corresponding git pulls).
 
 For more information see each subdirectory's README.
 
