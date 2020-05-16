@@ -57,8 +57,8 @@ kbound_max= 0, 0,  0,  0, -1,  1
 
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/scratch/dr86/ttg562/ramses_output/hbd_7_new/'
-initfile(1)='/suphys/tepper/ramses_output/hbd_7_new/'
+!initfile(1)='/scratch/dr86/ttg562/ramses_output/hbd_7_new/ic/'
+initfile(1)='/suphys/tepper/ramses_output/hbd_7_new/ic/'
 /
 
 !MAKE SURE TO USE THE CORRECT UNITS FOR length, velocity, and mass

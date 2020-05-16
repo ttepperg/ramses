@@ -59,8 +59,8 @@ kbound_max= 0, 0,  0,  0, -1,  1
 
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/scratch/dr86/ttg562/ramses_output/hbd_7_sink/'
-initfile(1)='/suphys/tepper/ramses_output/hbd_7_sink/'
+!initfile(1)='/scratch/dr86/ttg562/ramses_output/hbd_7_sink/ic/'
+initfile(1)='/suphys/tepper/ramses_output/hbd_7_sink/ic/'
 /
 
 ! NOTE: An additional ascii file 'ic_sink' must be present in initfile(1)
