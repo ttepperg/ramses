@@ -20,7 +20,7 @@ SOLVER = hydro
 # IMPORTANT: The order matters, as in the case of files with the same
 # name only the first found is considered!
 # Also, directories are NOT looked into recursively!
-PATCH = ../patch/tepper/amr:../patch/tepper/pm:../patch/tepper/poisson:../patch/init/dice:
+PATCH = ../patch/tepper/amr:../patch/tepper/pm:../patch/tepper/poisson:../patch/init/dice
 # Use RT? 1=Yes, 0=No
 RT = 0
 # Use MPI? 1=Yes, 0=No
