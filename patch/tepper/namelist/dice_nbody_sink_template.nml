@@ -1,4 +1,5 @@
-
+! COMPILE CODE WITH: Makefile_3D_GNU_DEBUG_OLDMPI0_DICEMULTIPATCH
+! OR: Makefile_3D_GNU_DEBUG_OLDMPI0_DICEPATCH
 &RUN_PARAMS
 verbose=.false.
 print_when_io=.true.
