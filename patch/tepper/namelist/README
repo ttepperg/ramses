@@ -5,7 +5,7 @@ Date: 15 MAY 2020 -
 About:
 
 The content of this subdirectory does not correspond to
-actual patches, my rather the namelist I have used to run
+actual patches, my rather the namelists I have used to run
 simulations.
 
 Initial conditions: Initial conditions are expected in the
@@ -13,6 +13,6 @@ output directory (output_dir), within a subdirectory 'ic',
 i.e. <initfile> = <output_dir>/ic
 
 The idea is that the output directory, i.e. the ic directory
-and any of the output_xxxxx directories together containt
+and any of the output_xxxxx directories together contain
 all the necessary information and data to reproduce the
 corresponding simulation.
