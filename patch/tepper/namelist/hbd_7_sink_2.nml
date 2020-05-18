@@ -68,8 +68,8 @@ kbound_max= 0, 0,  0,  0, -1,  1
 !collectively has len < 80 characters
 &INIT_PARAMS
 filetype='dice'
-initfile(1)='/scratch/dr86/ttg562/hbd_7_sink_1/ic/'
-!initfile(1)='/suphys/tepper/ramses_output/hbd_7_sink_1/ic/'
+initfile(1)='/scratch/dr86/ttg562/hbd_7_sink_2/ic/'
+!initfile(1)='/suphys/tepper/ramses_output/hbd_7_sink_2/ic/'
 /
 
 
@@ -111,6 +111,6 @@ gadget_scale_t=3.15360e+13       ! Gadget file time unit    -> 1 Myr (note that 
 &OUTPUT_PARAMS
 tend = 6.
 delta_tout = 0.1
-output_dir='/scratch/dr86/ttg562/hbd_7_sink_1/'
-!output_dir='/suphys/tepper/ramses_output/hbd_7_sink_1/'
+output_dir='/scratch/dr86/ttg562/hbd_7_sink_2/'
+!output_dir='/suphys/tepper/ramses_output/hbd_7_sink_2/'
 /

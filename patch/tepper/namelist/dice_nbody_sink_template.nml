@@ -14,11 +14,13 @@ nsubcycle=8*1
 ncontrol=1
 /
 
+
 &UNITS_PARAMS
 units_density = 1.6605390D-24			! g/cm^3 = 1 H / cm^3;	 Ramses unit
 units_time    = 3.00386047142391D+15 	! s; -> G=1; needed if poisson=.true.
 units_length  = 3.0856776D+21 			! cm = 1 kpc;	Ramses unit
 /
+
 
 &HYDRO_PARAMS
 courant_factor=0.5
@@ -27,9 +29,11 @@ scheme='muscl'
 riemann='llf'
 /
 
+
 &POISSON_PARAMS
 gravity_type=0	! requires to set units such that G=1
 /
+
 
 &AMR_PARAMS
 boxlen=6.0d2
@@ -40,12 +44,14 @@ npartmax=3500000
 nexpand=1
 /
 
+
 &REFINE_PARAMS
 m_refine=8*25
 sink_refine=.true.		! refine around sink to levelmax; default is .false.
 interpol_type=0   		! use this to avoid refinement runaway
 interpol_var=1    		! use this to avoid refinement runaway
 /
+
 
 &BOUNDARY_PARAMS
 nboundary=6
@@ -58,11 +64,15 @@ kbound_min= 0, 0,  0,  0, -1,  1
 kbound_max= 0, 0,  0,  0, -1,  1
 /
 
+
+!initfile must be such that expanded by the IC file names
+!collectively has len < 80 characters
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/scratch/dr86/ttg562/ramses_output/hbd_7_sink/ic/'
+!initfile(1)='/scratch/dr86/ttg562/hbd_7_sink/ic/'
 initfile(1)='/suphys/tepper/ramses_output/hbd_7_sink/ic/'
 /
+
 
 ! NOTE: An additional ascii file 'ic_sink' must be present in initfile(1)
 ! This file contains a list of sinks with the following format
@@ -77,10 +87,12 @@ mass_sink_seed=1.			! need > 0 for code to run; default is 0
 nsinkmax=1					! not sure about this but should save memory
 /
 
+
 !not sure if used when hydro=.false.
 &CLUMPFIND_PARAMS
 ivar_clump=0				! use DM for clump finding; default is 1 (gas)
 /
+
 
 !MAKE SURE TO USE THE CORRECT UNITS FOR length, velocity, and mass
 &DICE_PARAMS
@@ -94,9 +106,12 @@ gadget_scale_m=1.9891D33         ! AGAMA file mass unit     -> 1 solar mass
 gadget_scale_t=3.15360e+13       ! Gadget file time unit    -> 1 Myr (note that this is NOT the simulation time unit)
 /
 
+
+!output_dir name must have len < 40 characters to accomodate
+!the longest Ramses output file names
 &OUTPUT_PARAMS
 tend = 6.
 delta_tout = 0.1
-!output_dir='/scratch/dr86/ttg562/ramses_output/hbd_7_sink/'
+!output_dir='/scratch/dr86/ttg562/hbd_7_sink/'
 output_dir='/suphys/tepper/ramses_output/hbd_7_sink/'
 /
