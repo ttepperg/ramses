@@ -13,11 +13,13 @@ nsubcycle=8*1
 ncontrol=1
 /
 
+
 &UNITS_PARAMS
 units_density = 1.6605390D-24			! g/cm^3 = 1 H / cm^3;	 Ramses unit
 units_time    = 3.00386047142391D+15 	! s; -> G=1; needed if poisson=.true.
 units_length  = 3.0856776D+21 			! cm = 1 kpc;	Ramses unit
 /
+
 
 &HYDRO_PARAMS
 courant_factor=0.5
@@ -26,9 +28,11 @@ scheme='muscl'
 riemann='llf'
 /
 
+
 &POISSON_PARAMS
 gravity_type=0	! requires to set units such that G=1
 /
+
 
 &AMR_PARAMS
 boxlen=6.0d2
@@ -39,11 +43,13 @@ npartmax=3500000
 nexpand=1
 /
 
+
 &REFINE_PARAMS
 m_refine=8*25
 interpol_type=0			! use this to avoid refinement runaway
 interpol_var=1			! use this to avoid refinement runaway
 /
+
 
 &BOUNDARY_PARAMS
 nboundary=6
@@ -56,11 +62,15 @@ kbound_min= 0, 0,  0,  0, -1,  1
 kbound_max= 0, 0,  0,  0, -1,  1
 /
 
+
+!initfile must be such that expanded by the IC file names
+!collectively has len < 80 characters
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/scratch/dr86/ttg562/ramses_output/hbd_7_new/ic/'
+!initfile(1)='/scratch/dr86/ttg562/hbd_7_new/ic/'
 initfile(1)='/suphys/tepper/ramses_output/hbd_7_new/ic/'
 /
+
 
 !MAKE SURE TO USE THE CORRECT UNITS FOR length, velocity, and mass
 !For more parameter see:
@@ -76,9 +86,12 @@ gadget_scale_m=1.9891D+33			! AGAMA file mass unit     -> 1 solar mass
 gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this is NOT the simulation time unit)
 /
 
+
+!output_dir name must have len < 40 characters to accomodate
+!the longest Ramses output file names
 &OUTPUT_PARAMS
 tend = 6.
 delta_tout = 0.1
-!output_dir='/scratch/dr86/ttg562/ramses_output/hbd_7_new/'
+!output_dir='/scratch/dr86/ttg562/hbd_7_new/'
 output_dir='/suphys/tepper/ramses_output/hbd_7_new/'
 /
