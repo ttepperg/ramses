@@ -20,15 +20,14 @@ SOLVER = hydro
 # IMPORTANT: The ORDER matters! If files with the same name are present,
 # only the first found is considered!
 # Also, directories are NOT looked into recursively!
-PATCH = ../patch/tepper/amr:../patch/tepper/pm:../patch/tepper/poisson
-PATCH += :../patch/init/dice
+PATCH = ../patch/tepper/amr:../patch/tepper/pm:../patch/tepper/poisson:../patch/init/dice
 # Use RT? 1=Yes, 0=No
 RT = 0
 # Use MPI? 1=Yes, 0=No
 MPI = 1
 MPIF90 = mpif90
 # Root name of executable
-EXEC = ramses_dice
+EXEC = ramses_debug_dice
 # Number of additional energies
 NENER = 0
 # Use Grackle cooling? 1=Yes, 0=No
