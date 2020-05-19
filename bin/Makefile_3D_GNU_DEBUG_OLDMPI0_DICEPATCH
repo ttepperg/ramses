@@ -23,7 +23,7 @@ RT = 0
 MPI = 1
 MPIF90 = mpif90
 # Root name of executable
-EXEC = ramses_dice
+EXEC = ramses_debug_dice
 # Number of additional energies
 NENER = 0
 # Use Grackle cooling? 1=Yes, 0=No
