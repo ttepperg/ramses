@@ -5,7 +5,7 @@ print_when_io=.true.
 cosmo=.false.
 hydro=.false.
 pic=.true.
-poisson=.true.	! requires to set units such that G=1
+poisson=.true.	! requires to set units such that G=1; taken care of by units.f90
 nrestart=0
 nremap=10
 nsubcycle=8*1

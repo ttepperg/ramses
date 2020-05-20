@@ -5,9 +5,11 @@ print_when_io=.true.
 cosmo=.false.
 hydro=.false.
 pic=.true.
-poisson=.true.	! requires to set units such that G=1
-sink=.true.
-nrestart=0
+poisson=.true.	! requires to set units such that G=1; taken care of by units.f90
+!sink=.true.	! use either these:
+!nrestart=0
+sink=.false.	! or these:
+nrestart=34
 nremap=10
 nsubcycle=8*1
 ncontrol=1
