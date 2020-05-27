@@ -6,7 +6,7 @@ cosmo=.false.
 hydro=.false.
 pic=.true.
 poisson=.true.	! requires to set units such that G=1; taken care of by units.f90
-sink=.true.
+sink=.true.	! use either these:
 nrestart=0
 nremap=10
 nsubcycle=8*1
@@ -15,9 +15,9 @@ ncontrol=1
 
 
 &UNITS_PARAMS
-units_density = 1.6605390D-24			! g/cm^3 = 1 H / cm^3;	 Ramses unit
-units_time    = 3.00386047142391D+15 	! s; -> G=1; needed if poisson=.true.
-units_length  = 3.0856776D+21 			! cm = 1 kpc;	Ramses unit
+units_density = 1.6605390D-24         ! g/cm^3 = 1 H / cm^3;	 Ramses unit
+units_time    = 3.00386047142391D+15  ! s; -> G=1; needed if poisson=.true.
+units_length  = 3.0856776D+21         ! cm = 1 kpc;	Ramses unit
 /
 
 
@@ -38,8 +38,8 @@ gravity_type=0	! requires to set units such that G=1
 boxlen=6.0d2
 levelmin=7
 levelmax=14
-ngridmax=100000
-npartmax=1000000
+ngridmax=500000
+npartmax=11000000
 nexpand=1
 /
 
@@ -66,10 +66,11 @@ kbound_max= 0, 0,  0,  0, -1,  1
 
 !initfile must be such that expanded by the IC file names
 !collectively has len < 80 characters
+!This dir is an example of the longest allowed!
 &INIT_PARAMS
 filetype='dice'
-initfile(1)='/scratch/dr86/ttg562/hbd_7_sink_2/ic/'
-!initfile(1)='/import/photon1/tepper/hbd_7_sink_2/ic/'
+initfile(1)='/scratch/dr86/ttg562/hbd_7_hyperes_sink_4/ic/'
+!initfile(1)='/import/photon1/tepper/hbd_7_hyperes_sink_4/ic/'
 /
 
 
@@ -84,6 +85,9 @@ mass_sink_direct_force=1.	! mass (Msun) above which sinks are treated with direc
 create_sinks=.false.		! default, but just in case
 mass_sink_seed=1.			! need > 0 for code to run; default is 0
 nsinkmax=1					! default 2000; save memory
+remove_sink=.true.			! exponentially decrease sink mass...
+sink_tscale0=1.5			! starting at this time (in code units)...
+sink_tscale=0.3				! over this time scale (in code units)
 /
 
 
@@ -95,7 +99,7 @@ ivar_clump=0				! use DM for clump finding; default is 1 (gas)
 
 !MAKE SURE TO USE THE CORRECT UNITS FOR length, velocity, and mass
 &DICE_PARAMS
-ic_file='hbd_7_preproc.g2'	  ! Name of the initial conditions file
+ic_file='hbd_7_hyperes_preproc.g2'	  ! Name of the initial conditions file
 ic_nfile=3                    ! If greater than one, look for files with name matching ic_file//'.n'
 ic_ifout=1                    ! Change ramses output index for restarts
 ic_format='Gadget2'           ! Format of the initial conditions. 'Gadget1' or 'Gadget2'
@@ -108,9 +112,10 @@ gadget_scale_t=3.15360e+13       ! Gadget file time unit    -> 1 Myr (note that 
 
 !output_dir name must have len < 40 characters to accomodate
 !the longest Ramses output file names
+!This dir is an example of the longest allowed!
 &OUTPUT_PARAMS
 tend = 6.
 delta_tout = 0.1
-output_dir='/scratch/dr86/ttg562/hbd_7_sink_2/'
-!output_dir='/import/photon1/tepper/hbd_7_sink_2/'
+output_dir='/scratch/dr86/ttg562/hbd_7_hyperes_sink_4/'
+!output_dir='/import/photon1/tepper/hbd_7_hyperes_sink_4/'
 /

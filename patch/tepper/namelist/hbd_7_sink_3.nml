@@ -40,8 +40,8 @@ gravity_type=0	! requires to set units such that G=1
 boxlen=6.0d2
 levelmin=7
 levelmax=14
-ngridmax=100000   ! set to 3x if running on 16 cpu's
-npartmax=1000000  ! set to 3.5x if running on 16 cpu's
+ngridmax=100000
+npartmax=1000000
 nexpand=1
 /
 
@@ -114,5 +114,5 @@ gadget_scale_t=3.15360e+13       ! Gadget file time unit    -> 1 Myr (note that 
 tend = 6.
 delta_tout = 0.1
 output_dir='/scratch/dr86/ttg562/hbd_7_sink_3/'
-!output_dir='/import/photon1/tepper/hbd_7_sink_3/ic/'
+!output_dir='/import/photon1/tepper/hbd_7_sink_3/'
 /
