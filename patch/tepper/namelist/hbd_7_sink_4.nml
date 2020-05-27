@@ -6,7 +6,7 @@ cosmo=.false.
 hydro=.false.
 pic=.true.
 poisson=.true.	! requires to set units such that G=1; taken care of by units.f90
-sink=.true.
+sink=.true.	! use either these:
 nrestart=0
 nremap=10
 nsubcycle=8*1
@@ -15,9 +15,9 @@ ncontrol=1
 
 
 &UNITS_PARAMS
-units_density = 1.6605390D-24			! g/cm^3 = 1 H / cm^3;	 Ramses unit
-units_time    = 3.00386047142391D+15 	! s; -> G=1; needed if poisson=.true.
-units_length  = 3.0856776D+21 			! cm = 1 kpc;	Ramses unit
+units_density = 1.6605390D-24         ! g/cm^3 = 1 H / cm^3;	 Ramses unit
+units_time    = 3.00386047142391D+15  ! s; -> G=1; needed if poisson=.true.
+units_length  = 3.0856776D+21         ! cm = 1 kpc;	Ramses unit
 /
 
 
@@ -68,8 +68,8 @@ kbound_max= 0, 0,  0,  0, -1,  1
 !collectively has len < 80 characters
 &INIT_PARAMS
 filetype='dice'
-initfile(1)='/scratch/dr86/ttg562/hbd_7_sink_2/ic/'
-!initfile(1)='/import/photon1/tepper/hbd_7_sink_2/ic/'
+initfile(1)='/scratch/dr86/ttg562/hbd_7_sink_4/ic/'
+!initfile(1)='/import/photon1/tepper/hbd_7_sink_4/ic/'
 /
 
 
@@ -84,6 +84,9 @@ mass_sink_direct_force=1.	! mass (Msun) above which sinks are treated with direc
 create_sinks=.false.		! default, but just in case
 mass_sink_seed=1.			! need > 0 for code to run; default is 0
 nsinkmax=1					! default 2000; save memory
+remove_sink=.true.			! exponentially decrease sink mass...
+sink_tscale0=1.5			! starting at this time (in code units)...
+sink_tscale=0.3				! over this time scale (in code units)
 /
 
 
@@ -111,6 +114,6 @@ gadget_scale_t=3.15360e+13       ! Gadget file time unit    -> 1 Myr (note that 
 &OUTPUT_PARAMS
 tend = 6.
 delta_tout = 0.1
-output_dir='/scratch/dr86/ttg562/hbd_7_sink_2/'
-!output_dir='/import/photon1/tepper/hbd_7_sink_2/'
+output_dir='/scratch/dr86/ttg562/hbd_7_sink_4/'
+!output_dir='/import/photon1/tepper/hbd_7_sink_4/'
 /

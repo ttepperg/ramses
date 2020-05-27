@@ -39,8 +39,8 @@ gravity_type=0	! requires to set units such that G=1
 boxlen=6.0d2
 levelmin=7
 levelmax=14
-ngridmax=300000   ! could be much lower if running on > 16  cpu's
-npartmax=3500000  ! could be much lower if running on > 16  cpu's
+ngridmax=100000
+npartmax=1000000
 nexpand=1
 /
 
