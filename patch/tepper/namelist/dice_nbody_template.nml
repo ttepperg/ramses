@@ -96,4 +96,6 @@ tend = 6.
 delta_tout = 0.1
 !output_dir='/scratch/dr86/ttg562/hbd_7_new/'
 output_dir='/import/photon1/tepper/hbd_7_new/'
+walltime_hrs=24       ! Wallclock time for submitted job
+minutes_dump=10       ! Dump an output minutes before walltime ends
 /
