@@ -31,4 +31,5 @@ output_sink.f90:
 
 init_part.f90:
 !!!This is a modified copy of the patch/init/dice/read_params.f90!!!
+Any changes to pm/init_part.f90 are not relevant to this file
 - added TRIM(output_dir) to filename strings where relevant
