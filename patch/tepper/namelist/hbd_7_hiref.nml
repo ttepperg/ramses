@@ -7,7 +7,7 @@ hydro=.false.
 pic=.true.
 poisson=.true.	 ! requires to set units such that G=1; taken care of by units.f90
 nrestart=0
-nstepmax=1100000 ! needed to reach the stipulated end time tend
+nstepmax=1044000 ! needed to reach the stipulated end time tend
 nremap=10
 nsubcycle=12*1
 ncontrol=1
