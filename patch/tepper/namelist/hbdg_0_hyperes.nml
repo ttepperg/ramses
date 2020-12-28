@@ -1,16 +1,17 @@
 ! COMPILE CODE WITH: Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
 &RUN_PARAMS
-print_when_io=.true.
 verbose=.false.
+print_when_io=.true.
 cosmo=.false.
 hydro=.true.
 pic=.true.
-poisson=.true.
+poisson=.true.	! requires units such that G=1; taken care of by units.f90
 nrestart=0
 nremap=10
-nsubcycle=7*1
+nsubcycle=8*1
 ncontrol=1
 /
+
 
 &UNITS_PARAMS
 units_density = 1.6605390D-24			! g/cm^3 = 1 H / cm^3;	 Ramses unit
@@ -18,21 +19,20 @@ units_time    = 3.00386047142391D+15 	! s; -> G=1; needed if poisson=.true.
 units_length  = 3.0856776D+21 			! cm = 1 kpc;	Ramses unit
 /
 
+
 &COOLING_PARAMS
 cooling=.true.
-!isothermal=.true.
-!haardt_madau=.false. 		!-> default => Nmodel=2 Theuns+98 cool.mod. (theuns=.true.)
-!J21=0.1d0					!-> default => Theuns+98 UV background model
-!a_spec=1.0d0				!-> default => Theuns+98 UV background model
 !z_ave=0.1					!-> relative to 0.02 (solar); init_part.f90/1328; requires metal=.true. and star=.true. -> not sure about the latter...
 !metal=.true.				!-> metallicity affects cooling!
 /
+
 
 &SF_PARAMS
 T2_star=1.0d4	!-> defines a temperature floor -> keep the gas disc stable
 g_star=1.0d0    !-> defines a temperature floor -> keep the gas disc stable
 n_star=1.0d0	!-> defines a temperature floor -> keep the gas disc stable
 /
+
 
 &HYDRO_PARAMS
 smallr=1.0d-20			! may not have an effect due to IG_rho (see DICE_PARAMS)
@@ -45,27 +45,34 @@ pressure_fix=.true.
 beta_fix=0.5d0
 /
 
+
 &POISSON_PARAMS
-gravity_type=0
-cic_levelmax=11			!-> maximum recorded refinement level in similar, pure particles run
+gravity_type=0	! requires units such that G=1; taken care of by units.f90
 /
 
+
+! Memory management PER CORE (pure N-body runs)
+! ~ 0.8*[ (ngridmax/10^6) + (npartmax/10^7) ] GB
+! The ICs used here (DICE_PARAMS) have roughly 35 million particles
+! Note that the more cores, the smaller ngridmax and npartmax can be
 &AMR_PARAMS
 boxlen=6.0d2
 levelmin=7
-levelmax=13
-ngridmax=300000
-npartmax=5000000
+levelmax=14
+ngridmax=500000   ! 96/144/192/240 cores; ~400 MB / core
+npartmax=5000000  ! 96/144/192/240 cores; ~400 MB / core
 nexpand=1
 /
 
+
 &REFINE_PARAMS
-jeans_refine=7*4
+jeans_refine=8*4
 mass_sph=2.5d-3   		!-> refinement runaway w/o interpolation scheme below
-m_refine=7*40
+m_refine=8*25
 interpol_type=0   		! use this to avoid refinement runaway
 interpol_var=1    		! use this to avoid refinement runaway
 /
+
 
 &BOUNDARY_PARAMS
 nboundary=6
@@ -79,43 +86,42 @@ kbound_max= 0, 0,  0,  0, -1,  1
 no_inflow=.false.				  ! ...  without inflow
 /
 
+
+!initfile must be such that expanded by the IC file names
+!collectively has len < 80 characters
+!the longest file name reads:
+!initfile(1)output_xxxxx/part_file_descriptor.txt
 &INIT_PARAMS
 filetype='dice'
-initfile(1)='/import/photon1/tepper/hbdg_0/ic/'
+initfile(1)='/scratch/dr86/ttg562/hbdg_0_hyperes/ic/'
+!initfile(1)='/import/photon1/tepper/hbdg_0_hyperes/ic/'
 /
 
+
+!MAKE SURE TO USE THE CORRECT UNITS FOR length, velocity, and mass
+!For more information see:
+!https://bitbucket.org/vperret/dice/wiki/RAMSES%20simulation
 &DICE_PARAMS
-ic_file='hbdg_0_proc.g2'           ! Name of the initial conditions file
+ic_file='hbdg_0_hyperes_proc.g2'           ! Name of the initial conditions file
 ic_nfile=4                    ! If greater than one, look for files with name matching ic_file//'.n'
 ic_ifout=1                    ! Change ramses output index for restarts
 ic_format='Gadget2'           ! Format of the initial conditions. 'Gadget1' or 'Gadget2'
-ic_center=0.0,0.0,0.0         ! Shift center parameter. ICs are automatically shifted with boxlen/2
-ic_scale_pos=1.0              ! Scaling factor for the position vector
-ic_scale_vel=1.0              ! Scaling factor for the velocity vector
-ic_scale_mass=1.0             ! Scaling factor for the mass
-ic_scale_u=1.0                ! Scaling factor for the internal energy
-ic_scale_age=1.0              ! Scaling factor for the particles age
-ic_scale_metal=0.02           ! Scaling factor for the metallicity (DICE adopts solar units, RAMSES expects actual metal mass frac.)
-ic_head_name='HEAD'           ! Name of the Header datablock (Gadget2 format only)
-ic_pos_name='POS '            ! Name of the position vector datablock (Gadget2 format only)
-ic_vel_name='VEL '            ! Name of the velocity vector datablock (Gadget2 format only)
-ic_mass_name='MASS'           ! Name of the mass datablock (Gadget2 format only)
-ic_id_name='ID  '             ! Name of the particle identifier datablock (Gadget2 format only)
-ic_u_name='U   '              ! Name of the internal energy datablock (Gadget2 format only)
-ic_metal_name='Z   '          ! Name of the metallicity datablock (Gadget2 format only)
-ic_age_name='AGE '            ! Name of the particle age datablock (Gadget2 format only)
+ic_scale_metal=0.02           ! Scaling factor for the metallicity (DICE adopts solar units, RAMSES expects actual metal mass frac.; defaults to 1.0)
 IG_rho=1.0D-6                 ! IGM gas density (default 1.0d-5)
 IG_T2=1.0D6                   ! IGM gas temperature (defaults 1.0d7)
 IG_metal=0.0                  ! IGM metallicity (default 1.0d-2)
-amr_struct=.false.            ! Reproduce the AMR structure of the Gadget2 file resulting from a ramses to gadget conversion
 gadget_scale_l=3.085677581282D+21	! AGAMA file length unit   -> 1 kpc
 gadget_scale_v=1.0D+5 				! AGAMA file velocity unit -> 1 km/s
 gadget_scale_m=1.9891D+33			! AGAMA file mass unit     -> 1 solar mass
 gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this is NOT the simulation time unit)
 /
 
+
+!output_dir name must have len < 40 characters to accomodate
+!the longest Ramses output file names
 &OUTPUT_PARAMS
-tend = 40.
+tend = 50.
 delta_tout = 0.1
-output_dir='/import/photon1/tepper/hbdg_0/'
+output_dir='/scratch/dr86/ttg562/hbdg_0_hyperes/'
+!output_dir='/import/photon1/tepper/hbdg_0_hyperes/'
 /
