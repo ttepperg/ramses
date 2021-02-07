@@ -1,11 +1,11 @@
 Author: Dr. Thorsten Tepper Garcia
 
-Date: 13 MAY 2020 - 
+Created: 13 MAY 2020
 
 About:
 
 This subdirectory contains a number of patches
-to files originally in pm.
+to files originally in pm, unless stated otherwise.
 
 init_sink.f90:
 - added kpc2cm, km2cm conversion factors from amr/constants.f90
