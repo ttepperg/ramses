@@ -1,0 +1,16 @@
+Author: Dr. Thorsten Tepper Garcia
+
+Created: 08 FEB 2021
+
+About:
+
+This subdirectory contains a number of patches
+to files originally in patch/init/dice, unless stated otherwise.
+
+init_part.f90:
+- added TRIM(output_dir) to filename strings where relevant
+
+read_params.f90:
+- added variable 'output_dir' to namelist block 'output_params'
+- added TRIM(output_dir) to filename strings where relevant
+- added variable 'print_when_io' to namelist block 'run_params'
