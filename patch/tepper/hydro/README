@@ -1,11 +1,11 @@
 Author: Dr. Thorsten Tepper Garcia
 
-Date: 09 DEC 2020 -
+Created: 09 DEC 2020
 
 About:
 
 This subdirectory contains a number of patches
-to files originally in hydro
+to files originally in hydro, unless stated otherwise.
 
 init_hydro.f90:
 - added TRIM(output_dir) to filename strings where relevant
