@@ -18,12 +18,6 @@ amr_parameters.f90:
 - added output parameter 'output_dir' (type character(len=80))
 	which allows to redirect the output to any location
 
-read_params.f90:
-!!!This is a modified copy of the patch/init/dice/read_params.f90!!!
-- added variable 'output_dir' to namelist block 'output_params'
-- added TRIM(output_dir) to filename strings where relevant
-- added variable 'print_when_io' to namelist block 'run_params'
-
 output_amr.f90:
 - added TRIM(output_dir) to filename strings where relevant; this should
 	propagate through all the output routines via the 'filename'
