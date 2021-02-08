@@ -11,7 +11,7 @@ module pm_parameters
   logical::remove_sink=.false.      ! Exponentially dampen sink mass over ...
   real(dp)::sink_tscale=1.D10       ! ... this time scale (in code units) ...
   real(dp)::sink_tscale0=1.D10      ! ... from this time on (in code units)
-
+  logical::sink_restart=.false.     ! allow to include sinks at restart
 
   ! More sink related parameters, can all be set in namelist file
 

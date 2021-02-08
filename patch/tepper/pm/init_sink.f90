@@ -4,6 +4,7 @@ subroutine init_sink
   use clfind_commons
   use amr_parameters, only:levelmin
   use constants, only:M_sun,kpc2cm
+  use pm_parameters, only: sink_restart
   use mpi_mod
   implicit none
 #ifndef WITHOUTMPI
@@ -46,7 +47,7 @@ subroutine init_sink
   allocate(fsink(1:nsinkmax,1:ndim))
   vsink=0d0; lsink=0d0; tsink=0d0; vsold=0d0; vsnew=0d0
   delta_mass=0d0; fsink_partial=0d0; fsink=0d0
-  
+
   allocate(msum_overlap(1:nsinkmax))
   allocate(rho_sink_tff(levelmin:nlevelmax))
   msum_overlap=0; rho_sink_tff=0d0
@@ -136,54 +137,58 @@ subroutine init_sink
      endif
 #endif
 
-     nsink=0
-     open(10,file=fileloc,form='formatted')
-     eof=.false.
-     ! scrolling over the comment lines
-     read(10,'(A200)')comment_line
-     read(10,'(A200)')comment_line
-     do
-        read(10,'(I10,20(A1,ES21.10),A1,I10)',end=104)sid,co, sm1,co,&
-                           sx1,co,sx2,co,sx3,co, &
-                           sv1,co,sv2,co,sv3,co, &
-                           sl1,co,sl2,co,sl3,co, &
-                           stform,co, sacc_rate,co, &
-                           sacc_mass,co, &
-                           srho_gas,co, sc2_gas,co, seps_sink,co, &
-                           svg1,co,svg2,co,svg3,co, &
-                           sm2,co,slevel
-        nsink=nsink+1
-        idsink(nsink)=sid
-        msink(nsink)=sm1
-        xsink(nsink,1)=sx1
-        xsink(nsink,2)=sx2
-        xsink(nsink,3)=sx3
-        vsink(nsink,1)=sv1
-        vsink(nsink,2)=sv2
-        vsink(nsink,3)=sv3
-        lsink(nsink,1)=sl1
-        lsink(nsink,2)=sl2
-        lsink(nsink,3)=sl3
-        tsink(nsink)=stform
-        dMBHoverdt(nsink)=sacc_rate
-        delta_mass(nsink)=sacc_mass
-        rho_gas(nsink)=srho_gas
-        c2sink(nsink)=sc2_gas
-        eps_sink(nsink)=seps_sink
-        vel_gas(nsink,1)=svg1
-        vel_gas(nsink,2)=svg2
-        vel_gas(nsink,3)=svg3
-        new_born(nsink)=.false. ! this is a restart
-        msmbh(nsink)=sm2
-        vsold(nsink,1:ndim,slevel)=vsink(nsink,1:ndim)
-        vsnew(nsink,1:ndim,slevel)=vsink(nsink,1:ndim)
-     end do
+     if(.not. sink_restart)then ! sinks are not present in restart ramses file
+
+         nsink=0
+         open(10,file=fileloc,form='formatted')
+         eof=.false.
+         ! scrolling over the comment lines
+         read(10,'(A200)')comment_line
+         read(10,'(A200)')comment_line
+         do
+            read(10,'(I10,20(A1,ES21.10),A1,I10)',end=104)sid,co, sm1,co,&
+                               sx1,co,sx2,co,sx3,co, &
+                               sv1,co,sv2,co,sv3,co, &
+                               sl1,co,sl2,co,sl3,co, &
+                               stform,co, sacc_rate,co, &
+                               sacc_mass,co, &
+                               srho_gas,co, sc2_gas,co, seps_sink,co, &
+                               svg1,co,svg2,co,svg3,co, &
+                               sm2,co,slevel
+            nsink=nsink+1
+            idsink(nsink)=sid
+            msink(nsink)=sm1
+            xsink(nsink,1)=sx1
+            xsink(nsink,2)=sx2
+            xsink(nsink,3)=sx3
+            vsink(nsink,1)=sv1
+            vsink(nsink,2)=sv2
+            vsink(nsink,3)=sv3
+            lsink(nsink,1)=sl1
+            lsink(nsink,2)=sl2
+            lsink(nsink,3)=sl3
+            tsink(nsink)=stform
+            dMBHoverdt(nsink)=sacc_rate
+            delta_mass(nsink)=sacc_mass
+            rho_gas(nsink)=srho_gas
+            c2sink(nsink)=sc2_gas
+            eps_sink(nsink)=seps_sink
+            vel_gas(nsink,1)=svg1
+            vel_gas(nsink,2)=svg2
+            vel_gas(nsink,3)=svg3
+            new_born(nsink)=.false. ! this is a restart
+            msmbh(nsink)=sm2
+            vsold(nsink,1:ndim,slevel)=vsink(nsink,1:ndim)
+            vsnew(nsink,1:ndim,slevel)=vsink(nsink,1:ndim)
+         end do
 104  continue
-     sinkint_level=slevel
-     if(nsink>0)then
-        nindsink=idsink(nsink)
+         sinkint_level=slevel
+         if(nsink>0)then
+            nindsink=idsink(nsink)
+         end if
+         close(10)
+
      end if
-     close(10)
 
      ! Send the token
 #ifndef WITHOUTMPI
@@ -228,6 +233,9 @@ subroutine init_sink
         INQUIRE(FILE=filename, EXIST=ic_sink)
      end if
   end if
+
+  if(.not. ic_sink.and. myid==1)write(*,*) 'WARNING: Could not find file ',&
+  &filename
 
   if (ic_sink)then
 

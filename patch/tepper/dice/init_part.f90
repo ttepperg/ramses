@@ -2,6 +2,7 @@
   use amr_commons
   use pm_commons
   use clfind_commons
+  use pm_parameters, only: sink_restart
   ! DICE patch
   use dice_commons
   use cooling_module
@@ -99,12 +100,12 @@
 #ifdef OUTPUT_PARTICLE_POTENTIAL
   allocate(ptcl_phi(npartmax))
 #endif
-  ! DICE patch 
+  ! DICE patch
   allocate(up(npartmax))
   if(ic_mask_ptype.gt.-1)then
      allocate(maskp(npartmax))
   endif
-  ! DICE patch 
+  ! DICE patch
   xp=0.0; vp=0.0; mp=0.0; levelp=0; idp=0
   typep(1:npartmax)%family=FAM_UNDEF; typep(1:npartmax)%tag=0
   if(star.or.sink)then
@@ -201,22 +202,24 @@
      ! We don't need the potential, but read it anyway (to get the records correctly for tp/zp)
      read(ilun)
 #endif
-     if(star.or.sink)then
-        ! Read birth epoch
-        allocate(xdp(1:npart2))
-        read(ilun)xdp
-        tp(1:npart2)=xdp
-        if(convert_birth_times) then
-           do i = 1, npart2 ! Convert birth time to proper for RT postpr.
-              call getProperTime(tp(i),tp(i))
-           enddo
-        endif
-        if(metal)then
-           ! Read metallicity
-           read(ilun)xdp
-           zp(1:npart2)=xdp
-        end if
-        deallocate(xdp)
+     if(.not. sink_restart)then ! sinks are not present in restart ramses file
+         if(star.or.sink)then
+            ! Read birth epoch
+            allocate(xdp(1:npart2))
+            read(ilun)xdp
+            tp(1:npart2)=xdp
+            if(convert_birth_times) then
+               do i = 1, npart2 ! Convert birth time to proper for RT postpr.
+                  call getProperTime(tp(i),tp(i))
+               enddo
+            endif
+            if(metal)then
+               ! Read metallicity
+               read(ilun)xdp
+               zp(1:npart2)=xdp
+            end if
+            deallocate(xdp)
+         end if
      end if
 
      close(ilun)
@@ -1051,7 +1054,7 @@ contains
           mass_blck  = -1
           metal_blck = -1
           age_blck   = -1
-          
+
           if(ic_format .eq. 'Gadget1') then
              ! Init block counter
              jump_blck = 1
@@ -1175,7 +1178,7 @@ contains
              write(*,*) 'Gadget header is not 256 bytes'
              error=.true.
           endif
-          
+
           ! Byte swapping doesn't appear to work if you just do READ(1)header
           READ(1,POS=head_blck) header%npart,header%mass,header%time,header%redshift, &
                header%flag_sfr,header%flag_feedback,header%nparttotal, &
@@ -1184,13 +1187,13 @@ contains
                header%flag_stellarage,header%flag_metals,header%totalhighword, &
                header%flag_entropy_instead_u, header%flag_doubleprecision, &
                header%flag_ic_info, header%lpt_scalingfactor
-          
+
           nstar_tot = sum(header%npart(3:5))
           npart     = sum(header%npart)
           ngas      = header%npart(1)
           nhalo     = header%npart(2)
           if(cosmo) T2_start = 1.356d-2/aexp**2
-          
+
           write(*,'(A50)')"__________________________________________________"
           write(*,*)"Found ",npart," particles"
           skip=.false.
@@ -1320,7 +1323,7 @@ contains
                    if(xx(i,3)<  0.0d0  )xx(i,3)=xx(i,3)+dble(nz)
                    if(xx(i,3)>=dble(nz))xx(i,3)=xx(i,3)-dble(nz)
                 endif
-                
+
                 if(metal) then
                    if(metal_blck.ne.-1) then
                       zz(i) = zz_sp(i)*ic_scale_metal
@@ -1346,7 +1349,7 @@ contains
                       ! Temperature stored in units of K/mu
                       uu(i) = uu_sp(i)*mu_mol*(gadget_scale_v/scale_v)**2*ic_scale_u
                    endif
-                   
+
                 endif
                 if(kpart.le.header%npart(1)) mgas_tot = mgas_tot+mm(i)
                 ! Check the End Of Block
