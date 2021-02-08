@@ -1,13 +1,34 @@
 Author: Dr. Thorsten Tepper Garcia
 
 Created: 13 MAY 2020
+Last update: 08 FEB 2021
 
 About:
 
 This subdirectory contains a number of patches
 to files originally in pm, unless stated otherwise.
 
+sink_particle.f90:
+- added parameters
+	remove_sink
+	sink_tscale
+	sink_tscale0
+	sink_restart
+to sink_params block; the first three are used in routine update_sink, the last one in routines init_sink and init_part. The first three allow to exponentially decrase the mass of a sink with time (see routine update_sink). The last one, sink_restart, if set .true., allows to include sinks at restart
+via an initfile(1)/ic_sink_restart text file for a simulation that previously did not include sinks. If the simulation did include sinks, then additional sinks may be added via initfile(1)/ic_sink_restart without the need to set sink_restart
+
+pm_parameters.f90:
+- set default values for parameters
+	remove_sink=.false.
+	sink_tscale=1.D10
+	sink_tscale0=1.D10
+	sink_restart=.false.
+in module pm_parameters
+
+
 init_sink.f90:
+- added a warnig of file 'ic_sink' or 'ic_sink_restart' not found
+- added 'use pm_parameters, only: sink_restart'
 - added kpc2cm, km2cm conversion factors from amr/constants.f90
 - added scale_m (type real(db))
 - scaled ic_sink input values to code units
@@ -24,6 +45,7 @@ init_sink.f90:
 - moved output sink properties to screen to end of subroutine
 - added direct force scheme information to output to screen
 - added TRIM(output_dir) to filename strings where relevant
+
 
 output_sink.f90:
 - changed output file header string 'msink' to 'mass' for

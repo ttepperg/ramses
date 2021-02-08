@@ -1283,7 +1283,7 @@ subroutine make_sink_from_clump(ilevel)
   use hydro_commons
   use poisson_commons
   use clfind_commons
-  use constants, only: 
+  use constants, only:
   use mpi_mod
   implicit none
 
@@ -1877,7 +1877,7 @@ subroutine update_sink(ilevel)
         xsinkold(isink,1:ndim)=xsink(isink,1:ndim)
      endif
   enddo
-  
+
   ! Updating sink positions
 
   fsink=0
@@ -1945,7 +1945,7 @@ subroutine update_sink(ilevel)
               graddescent_over_dt(isink) = NORM2(xsink_graddescent(isink,1:ndim))/dtnew(ilevel)
            endif
         endif
-        
+
         new_born(isink)=.false.
 
         ! Dampen sink mass (this is NOT compatible with other sink settings)
@@ -2496,7 +2496,7 @@ subroutine read_sink_params()
        AGN_fbk_frac_ener,AGN_fbk_frac_mom,T2_max,boost_threshold_density,&
        epsilon_kin,AGN_fbk_mode_switch_threshold,kin_mass_loading,bondi_use_vrel,smbh,agn,max_mass_nsc,&
        agn_acc_method,agn_inj_method,sink_descent,gamma_grad_descent,fudge_graddescent,&
-       remove_sink,sink_tscale,sink_tscale0
+       remove_sink,sink_tscale,sink_tscale0,sink_restart
   real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v
 
   if(.not.cosmo) call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
