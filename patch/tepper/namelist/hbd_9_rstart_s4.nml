@@ -7,8 +7,9 @@ hydro=.false.
 pic=.true.
 poisson=.true.	! requires to set units such that G=1; taken care of by units.f90
 sink=.true.     ! IMPORTANT: See notes on SINK_PARAMS block below
-nrestart=166    ! IMPORTANT: After first restart, set sink_restart=F and remove
-                ! ic_sink_restart file from initfile(1) location!
+!nrestart=151	! -> T = 0 Gyr (i.e. initial condition) of new run!
+nrestart=166    ! IMPORTANT: After first restart, set sink_restart=.false.
+				! and rename ic_sink_restart file to e.g. no_ic_sink_restart
 nremap=10
 nsubcycle=7*1
 ncontrol=1
