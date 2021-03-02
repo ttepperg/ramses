@@ -68,9 +68,8 @@ kbound_max= 0, 0,  0,  0, -1,  1
 !initfile(1)output_xxxxx/part_file_descriptor.txt
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/scratch/dr86/ttg562/hbd_9_hyrdisc/ic/'
+initfile(1)='/scratch/dr86/ttg562/hbd_9_hyrdisc/ic/'
 !initfile(1)='/import/photon1/tepper/hbd_9_hyrdisc/ic/'
-initfile(1)='/p9/mcc_uspa/tepper/output/hbd_9_hyrdisc/ic/'
 /
 
 
@@ -92,9 +91,8 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 !output_dir name must have len < 40 characters to accomodate
 !the longest Ramses output file names
 &OUTPUT_PARAMS
-tend = 50.
+tend = 45.
 delta_tout = 0.1
-!output_dir='/scratch/dr86/ttg562/hbd_9_hyrdisc/'
+output_dir='/scratch/dr86/ttg562/hbd_9_hyrdisc/'
 !output_dir='/import/photon1/tepper/hbd_9_hyrdisc/'
-output_dir='/p9/mcc_uspa/tepper/output/hbd_9_hyrdisc/'
 /
