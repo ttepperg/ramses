@@ -240,7 +240,6 @@ subroutine rho_from_current_level(ilevel)
   integer,dimension(1:nvector),save::ind_part,ind_grid_part
   real(dp),dimension(1:nvector,1:ndim),save::x0
 
-  integer :: counter
   ! Mesh spacing in that level
   dx=0.5D0**ilevel
 
@@ -257,22 +256,15 @@ subroutine rho_from_current_level(ilevel)
            ind_grid(ig)=igrid
            ipart=headp(igrid)
 
-           counter = 0
            ! Loop over particles
            do jpart=1,npart1
               if(ig==0)then
                  ig=1
                  ind_grid(ig)=igrid
               end if
-              ! MC Tracer patch
-              if (is_not_tracer(typep(ipart))) then
-                 ip=ip+1
-                 ind_part(ip)=ipart
-                 ind_grid_part(ip)=ig
-                 ! Count the number of non-tracers
-                 counter = counter + 1
-              end if
-              ! End MC Tracer patch
+              ip=ip+1
+              ind_part(ip)=ipart
+              ind_grid_part(ip)=ig
               if(ip==nvector)then
                  ! Lower left corner of 3x3x3 grid-cube
                  do idim=1,ndim
@@ -290,16 +282,11 @@ subroutine rho_from_current_level(ilevel)
 #endif
                  ip=0
                  ig=0
-                 counter=0
               end if
               ipart=nextp(ipart)  ! Go to next particle
            end do
            ! End loop over particles
 
-           ! Only tracers, remove one cache line
-           if (counter == 0 .and. ig > 0) then
-              ig = ig - 1
-           end if
         end if
 
         igrid=next(igrid)   ! Go to next grid
@@ -671,7 +658,7 @@ subroutine multipole_fine(ilevel)
   ! solver, the restriction is necessary in any case.
   !-------------------------------------------------------------------
   integer ::ind,i,ncache,igrid,ngrid,iskip,nx_loc
-  integer ::idim,nleaf,nsplit,ix,iy,iz,iskip_son,ind_son,ind_grid_son,ind_cell_son
+  integer ::imat,idim,nleaf,nsplit,ix,iy,iz,iskip_son,ind_son,ind_grid_son,ind_cell_son
   integer,dimension(1:nvector),save::ind_grid,ind_cell,ind_leaf,ind_split
   real(dp),dimension(1:nvector,1:ndim),save::xx
   real(dp),dimension(1:nvector),save::dd
@@ -744,14 +731,16 @@ subroutine multipole_fine(ilevel)
 
         ! Compute gas multipole for leaf cells only
         if(hydro)then
-           do i=1,nleaf
-              mm=max(uold(ind_leaf(i),1),smallr)*vol_loc
-              unew(ind_leaf(i),1)=unew(ind_leaf(i),1)+mm
-           end do
-           do idim=1,ndim
+           do imat=1,nmat
               do i=1,nleaf
-                 mm=max(uold(ind_leaf(i),1),smallr)*vol_loc
-                 unew(ind_leaf(i),idim+1)=unew(ind_leaf(i),idim+1)+mm*xx(i,idim)
+                 mm=uold(ind_leaf(i),nmat+imat)*vol_loc
+                 unew(ind_leaf(i),1)=unew(ind_leaf(i),1)+mm
+              end do
+              do idim=1,ndim
+                 do i=1,nleaf
+                    mm=uold(ind_leaf(i),nmat+imat)*vol_loc
+                    unew(ind_leaf(i),idim+1)=unew(ind_leaf(i),idim+1)+mm*xx(i,idim)
+                 end do
               end do
            end do
         endif

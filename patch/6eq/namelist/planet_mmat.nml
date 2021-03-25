@@ -28,15 +28,15 @@ bound_type= 2, 2, 2, 2
 
 &MATERIAL_PARAMS
 eos_params(1,1:4)=3,3,1.0,1.0
-eos_params(2,1:4)=3,3,1.0,1.0
+eos_params(2,1:4)=1.4,0.0,0.0,1.0
 /
 
 &INIT_PARAMS
 /
 
 &OUTPUT_PARAMS
-delta_tout=0.1
-tend=1.5
+delta_tout=0.28
+tend=2.8
 /
 
 &POISSON_PARAMS 
@@ -49,6 +49,7 @@ courant_factor=0.5
 slope_type=1
 scheme='muscl'
 eos_name='mie-grueneisen'
+smallc=1d-6
 /
 
 
