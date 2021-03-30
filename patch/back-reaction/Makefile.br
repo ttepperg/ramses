@@ -39,7 +39,7 @@ NIONS = 0
 # Number of photon groups for RT
 NGROUPS = 0
 # Number of passive scalars
-NPSCAL = 0
+NPSCAL = 4
 
 # Compute NVAR
 NVAR = 2+$(NDIM)
@@ -52,7 +52,7 @@ ifeq ($(RT),1)
 endif
 
 # Set to one to use 'include "mpif.h"' instead of more recent "use mpi"
-OLD_MPI_SUPPORT = 0
+OLD_MPI_SUPPORT = 1
 #############################################################################
 GITBRANCH = $(shell git rev-parse --abbrev-ref HEAD)
 GITHASH = $(shell git log --pretty=format:'%H' -n 1)
