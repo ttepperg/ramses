@@ -75,8 +75,8 @@ kbound_max= 0, 0,  0,  0, -1,  1
 ! initfile(1)output_xxxxx/part_file_descriptor.txt
 &INIT_PARAMS
 filetype='dice'
-initfile(1)='/scratch/dr86/ttg562/hbd_9_hyrdisc_rstart_s5/ic/'
-!initfile(1)='/import/photon1/tepper/hbd_9_hyrdisc_rstart_s5/ic/'
+initfile(1)='/scratch/dr86/ttg562/hbd_9_hyrdisc_rs_s6/ic/'
+!initfile(1)='/import/photon1/tepper/hbd_9_hyrdisc_rs_s6/ic/'
 /
 
 
@@ -92,7 +92,7 @@ create_sinks=.false.		! default, but just in case
 mass_sink_seed=1.			! need > 0 for code to run; default is 0
 nsinkmax=1					! set to exact number of sinks in simulation!
 remove_sink=.true.			! exponentially decrease sink mass...
-sink_tscale0=16.5			! starting at this time (in code units)...
+sink_tscale0=26.5			! starting at this time (in code units)...
 sink_tscale=0.3				! over this time scale (in code units)
 sink_restart=.true.         ! include sinks at restart without previous sinks
 							! IMPORTANT: after first restart, set
@@ -106,6 +106,6 @@ sink_restart=.true.         ! include sinks at restart without previous sinks
 &OUTPUT_PARAMS
 tend = 50.
 delta_tout = 0.1
-output_dir='/scratch/dr86/ttg562/hbd_9_hyrdisc_rstart_s5/'
-!output_dir='/import/photon1/tepper/hbd_9_hyrdisc_rstart_s5/'
+output_dir='/scratch/dr86/ttg562/hbd_9_hyrdisc_rs_s6/'
+!output_dir='/import/photon1/tepper/hbd_9_hyrdisc_rs_s6/'
 /
