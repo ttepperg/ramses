@@ -25,3 +25,8 @@ output_amr.f90:
 
 init_amr.f90:
 - added TRIM(output_dir) to filename strings where relevant
+
+movie.f90:
+- added TRIM(output_dir) to filename strings where relevant; this should
+	propagate through all the output routines via the 'filename'
+	variable
