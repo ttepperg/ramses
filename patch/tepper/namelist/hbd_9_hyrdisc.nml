@@ -91,7 +91,7 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 !output_dir name must have len < 40 characters to accomodate
 !the longest Ramses output file names
 &OUTPUT_PARAMS
-tend = 45.
+tend = 50.
 delta_tout = 0.1
 output_dir='/scratch/dr86/ttg562/hbd_9_hyrdisc/'
 !output_dir='/import/photon1/tepper/hbd_9_hyrdisc/'
