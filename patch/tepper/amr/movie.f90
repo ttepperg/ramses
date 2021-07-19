@@ -12,6 +12,7 @@ subroutine output_frame()
 #endif
   use constants, only: pi, c_cgs, L_sun, M_sun, yr2sec
   use mpi_mod
+  use file_module, ONLY: mkdir
   implicit none
 #if NDIM > 1
 #ifndef WITHOUTMPI
@@ -55,6 +56,7 @@ subroutine output_frame()
   real(kind=8),dimension(:,:,:),allocatable::data_frame
   real(kind=8),dimension(:,:),allocatable::weights
   real(kind=8)::e,uvar
+  integer, parameter :: mode = int(O'755')
   integer::igrid,ilevel
   integer::i,j,ivar
   integer::proj_ind,nh_temp,nw_temp,proj_ax
@@ -100,6 +102,7 @@ subroutine output_frame()
  ! Only one projection available in 2D
  if((ndim.eq.2).and.(trim(proj_axis).ne.'z')) proj_axis = 'z'
 
+ ! Loop over projections
  do proj_ind=1,LEN(trim(proj_axis))
 
   opened=.false.
@@ -153,8 +156,9 @@ subroutine output_frame()
 #else
      if(myid==1)then
         ierr=1
-        call system(moviecmd,ierr)
-!        call EXECUTE_COMMAND_LINE(moviecmd,exitstat=ierr,wait=.true.)
+          ! call system(moviecmd,ierr)
+          ! call EXECUTE_COMMAND_LINE(moviecmd,exitstat=ierr,wait=.true.)
+          call mkdir(trim(moviedir),mode,ierr)
      endif
 #ifndef WITHOUTMPI
      call MPI_BCAST(ierr,1,MPI_INTEGER,0,MPI_COMM_WORLD,info)
@@ -217,6 +221,7 @@ subroutine output_frame()
   else
       timer = t
   endif
+    
   ! Compute frame boundaries
   xcen=xcentre_frame(proj_ind*4-3)+xcentre_frame(proj_ind*4-2)*timer+xcentre_frame(proj_ind*4-1)*timer**2+xcentre_frame(proj_ind*4)*timer**3
   ycen=ycentre_frame(proj_ind*4-3)+ycentre_frame(proj_ind*4-2)*timer+ycentre_frame(proj_ind*4-1)*timer**2+ycentre_frame(proj_ind*4)*timer**3
@@ -330,6 +335,7 @@ subroutine output_frame()
   endif
   weights(:,:) = 0d0
 
+    ! Deal with hydro variables
   if(hydro) then
      ! Loop over levels
      do ilevel=levelmin,nlevelmax_frame
@@ -628,16 +634,20 @@ subroutine output_frame()
                                 l2 = (ycube(lind(iline,4))-ycube(lind(iline,3)))**2+(xcube(lind(iline,4))-xcube(lind(iline,3)))**2
                                 if(l1.eq.0d0) cycle
                                 if(l2.eq.0d0) cycle
-                                d1 = ((ycube(lind(iline,2))-ycube(lind(iline,1)))*xpc-(xcube(lind(iline,2))-xcube(lind(iline,1)))*ypc+xcube(lind(iline,2))*ycube(lind(iline,1))-ycube(lind(iline,2))*xcube(lind(iline,1)))/l1
-                                d2 = ((ycube(lind(iline,4))-ycube(lind(iline,3)))*xpc-(xcube(lind(iline,4))-xcube(lind(iline,3)))*ypc+xcube(lind(iline,4))*ycube(lind(iline,3))-ycube(lind(iline,4))*xcube(lind(iline,3)))/l2
+                                  d1 = ((ycube(lind(iline,2))-ycube(lind(iline,1)))*xpc-(xcube(lind(iline,2))-xcube(lind(iline,1)))*ypc &
+                                       & +xcube(lind(iline,2))*ycube(lind(iline,1))-ycube(lind(iline,2))*xcube(lind(iline,1)))/l1
+                                  d2 = ((ycube(lind(iline,4))-ycube(lind(iline,3)))*xpc-(xcube(lind(iline,4))-xcube(lind(iline,3)))*ypc &
+                                       & +xcube(lind(iline,4))*ycube(lind(iline,3))-ycube(lind(iline,4))*xcube(lind(iline,3)))/l2
                                 if(d1.eq.-sign(d1,d2)) cube_face=.true.
                                 if(.not.cube_face) cycle
                                 l3 = (ycube(lind(iline,6))-ycube(lind(iline,5)))**2+(xcube(lind(iline,6))-xcube(lind(iline,5)))**2
                                 l4 = (ycube(lind(iline,8))-ycube(lind(iline,7)))**2+(xcube(lind(iline,8))-xcube(lind(iline,7)))**2
                                 if(l3.eq.0d0) cycle
                                 if(l4.eq.0d0) cycle
-                                d3 = ((ycube(lind(iline,6))-ycube(lind(iline,5)))*xpc-(xcube(lind(iline,6))-xcube(lind(iline,5)))*ypc+xcube(lind(iline,6))*ycube(lind(iline,5))-ycube(lind(iline,6))*xcube(lind(iline,5)))/l3
-                                d4 = ((ycube(lind(iline,8))-ycube(lind(iline,7)))*xpc-(xcube(lind(iline,8))-xcube(lind(iline,7)))*ypc+xcube(lind(iline,8))*ycube(lind(iline,7))-ycube(lind(iline,8))*xcube(lind(iline,7)))/l4
+                                  d3 = ((ycube(lind(iline,6))-ycube(lind(iline,5)))*xpc-(xcube(lind(iline,6))-xcube(lind(iline,5)))*ypc &
+                                       & +xcube(lind(iline,6))*ycube(lind(iline,5))-ycube(lind(iline,6))*xcube(lind(iline,5)))/l3
+                                  d4 = ((ycube(lind(iline,8))-ycube(lind(iline,7)))*xpc-(xcube(lind(iline,8))-xcube(lind(iline,7)))*ypc &
+                                       & +xcube(lind(iline,8))*ycube(lind(iline,7))-ycube(lind(iline,8))*xcube(lind(iline,7)))/l4
                                 ! Within the projected face?
                                 if(d3.eq.sign(d3,d4)) cube_face=.false.
                                 if(cube_face) exit
@@ -800,6 +810,7 @@ subroutine output_frame()
      end do
   ! End loop over levels
   end if
+    ! End block if hydro
 
   ! Loop over particles
   do j=1,npartmax
@@ -1037,6 +1048,7 @@ subroutine output_frame()
   endif
 
   deallocate(data_frame)
+
   ! Update counter
   if(proj_ind.eq.len(trim(proj_axis))) then
      ! Increase counter and skip frames if timestep is large
@@ -1049,6 +1061,8 @@ subroutine output_frame()
   nw_frame = nw_temp
   nh_frame = nh_temp
   enddo
+ ! End loop over projections
+ 
 #endif
 end subroutine output_frame
 
@@ -1152,6 +1166,5 @@ subroutine set_movie_vars()
      endif
 
   end do
-
 
 end subroutine set_movie_vars
