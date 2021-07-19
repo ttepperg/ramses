@@ -52,7 +52,6 @@ beta_fix=0.5d0
 
 &POISSON_PARAMS
 gravity_type=0
-!cic_levelmax=11			!-> maximum recorded refinement level in similar, pure particles run
 /
 
 
