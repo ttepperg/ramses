@@ -93,13 +93,13 @@ no_inflow=.false.				  ! ...  without inflow
 
 &INIT_PARAMS
 filetype='dice'
-initfile(1)='/import/photon1/tepper/hbd_10_gd_iso_new/ic/'
-!initfile(1)='/scratch/dr86/ttg562/hbd_10_gd_iso_new/ic/'
+1initfile(1)='/import/photon1/tepper/hbd_11_gd0_new/ic/'
+initfile(1)='/scratch/dr86/ttg562/hbd_11_gd0_new/ic/'
 /
 
 
 &DICE_PARAMS
-ic_file='hbd_10_gd_proc.g2'           ! Name of the initial conditions file
+ic_file='hbd_11_gd0_new_proc.g2'           ! Name of the initial conditions file
 ic_nfile=4                    ! If greater than one, look for files with name matching ic_file//'.n'
 ic_ifout=1                    ! Change ramses output index for restarts
 ic_format='Gadget2'           ! Format of the initial conditions. 'Gadget1' or 'Gadget2'
@@ -130,8 +130,8 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 
 
 &OUTPUT_PARAMS
-tend = 40.
+tend = 45.
 delta_tout = 0.1
-output_dir='/import/photon1/tepper/hbd_10_gd_iso_new/'
-!output_dir='/scratch/dr86/ttg562/hbd_10_gd_iso_new/'
+!output_dir='/import/photon1/tepper/hbd_11_gd0_new/'
+output_dir='/scratch/dr86/ttg562/hbd_11_gd0_new/'
 /
