@@ -72,7 +72,7 @@ nexpand=1
 &REFINE_PARAMS
 jeans_refine=7*4
 mass_sph=2.5d-3   		!-> refinement runaway w/o interpolation scheme below
-m_refine=7*40
+m_refine=7*25			! had 7*40 before
 interpol_type=0   		! use this to avoid refinement runaway
 interpol_var=1    		! use this to avoid refinement runaway
 /
@@ -93,7 +93,7 @@ no_inflow=.false.				  ! ...  without inflow
 
 &INIT_PARAMS
 filetype='dice'
-1initfile(1)='/import/photon1/tepper/hbd_11_gd0_new/ic/'
+!initfile(1)='/import/photon1/tepper/hbd_11_gd0_new/ic/'
 initfile(1)='/scratch/dr86/ttg562/hbd_11_gd0_new/ic/'
 /
 
