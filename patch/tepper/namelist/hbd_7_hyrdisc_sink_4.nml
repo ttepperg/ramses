@@ -93,7 +93,7 @@ sink_tscale=0.3				! over this time scale (in code units)
 /
 
 
-!not sure if used when hydro=.false.
+!not sure if this is needed...
 &CLUMPFIND_PARAMS
 ivar_clump=0				! use DM for clump finding; default is 1 (gas)
 /
