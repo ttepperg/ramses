@@ -1,4 +1,5 @@
 ! COMPILE CODE WITH: Makefile_3D_GNU_(DEBUG)_OLDMPI0_DICEMULTIPATCH
+! NOTES: The sink parameter settings are appropriate for inserting sinks from the start. In contrast, e.g. hbd_9_hyrdisc_rs_s*.nml settings are appropriate for inserting one or more sink particles (point-masses) into a simulation at any snapshot other than the initial one.
 &RUN_PARAMS
 verbose=.false.
 print_when_io=.true.
