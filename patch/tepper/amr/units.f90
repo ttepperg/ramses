@@ -60,7 +60,7 @@ subroutine units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
     write(*,*)
     if(hydro)&
         &write(*,'(a32,1pe10.2)') "Refinement > gas mass [Msun]: ",&
-        & m_refine(levelmin+1) * mass_sph * scale_m / M_sun
+        & m_refine(1) * mass_sph * scale_m / M_sun
     write(*,*)
     write(*,*)
   end if
