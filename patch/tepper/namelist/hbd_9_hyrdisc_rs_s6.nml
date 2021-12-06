@@ -39,7 +39,7 @@ gravity_type=0	! requires to set units such that G=1
 
 ! Memory management PER CORE (pure N-body runs)
 ! ~ 0.8*[ (ngridmax/10^6) + (npartmax/10^7) ] GB
-! The ICs used here (DICE_PARAMS) have roughly 3.5 million particles
+! The ICs used here (DICE_PARAMS) have roughly 75 million particles
 ! Note that the more cores, the smaller ngridmax and npartmax can be
 &AMR_PARAMS
 boxlen=6.0d2

@@ -6,7 +6,7 @@ cosmo=.false.
 hydro=.true.
 pic=.true.
 poisson=.true.	! requires to set units such that G=1; taken care of by units.f90
-nrestart=0
+nrestart=1
 nremap=10
 nsubcycle=8*1
 ncontrol=1
@@ -19,15 +19,14 @@ units_time    = 3.00386047142391D+15  ! s; -> G=1; needed if poisson=.true.
 units_length  = 3.0856776D+21         ! cm = 1 kpc;	Ramses unit
 /
 
+
 &COOLING_PARAMS
-isothermal=.true.
+barotropic_eos = .true.
+barotropic_eos_form = 'isothermal'
+T_eos = 1.0d4
+mu_gas = 1.0d0
 /
 
-&SF_PARAMS
-T2_star=1.0d3	!-> defines a temperature floor -> keep the gas disc stable
-g_star=1.0d0    !-> defines a temperature floor -> keep the gas disc stable
-n_star=1.0d0	!-> defines a temperature floor -> keep the gas disc stable
-/
 
 &HYDRO_PARAMS
 smallr=1.0d-20			! may not have an effect due to IG_rho (see DICE_PARAMS)
@@ -45,6 +44,7 @@ beta_fix=0.5d0
 gravity_type=0	! requires to set units such that G=1
 /
 
+
 !Memory management:
 !1.4(ngridmax/10^6) + 0.7(npartmax/10^7) Gb for N-body and hydro runs per core
 ! Note that the more cores, the smaller ngridmax and npartmax can be
@@ -54,8 +54,10 @@ levelmin=7
 levelmax=14
 !ngridmax=500000   ! on 240 cpus @ ~170GB;
 !npartmax=11000000 ! on 240 cpus @ ~185GB;
-ngridmax=500000   ! on 96 cpus @ ~68GB;
-npartmax=12000000 ! on 96 cpus @ ~81GB;
+!ngridmax=200000   ! on 24 cpus @ ~7GB; use this to start
+!npartmax=20000000 ! on 24 cpus @ ~34GB; use this to start
+ngridmax=150000   ! on 24 cpus @ ~5GB;  use this to restart
+npartmax=4500000 ! on 24 cpus @ ~7.6GB; use this to restart
 nexpand=1
 /
 
@@ -89,8 +91,8 @@ no_inflow=.false.				  ! ...  without inflow
 &INIT_PARAMS
 filetype='dice'
 !initfile(1)='/scratch/dr86/ttg562/hbd_10_gd2_hd/ic/'
-!initfile(1)='/import/photon1/tepper/hbd_10_gd2_hd/ic/'
-initfile(1)='/project/RDS-FSC-GalSims-RW/hbd_10_gd2_hd/ic/'
+initfile(1)='/import/photon1/tepper/hbd_10_gd2_hd/ic/'
+!initfile(1)='/project/RDS-FSC-GalSims-RW/hbd_10_gd2_hd/ic/'
 /
 
 
@@ -115,7 +117,7 @@ IG_metal=0.0                   ! IGM metallicity (defaul:t 1.0d-2)
 &OUTPUT_PARAMS
 tend = 10.
 delta_tout = 0.1
-!output_dir='/scratch/dr86/ttg562/hbd_10_gd2_hd/'
-!output_dir='/import/photon1/tepper/hbd_10_gd2_hd/'
-output_dir='/project/RDS-FSC-GalSims-RW/hbd_10_gd2_hd/'
+!output_dir='/scratch/dr86/ttg562/hbd_10_gd2_hd_eos/'
+output_dir='/import/photon1/tepper/hbd_10_gd2_hd_eos/'
+!output_dir='/project/RDS-FSC-GalSims-RW/hbd_10_gd2_hd_eos/'
 /
