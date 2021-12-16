@@ -63,7 +63,7 @@ nexpand=1
 
 
 &REFINE_PARAMS
-jeans_refine=7*4
+jeans_refine=7*4		! WRONG! Should be 8*
 mass_sph=2.5d-3   		!-> refinement runaway w/o interpolation scheme below
 m_refine=8*25
 interpol_type=0   		! IMPORTANT: use this to avoid refinement runaway
