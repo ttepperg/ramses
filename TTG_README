@@ -17,8 +17,8 @@ And in case of new commits:
 
 $> git pull
 
-NOTE: This copy may containf my own changes in the form
-of patches, which are however not sent for pull requests
-from the main repo.
-It may be tricky to keep up to date but I'll try...
+NOTE: This copy contains my own changes in patch/tepper,
+which are however not sent for pull requests from the main repo.
+After each update of the main branch I update my fork using
+FileMerge to compare and update my patched files.
 
