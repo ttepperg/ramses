@@ -59,9 +59,9 @@ subroutine units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
     write(*,'(a32,1pe10.2)') "Unit hydrogen density [cm^-3]: ", scale_nH
     write(*,*)
     if (hydro) then
-      write(*,'(a32,1pe10.2)') "Refinement > gas mass [Msun] at levelmin: ",&
+      write(*,'(a44,1pe10.2)') "Refinement > gas mass [Msun] at levelmin: ",&
       & m_refine(levelmin) * mass_sph * scale_m / M_sun
-      write(*,'(a32,1pe10.2)') "Refinement > gas mass [Msun] at nelevelmax: ",&
+      write(*,'(a44,1pe10.2)') "Refinement > gas mass [Msun] at nlevelmax: ",&
 	  & m_refine(nlevelmax) * mass_sph * scale_m / M_sun
 	end if
     write(*,*)
