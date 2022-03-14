@@ -19,6 +19,7 @@ units_time    = 3.00386047142391D+15 	! s; -> G=1; needed if poisson=.true.
 units_length  = 3.0856776D+21 			! cm = 1 kpc;	Ramses unit
 /
 
+
 !IMPORTANT: If cooling is true, then UV heating will be included as well (theuns by default if madau = false), implying a temperature floor of 1.0e4 K no matter what the value of T2_star (SF_PARAMS below)
 &COOLING_PARAMS
 cooling=.true.
@@ -26,9 +27,10 @@ cooling=.true.
 !haardt_madau=.false. 		!-> default => Nmodel=2 Theuns+98 cool.mod.
 !J21=0.1d0					!-> default => Theuns+98 UV background model
 !a_spec=1.0d0				!-> default => Theuns+98 UV background model
-!z_ave=0.1					!-> default 0; rel. to 0.02 (solar); see hydro/init_flow_fine.f90:268; requires metal=.false.
+z_ave=0.1					!-> default 0; rel. to 0.02 (solar); see hydro/init_flow_fine.f90:268; requires metal=.false.
 !metal=.true.				!-> metallicity affects cooling!
 /
+
 
 !LEGACY SETTINGS (deprecated, but still not sure how to set a cooling floor with the new parameters)
 &SF_PARAMS
@@ -55,16 +57,17 @@ gravity_type=0
 /
 
 
-! Memory management PER CORE (N-body+HD runs)
-! ~ 0.8*[ 2*(ngridmax/10^6) + (npartmax/10^7) ] GB
-! The ICs used here (DICE_PARAMS) have roughly 3.5 million particles
+!Memory management:
+!1.4(ngridmax/10^6) + 0.7(npartmax/10^7) Gb for N-body and hydro runs per core
 ! Note that the more cores, the smaller ngridmax and npartmax can be
 &AMR_PARAMS
 boxlen=6.0d2
 levelmin=7
 levelmax=14
-ngridmax=200000
-npartmax=3000000
+!ngridmax=500000   ! on 240 cpus @ ~170GB;
+!npartmax=11000000 ! on 240 cpus @ ~185GB;
+ngridmax=500000   ! on 96 cpus @ ~68GB;
+npartmax=12000000 ! on 96 cpus @ ~81GB;
 nexpand=1
 /
 
@@ -93,13 +96,13 @@ no_inflow=.false.				  ! ...  without inflow
 
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/import/photon1/tepper/hbd_10_gd3/ic/'
-initfile(1)='/scratch/dr86/ttg562/hbd_10_gd3/ic/'
+!initfile(1)='/import/photon1/tepper/hbd_10_gd4_hd/ic/'
+initfile(1)='/scratch/dr86/ttg562/hbd_10_gd4_hd/ic/'
 /
 
 
 &DICE_PARAMS
-ic_file='hbd_10_gd2_proc.g2'           ! Name of the initial conditions file
+ic_file='hbd_10_gd2_hd_proc.g2'           ! Name of the initial conditions file
 ic_nfile=4                    ! If greater than one, look for files with name matching ic_file//'.n'
 ic_ifout=1                    ! Change ramses output index for restarts
 ic_format='Gadget2'           ! Format of the initial conditions. 'Gadget1' or 'Gadget2'
@@ -132,6 +135,6 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 &OUTPUT_PARAMS
 tend = 20.
 delta_tout = 0.1
-!output_dir='/import/photon1/tepper/hbd_10_gd3/'
-output_dir='/scratch/dr86/ttg562/hbd_10_gd3/'
+!output_dir='/import/photon1/tepper/hbd_10_gd4_hd/'
+output_dir='/scratch/dr86/ttg562/hbd_10_gd4_hd/'
 /
