@@ -19,7 +19,7 @@ units_time    = 3.00386047142391D+15 	! s; -> G=1; needed if poisson=.true.
 units_length  = 3.0856776D+21 			! cm = 1 kpc;	Ramses unit
 /
 
-!IMPORTANT: If cooling is true, then UV heating will be included as well (theuns by default if madau = false), implying a temperature floor of 1.0e4 K no matter what the value of T2_star (SF_PARAMS below)
+!IMPORTANT: If cooling is true, then UV heating will be included as well (theuns by default if madau = false), implying a temperature floor of 1.0e4 K no matter what the value of T2_star (SF_PARAMS below); need to add metals either via z_ave or in input data using metal=.true.
 &COOLING_PARAMS
 cooling=.true.
 !isothermal=.true.
