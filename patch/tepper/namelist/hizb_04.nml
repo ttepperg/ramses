@@ -6,7 +6,7 @@ cosmo=.false.
 hydro=.false.
 pic=.true.
 poisson=.true.	! requires to set units such that G=1; taken care of by units.f90
-nrestart=38
+nrestart=0
 nremap=10
 nsubcycle=7*1
 ncontrol=1
@@ -38,13 +38,13 @@ gravity_type=0	! requires to set units such that G=1
 ! The ICs used here (DICE_PARAMS) have roughly 3.5 million particles
 ! Note that the more cores, the smaller ngridmax and npartmax can be
 &AMR_PARAMS
-boxlen=6.0d2
+boxlen=1.0d2
 levelmin=8
 levelmax=14
-!ngridmax=200000   ! appropriate for 96 cores; ~160 MB / core
-!npartmax=1000000  ! appropriate for 96 cores; ~80 MB / core
-ngridmax=300000   ! appropriate for 16 cores; ~160 MB / core
-npartmax=4000000  ! appropriate for 16 cores; ~80 MB / core
+ngridmax=200000   ! ~160 MB / core
+npartmax=3000000  ! ~240 MB / core
+!ngridmax=300000   ! ~240 MB / core
+!npartmax=4000000  ! ~320 MB / core
 nexpand=1
 /
 
@@ -74,9 +74,9 @@ kbound_max= 0, 0,  0,  0, -1,  1
 !initfile(1)output_xxxxx/part_file_descriptor.txt
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/scratch/dr86/ttg562/hbd_18/ic/'
-initfile(1)='/project/RDS-FSC-GalSims-RW/hbd_18/ic/'
-!initfile(1)='/import/photon1/tepper/hbd_18/ic/'
+initfile(1)='/scratch/dr86/ttg562/hizb_04/ic/'
+!initfile(1)='/project/RDS-FSC-GalSims-RW/hizb_04/ic/'
+!initfile(1)='/import/photon1/tepper/hizb_04/ic/'
 /
 
 
@@ -84,8 +84,8 @@ initfile(1)='/project/RDS-FSC-GalSims-RW/hbd_18/ic/'
 !For more information see:
 !https://bitbucket.org/vperret/dice/wiki/RAMSES%20simulation
 &DICE_PARAMS
-ic_file='hbd_18_proc.g2'			! Name of the initial conditions file
-ic_nfile=4							! If greater than one, look for files with name matching ic_file//'.n'
+ic_file='hizb_04_proc.g2'			! Name of the initial conditions file
+ic_nfile=3							! If greater than one, look for files with name matching ic_file//'.n'
 ic_ifout=1							! Change ramses output index for restarts
 ic_format='Gadget2'					! Format of the initial conditions. 'Gadget1' or 'Gadget2'
 gadget_scale_l=3.085677581282D+21	! AGAMA file length unit   -> 1 kpc
@@ -98,9 +98,9 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 !output_dir name must have len < 40 characters to accomodate
 !the longest Ramses output file names
 &OUTPUT_PARAMS
-tend = 25.
+tend = 45.
 delta_tout = 0.1
-!output_dir='/scratch/dr86/ttg562/hbd_18/'
-output_dir='/project/RDS-FSC-GalSims-RW/hbd_18/'
-!output_dir='/import/photon1/tepper/hbd_18/'
+output_dir='/scratch/dr86/ttg562/hizb_04/'
+!output_dir='/project/RDS-FSC-GalSims-RW/hizb_04/'
+!output_dir='/import/photon1/tepper/hizb_04/'
 /
