@@ -38,7 +38,7 @@ gravity_type=0	! requires to set units such that G=1
 ! The ICs used here (DICE_PARAMS) have roughly 3.5 million particles
 ! Note that the more cores, the smaller ngridmax and npartmax can be
 &AMR_PARAMS
-boxlen=2.0d2
+boxlen=2.0d2 # should be 1e2
 levelmin=8
 levelmax=14
 ngridmax=200000   ! ~160 MB / core
