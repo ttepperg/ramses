@@ -75,7 +75,7 @@ module amr_parameters
   logical::unbind=.false.     ! Enable particle unbinding for the clump finder
   logical::make_mergertree=.false. ! Make on the fly mergertrees
   logical::aton=.false.       ! Enable ATON coarse grid radiation transfer
-  
+
   ! Mesh parameters
   integer::nx=1,ny=1,nz=1                  ! Number of coarse cells in each dimension
   integer::levelmin=1                      ! Full refinement up to levelmin
@@ -101,7 +101,7 @@ module amr_parameters
   integer::ncontrol=1            ! Write control variables
   integer::nremap=0              ! Load balancing frequency (0: never)
   integer,allocatable,dimension(:)::remap_pscalar
-  
+
   ! Output parameters
   integer::iout=1                ! Increment for output times
   integer::ifout=1               ! Increment for output files
@@ -205,6 +205,8 @@ module amr_parameters
   logical ::sf_log_properties=.false.   ! Log in ascii files birth properties of stars and supernovae
   logical ::sf_imf=.false.              ! Activate IMF sampling for SN feedback when resolution allows it
   logical ::sf_compressive=.false.      ! Advect compressive and solenoidal turbulence terms separately
+  logical ::cooling_ism = .false.      ! Use cooling module from Audit & Hennebelle 2005 (non-RT)
+                                        ! instead of ramses classical cooling 
 
   ! EOS parameters
   character(len=20)::barotropic_eos_form='legacy'  !Type of barotropic EOS: choose from:
