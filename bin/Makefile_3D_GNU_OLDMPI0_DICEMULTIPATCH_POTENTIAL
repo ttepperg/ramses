@@ -3,6 +3,8 @@
 #############################################################################
 # Compilation time parameters
 
+# Output particle potential? 1=Yes, 0=No
+OUTPUT_PARTICLE_POTENTIAL = 1
 # Do we want a debug build? 1=Yes, 0=No
 DEBUG = 0
 # Compiler flavor: GNU or INTEL
@@ -18,10 +20,9 @@ SOLVER = hydro
 # Patch (add here as many patch patch as desired)
 # Note that this requires a change in VPATH at (*)
 # IMPORTANT: The ORDER matters! If files with the same name are present,
-# only the first found is considered! Therefore, ../patch/init/dice is
-# added last to honour my patched versions of files inthere.
+# only the first found is considered!
 # Also, directories are NOT looked into recursively!
-PATCH = ../patch/tepper/dice:../patch/tepper/amr:../patch/tepper/hydro:../patch/tepper/pm:../patch/tepper/poisson:../patch/init/dice
+PATCH = ../patch/tepper/dice:../patch/tepper/amr:../patch/tepper/pm:../patch/tepper/poisson:../patch/init/dice
 # Use RT? 1=Yes, 0=No
 RT = 0
 # Use turbulence? 1=Yes, 0=No (requires fftw3)
@@ -30,13 +31,13 @@ USE_TURB=0
 MPI = 1
 MPIF90 = mpif90
 # Root name of executable
-EXEC = ramses_dice_gas
+EXEC = ramses_dice
 # Number of additional energies
 NENER = 0
 # Use Grackle cooling? 1=Yes, 0=No
 GRACKLE = 0
 # Number of metal species
-NMETALS = 1
+NMETALS = 0
 # ATON flages: Uncomment to enable ATON
 ATON_FLAGS = #-DATON
 # Number of ions for RT
@@ -78,6 +79,9 @@ ifeq ($(RT),1)
 endif
 ifeq ($(USE_TURB),1)
    DEFINES += -DUSE_TURB
+endif
+ifeq ($(OUTPUT_PARTICLE_POTENTIAL),1)
+   DEFINES += -DOUTPUT_PARTICLE_POTENTIAL
 endif
 
 #############################################################################
