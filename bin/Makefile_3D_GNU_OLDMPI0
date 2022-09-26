@@ -3,6 +3,10 @@
 #############################################################################
 # Compilation time parameters
 
+# Output particle potential? 1=Yes, 0=No
+OUTPUT_PARTICLE_POTENTIAL = 1
+# Output particle density? 1=Yes, 0=No
+OUTPUT_PARTICLE_DENSITY = 0
 # Do we want a debug build? 1=Yes, 0=No
 DEBUG = 0
 # Compiler flavor: GNU or INTEL
@@ -73,6 +77,15 @@ ifeq ($(RT),1)
 endif
 ifeq ($(USE_TURB),1)
    DEFINES += -DUSE_TURB
+endif
+ifeq ($(USE_TURB),1)
+   DEFINES += -DUSE_TURB
+endif
+ifeq ($(OUTPUT_PARTICLE_POTENTIAL),1)
+   DEFINES += -DOUTPUT_PARTICLE_POTENTIAL
+endif
+ifeq ($(OUTPUT_PARTICLE_DENSITY),1)
+   DEFINES += -DOUTPUT_PARTICLE_DENSITY
 endif
 
 #############################################################################

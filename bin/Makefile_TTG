@@ -4,7 +4,7 @@
 # Compilation time parameters
 
 # Output particle potential? 1=Yes, 0=No
-OUTPUT_PARTICLE_POTENTIAL = 0
+OUTPUT_PARTICLE_POTENTIAL = 1
 # Output particle density? 1=Yes, 0=No
 OUTPUT_PARTICLE_DENSITY = 0
 # Do we want a debug build? 1=Yes, 0=No
