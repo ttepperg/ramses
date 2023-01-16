@@ -23,7 +23,7 @@ units_length  = 3.0856776D+21         ! cm = 1 kpc;	Ramses unit
 &COOLING_PARAMS
 barotropic_eos = .true.
 barotropic_eos_form = 'isothermal'
-T_eos = 2.0d4
+T_eos = 1.0d4
 mu_gas = 1.0d0
 /
 
@@ -50,7 +50,7 @@ gravity_type=0	! requires to set units such that G=1
 ! The ICs used here (DICE_PARAMS) have roughly 3.5 million particles
 ! Note that the more cores, the smaller ngridmax and npartmax can be
 &AMR_PARAMS
-boxlen=6.0d2 # should be 1e2
+boxlen=1.0d2
 levelmin=8
 levelmax=14
 ngridmax=200000
@@ -104,7 +104,7 @@ gadget_scale_v=1.0D+5             ! AGAMA file velocity unit -> 1 km/s
 gadget_scale_m=1.9891D+33         ! AGAMA file mass unit     -> 1 solar mass
 gadget_scale_t=3.15360D+13        ! Gadget file time unit    -> 1 Myr (note that this is NOT the simulation time unit)
 IG_rho=1.0d-20                 ! IGM gas density (default 1.0d-5)
-IG_T2=2.0d4                    ! IGM gas temperature (default: 1.0d7)
+IG_T2=1.0d4                    ! IGM gas temperature (default: 1.0d7)
 IG_metal=0.0                   ! IGM metallicity (defaul:t 1.0d-2)
 /
 

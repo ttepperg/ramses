@@ -96,7 +96,7 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 !output_dir name must have len < 40 characters to accomodate
 !the longest Ramses output file names
 &OUTPUT_PARAMS
-tend = 10.
+tend = 20.
 delta_tout = 0.1
 !output_dir='/scratch/dr86/ttg562/hizb_18_lowres/'
 output_dir='/project/RDS-FSC-GalSims-RW/hizb_18_lowres/'

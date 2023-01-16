@@ -38,7 +38,7 @@ gravity_type=0	! requires to set units such that G=1
 ! The ICs used here (DICE_PARAMS) have roughly 3.5 million particles
 ! Note that the more cores, the smaller ngridmax and npartmax can be
 &AMR_PARAMS
-boxlen=2.0d2 # should be 1e2
+boxlen=1.0d2
 levelmin=8
 levelmax=14
 ngridmax=200000   ! ~160 MB / core
@@ -96,7 +96,7 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 !output_dir name must have len < 40 characters to accomodate
 !the longest Ramses output file names
 &OUTPUT_PARAMS
-tend = 45.
+tend = 25.
 delta_tout = 0.1
 !output_dir='/scratch/dr86/ttg562/hizb_15_lowres/'
 output_dir='/project/RDS-FSC-GalSims-RW/hizb_15_lowres/'
