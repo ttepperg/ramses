@@ -22,6 +22,7 @@ output_amr.f90:
 - added TRIM(output_dir) to filename strings where relevant; this should
 	propagate through all the output routines via the 'filename'
 	variable
+- added output sink***csv
 
 init_amr.f90:
 - added TRIM(output_dir) to filename strings where relevant
