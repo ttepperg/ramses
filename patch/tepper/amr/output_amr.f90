@@ -76,6 +76,10 @@ subroutine dump_all
         filename=TRIM(filedir)//'sink_'//TRIM(nchar)//'.csv'
         call output_sink_csv(filename)
      endif
+     if(stellar)then
+        filename=TRIM(filedir)//'stellar_'//TRIM(nchar)//'.csv'
+        call output_stellar_csv(filename)
+     end if
      ! Copy namelist file to output directory
      filename=TRIM(filedir)//'namelist.txt'
      OPEN(10, FILE=namelist_file, ACCESS="STREAM", ACTION="READ")

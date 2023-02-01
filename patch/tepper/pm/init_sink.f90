@@ -21,7 +21,7 @@ subroutine init_sink
 
   integer::sid,slevel
   real(dp)::sm1,sx1,sx2,sx3,sv1,sv2,sv3,sl1,sl2,sl3
-  real(dp)::stform,sacc_rate,sacc_mass,srho_gas,sc2_gas,seps_sink,svg1,svg2,svg3,sm2
+  real(dp)::stform,sacc_rate,sacc_mass,srho_gas,sc2_gas,seps_sink,svg1,svg2,svg3,sm2,dmf
   character::co
   character(LEN=200)::comment_line
 
@@ -30,8 +30,9 @@ subroutine init_sink
   idsink=0 ! Important: need to set idsink to zero
   allocate(msink(1:nsinkmax))
   allocate(msmbh(1:nsinkmax))
+  allocate(dmfsink(1:nsinkmax))
   allocate(xsink(1:nsinkmax,1:ndim))
-  msink=0d0; msmbh=0d0; xsink=boxlen/2
+  msink=0d0; msmbh=0d0; dmfsink=0d0; xsink=boxlen/2
 
   allocate(xsink_graddescent(1:nsinkmax,1:ndim))
   allocate(graddescent_over_dt(1:nsinkmax))
@@ -67,8 +68,10 @@ subroutine init_sink
   wden_new=0d0; wmom_new=0d0; weth_new=0d0; wvol_new=0d0; wdiv_new=0d0
   allocate(msink_new(1:nsinkmax))
   allocate(msmbh_new(1:nsinkmax))
+  allocate(dmfsink_new(1:nsinkmax))
   allocate(msmbh_all(1:nsinkmax))
   allocate(msink_all(1:nsinkmax))
+  allocate(dmfsink_all(1:nsinkmax))
   allocate(tsink_new(1:nsinkmax))
   allocate(tsink_all(1:nsinkmax))
   allocate(idsink_new(1:nsinkmax))
@@ -146,7 +149,7 @@ subroutine init_sink
          read(10,'(A200)')comment_line
          read(10,'(A200)')comment_line
          do
-            read(10,'(I10,20(A1,ES21.10),A1,I10)',end=104)sid,co, sm1,co,&
+        read(10,'(I10,21(A1,ES21.10),A1,I10)',end=104)sid,co, sm1,co,&
                                sx1,co,sx2,co,sx3,co, &
                                sv1,co,sv2,co,sv3,co, &
                                sl1,co,sl2,co,sl3,co, &
@@ -154,7 +157,7 @@ subroutine init_sink
                                sacc_mass,co, &
                                srho_gas,co, sc2_gas,co, seps_sink,co, &
                                svg1,co,svg2,co,svg3,co, &
-                               sm2,co,slevel
+                           sm2,co,dmf,co,slevel
             nsink=nsink+1
             idsink(nsink)=sid
             msink(nsink)=sm1
@@ -178,6 +181,7 @@ subroutine init_sink
             vel_gas(nsink,3)=svg3
             new_born(nsink)=.false. ! this is a restart
             msmbh(nsink)=sm2
+        dmfsink(nsink)=dmf
             vsold(nsink,1:ndim,slevel)=vsink(nsink,1:ndim)
             vsnew(nsink,1:ndim,slevel)=vsink(nsink,1:ndim)
          end do
@@ -252,7 +256,7 @@ subroutine init_sink
      open(10,file=filename,form='formatted')
      eof=.false.
      do
-        read(10,*,end=103)sm1,sx1,sx2,sx3,sv1,sv2,sv3,sl1,sl2,sl3,sm2,sid
+        read(10,*,end=103)sm1,sx1,sx2,sx3,sv1,sv2,sv3,sl1,sl2,sl3,sm2,sid,dmf
         nsink=nsink+1
         nindsink=nindsink+1
         idsink(nsink)=sid
@@ -269,6 +273,7 @@ subroutine init_sink
         tsink(nsink)=t
         new_born(nsink)=.false.
         msmbh(nsink)=sm2
+        dmfsink(nsink)=dmf
         vsold(nsink,1:ndim,levelmin)=vsink(nsink,1:ndim)
         vsnew(nsink,1:ndim,levelmin)=vsink(nsink,1:ndim)
      end do
@@ -292,17 +297,6 @@ subroutine init_sink
   ! Compute number of cloud particles within sink sphere
   call compute_ncloud_sink
 
-  ! Set direct force boolean
-  if(mass_sink_direct_force .ge. 0.0)then
-     do isink=1,nsink
-        direct_force_sink(isink)=(msink(isink) .ge. mass_sink_direct_force*M_sun/(scale_d*scale_l**3))
-     end do
-  else
-     do isink=1,nsink
-        direct_force_sink(isink)=.False.
-     end do
-  endif
-
   ! Output sink properties to screen
   if (myid==1.and.nsink-nsinkold>0)then
      write(*,*)'sinks read from file '//filename
@@ -316,6 +310,16 @@ subroutine init_sink
      end do
   end if
 
+  ! Set direct force boolean
+  if(mass_sink_direct_force .ge. 0.0)then
+     do isink=1,nsink
+        direct_force_sink(isink)=(msink(isink) .ge. mass_sink_direct_force*M_sun/(scale_d*scale_l**3))
+     end do
+  else
+     do isink=1,nsink
+        direct_force_sink(isink)=.False.
+     end do
+  endif
 
 end subroutine init_sink
 !################################################################
