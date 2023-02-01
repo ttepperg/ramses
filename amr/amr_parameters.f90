@@ -62,6 +62,7 @@ module amr_parameters
   logical::cosmo   =.false.   ! Cosmology activated
   logical::star    =.false.   ! Star formation activated
   logical::sink    =.false.   ! Sink particles activated
+  logical::stellar = .false.  ! stellar particles for sink feedback
   logical::rt      =.false.   ! Radiative transfer activated
   logical::debug   =.false.   ! Debug mode activated
   logical::static  =.false.   ! Static mode activated
@@ -144,6 +145,7 @@ module amr_parameters
   real(dp)::f_ek   =1                ! Supernovae kinetic energy fraction (only between 0 and 1)
   real(dp)::rbubble=0                ! Supernovae superbubble radius in pc
   real(dp)::f_w    =0                ! Supernovae mass loading factor
+  real(dp)::f_esn  =1                ! Supernovae energy in units of 1d51 erg
   integer ::ndebris=1                ! Supernovae debris particle number
   real(dp)::mass_gmc=-1              ! Stochastic exploding GMC mass
   real(dp)::z_ave  =0                ! Average metal abundance
