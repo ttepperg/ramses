@@ -1,0 +1,27 @@
+Author: Dr. Thorsten Tepper Garcia
+
+Created: 01 FEB 2023
+
+About:
+
+This directory contains a number of source files modified to duplicate Oscar Agertz's Ramses patch shared by him with me and fully self-contained in:
+
+/Users/tepper/codes/ramses_agertz/ramses
+
+The idea is to merge his changes with the most updated Ramses version and keep it that way as Ramses evolves.
+
+The file filesf90_list.txt contains a list of the files in here, e.g. for convenience in case they need to be recopied from the main branch or O.Agertz's patch.
+
+IMPORTANT:
+
+	- feedback.f90 has been copied directly, as it seemed OK to do so
+
+	- condinit.f90 has been copied direclty
+
+	- metal_yields.f90 does not exist in the current Ramses version and has been copied directly; note that this requires an appropriate Makefile:
+
+	/Users/tepper/codes/ramses_fork/bin/Makefile_3D_GNU_OLDMPI0_OAgertz
+
+	which also contains other modifications wrt my standar Makefiles, e.g. NMETALS = 2, etc.
+
+	Note that metal_yields.f90 may in fact not be needed (ask Oscar)
