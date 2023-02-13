@@ -113,6 +113,7 @@ module amr_parameters
   logical::output_now=.false.    ! write output next step
   real(dp)::walltime_hrs=-1      ! Wallclock time for submitted job
   real(dp)::minutes_dump=1       ! Dump an output minutes before walltime ends
+  character(len=80)::output_dir='./'  ! Data output directory
 
   ! Lightcone parameters
   real(dp)::thetay_cone=12.5d0

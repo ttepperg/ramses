@@ -14,6 +14,14 @@ The file filesf90_list.txt contains a list of the files in here, e.g. for conven
 
 IMPORTANT:
 
+	- units.f90 has been renamed so that it is not longer compiled and overriden by tepper/amr/units.f90. Note that this change MUST be accompanied by including the following block in the NML file (also when running Oscar's original setup!)
+
+	&UNITS_PARAMS
+	units_density = 1.573391528d-26			! g/cm^3 = 1 H / cm^3
+	units_time    = 3.00386047142391D+15 	! s; irrelevant if poisson=.true.
+	units_length  = 3.0856776D+21 			! cm = 1 kpc
+	/
+
 	- feedback.f90 has been copied directly, as it seemed OK to do so
 
 	- condinit.f90 has been copied direclty
