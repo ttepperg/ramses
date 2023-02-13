@@ -10,7 +10,7 @@ This directory contains a patch intended to run DICE simulations
 with the capability to restart and include additional DICE initial conditions
 at restart.
 
-The core of the patch is a new snippet in init_part.f90, case('dice_restart'), which consists of a merge between the case('dice') snippet in the same file and the case('restart') snippet in patch/init/restart, available here as to separate files: load_dice_restart and load_ramses, to be merged.
+The core of the patch is a new snippet in init_part.f90, case('dice_restart'), which consists of a merge between the case('dice') snippet in the same file and the case('ramses') snippet in patch/init/restart, available here as to separate files: load_dice_restart and load_ramses, to be merged.
 
 IMPORTANT: See /Users/tepper/codes/ramses_020217/ramses/trunk/ramses/patch/mySIMS/Nbody+HD/dice/myics/dice_restart/src/init_part.f90, DICE_RESTART snippet
 for a guide on how to achieve this.
