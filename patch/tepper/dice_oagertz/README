@@ -1,0 +1,24 @@
+Author: Dr. Thorsten Tepper Garcia
+
+Created: 08 FEB 2023
+
+About:
+
+This subdirectory contains a number of patches to files originally in /Users/tepper/codes/ramses_fork/patch/init/dice/.
+
+The modifications are intended to make this patch work with /Users/tepper/codes/ramses_fork/patch/tepper/oagertz/.
+
+The necessary modifications have been accomplished by:
+	1) Copying to this directory *all* the file in /Users/tepper/codes/ramses_fork/patch/init/dice/.
+	2) Comparing with FileMerge the files *common* to the two above directories (add_list.f90, init_part.f90, particle_tree.f90), and adding the required code snippets
+	3) Some files needed to be additionally edited by hand:
+		- init_part.f90: make zp array consistent
+
+Notes:
+
+	- See also:
+		/Users/tepper/codes/ramses_agertz/ramses/patch/dice/TTG_README
+
+IMPORTANT:
+	- The current dice patch DOES NOT take into account all of the modifications to the corresponding source files in the main branch since 01 APR 2021, e.g. the use of the LIGHT_MPI_COMM directive, among much more, so
+	BE CAREFUL!

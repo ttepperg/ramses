@@ -22,7 +22,8 @@ SOLVER = hydro
 # Patch (add here as many patch patch as desired)
 # Note that this requires a change in VPATH at (*)
 # IMPORTANT: The ORDER matters! If files with the same name are present,
-# only the first found is considered!
+# only the first found is considered! Therefore, ../patch/init/dice is
+# added last to honour my patched versions of files in there.
 # Also, directories are NOT looked into recursively!
 PATCH = ../patch/tepper/dice:../patch/tepper/amr:../patch/tepper/pm:../patch/tepper/poisson:../patch/init/dice
 # Use RT? 1=Yes, 0=No

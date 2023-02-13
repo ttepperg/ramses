@@ -93,10 +93,10 @@ subroutine star_formation(ilevel)
      call title(ifout-1,nchar)
      if(IOGROUPSIZEREP>0) then
         call title(((myid-1)/IOGROUPSIZEREP)+1,ncharcpu)
-        filedirini='output_'//TRIM(nchar)//'/'
-        filedir='output_'//TRIM(nchar)//'/group_'//TRIM(ncharcpu)//'/'
+        filedirini=TRIM(output_dir)//'output_'//TRIM(nchar)//'/'
+        filedir=TRIM(output_dir)//'output_'//TRIM(nchar)//'/group_'//TRIM(ncharcpu)//'/'
      else
-        filedir='output_'//TRIM(nchar)//'/'
+        filedir=TRIM(output_dir)//'output_'//TRIM(nchar)//'/'
      endif
      filename=TRIM(filedir)//'stars_'//TRIM(nchar)//'.out'
      ilun=myid+103
@@ -724,7 +724,7 @@ subroutine star_formation(ilevel)
            tg=uold(ind_cell_new(i),5)*(gamma-1)*scale_T2
            if(metal)then
               iii=0
-              do imet=1,nmetals                 
+              do imet=1,nmetals
                  zg(imet)=uold(ind_cell_new(i),imetal+iii)
                  iii=iii+1
               enddo
@@ -749,14 +749,14 @@ subroutine star_formation(ilevel)
                  zp(ind_part(i),imet) = zg(imet)  ! Initial star metallicity
               end do
            endif
-              
+
            ! --- Write to logfile
-           if(SFdiagnostics)then 
+           if(SFdiagnostics)then
               write(SFunit_out,'(I7,I10,I3,7e14.5)') nstep,index_star,ilevel,d*scale_nH, &
                  & x*scale_l/kpc2cm,y*scale_l/kpc2cm,z*scale_l/kpc2cm, &
                  & n*mstar*scale_m,birth_epoch*scale_t,aexp
            endif
-           
+
 
            ! Set GMC particle variables
            if(f_w>0)then
@@ -813,7 +813,7 @@ subroutine star_formation(ilevel)
 
         end do
         ! End loop over new star particles
-        flush(SFunit_out) ! Ensure writing to disk of the SF log after all stars particle have been created 
+        flush(SFunit_out) ! Ensure writing to disk of the SF log after all stars particle have been created
 
         ! Modify gas density according to mass depletion
         do i=1,nnew
