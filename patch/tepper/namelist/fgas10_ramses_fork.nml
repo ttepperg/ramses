@@ -10,7 +10,7 @@
 !
 ! IMPORTANT:
 ! - In this Ramses version output_dir does not exist and so outputs are dumped into the bin directory!
-! - MOVIE_PARAMS commented out to speed up output
+! - MOVIE_PARAMS block removed because I have not included the necessary code snippets, which are particular to O.Agertz setup and not a Ramses standard
 
 &RUN_PARAMS
 verbose=.false.
@@ -27,6 +27,14 @@ nstepmax=10000000
 nsubcycle=1,1,2,2,2,2,2,2,2,2,2
 ordering='hilbert'
 rt=.false.
+/
+
+! INCLUDED POST 12 FEB 2023 to mimick O.Agertz setup units.f90; the latter has been inactivated
+! Note that these differ from my usual settings and will affect the value of the time unit, prompting changes to OUTPUT_PARAMS
+&UNITS_PARAMS
+units_density = 1.573391528d-26			! g/cm^3 = 1 H / cm^3
+units_time    = 3.00386047142391D+15 	! s; irrelevant if poisson=.true.
+units_length  = 3.0856776D+21 			! cm = 1 kpc
 /
 
 &FEEDBACK_PARAMS
@@ -152,24 +160,4 @@ gal_axis2= 0.0D0 , 0.0D0 , 1.0D0
 Vgal1= 0.0D0 , 0.0D0, 0.0D0
 Vgal2= 0.0D0 , 0.0D0, 0.0D0
 Zgas= 1.0
-/
-
-! COMMENTED OUT to speed up output
-!&MOVIE_PARAMS
-!imovout=5000
-!imov=1
-!tendmov=1.0
-!movie=.true.
-!nw_frame=512
-!nh_frame=512
-!levelmax_frame=15
-!ivar_frame=1
-!xcentre_frame=300.0,0.0,0.0,0.0,300.0,0.0,0.0,0.0
-!ycentre_frame=300.0,0.0,0.0,0.0,300.0,0.0,0.0,0.0
-!zcentre_frame=300.0,0.0,0.0,0.0,300.0,0.0,0.0,0.0
-!deltax_frame=24.0,0.0,24.0,0.0
-!deltay_frame=24.0,0.0,24.0,0.0
-!deltaz_frame=24.0,0.0,24.0,0.0
-!movie_vars_txt='dens','temp','var6','var7','stars'
-!proj_axis='zx'
 /
