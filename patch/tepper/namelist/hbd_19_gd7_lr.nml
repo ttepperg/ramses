@@ -66,7 +66,7 @@ boxlen=600.0
 filetype='dice'
 !initfile(1)='/import/photon1/tepper/hbd_19_gd7_lr/ic/'
 !initfile(1)='/scratch/dr86/ttg562/hbd_19_gd7_lr/ic/'
-initfile(1)='/project/RDS-FSC-GalSims-RW//hbd_19_gd7_lr/ic/'
+initfile(1)='/project/GalSims//hbd_19_gd7_lr/ic/'
 d_region=1.0d-6
 p_region=1.0d6
 /
@@ -79,7 +79,7 @@ walltime_hrs=1.0
 minutes_dump=5
 !output_dir='/import/photon1/tepper/hbd_19_gd7_lr/'
 !output_dir='/scratch/dr86/ttg562/hbd_19_gd7_lr/'
-output_dir='/project/RDS-FSC-GalSims-RW//hbd_19_gd7_lr/'
+output_dir='/project/GalSims//hbd_19_gd7_lr/'
 /
 
 &REFINE_PARAMS

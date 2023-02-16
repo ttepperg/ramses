@@ -73,7 +73,7 @@ kbound_max= 0, 0,  0,  0, -1,  1
 &INIT_PARAMS
 filetype='dice'
 initfile(1)='/g/data/aa8/ttg562/hbd_10_slosh/ic/'
-!initfile(1)='/project/RDS-FSC-GalSims-RW/hbd_10_slosh/ic/'
+!initfile(1)='/project/GalSims/hbd_10_slosh/ic/'
 !initfile(1)='/import/silo5/tepper/hbd_10_slosh/ic/'
 /
 
@@ -99,6 +99,6 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 tend = 10.0
 delta_tout = 0.1
 output_dir='/g/data/aa8/ttg562/hbd_10_slosh/'
-!output_dir='/project/RDS-FSC-GalSims-RW/hbd_10_slosh/'
+!output_dir='/project/GalSims/hbd_10_slosh/'
 !output_dir='/import/silo5/tepper/hbd_10_slosh/'
 /
