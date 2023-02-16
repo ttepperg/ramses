@@ -1,6 +1,6 @@
 ! COMPILE CODE WITH: Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
 !
-! Identical to hbd_19_gd7_lr.nml, with 'hbd_19_gd7_lr' replaced by 'fgas10_ramses_fork_iso' everywhere.
+! Identical to hbd_19_gd7_lr.nml, with 'hbd_19_gd7_lr' replaced by 'fgas10_agama_iso_rf' everywhere.
 !
 ! See the latter's header for more info. This duplicate exists to create a consistent set of fgas10_ramses_fork* models, and it shall replace hbd_19_gd7_lr.nml in the future.
 
@@ -63,9 +63,9 @@ boxlen=600.0
 
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/import/photon1/tepper/fgas10_ramses_fork_iso/ic/'
-!initfile(1)='/scratch/dr86/ttg562/fgas10_ramses_fork_iso/ic/'
-initfile(1)='/project/RDS-FSC-GalSims-RW//fgas10_ramses_fork_iso/ic/'
+!initfile(1)='/import/photon1/tepper/fgas10_agama_iso_rf/ic/'
+!initfile(1)='/scratch/dr86/ttg562/fgas10_agama_iso_rf/ic/'
+initfile(1)='/project/GalSims//fgas10_agama_iso_rf/ic/'
 d_region=1.0d-6
 p_region=1.0d6
 /
@@ -76,9 +76,9 @@ tend=1.0
 delta_tout=0.005
 walltime_hrs=1.0
 minutes_dump=5
-!output_dir='/import/photon1/tepper/fgas10_ramses_fork_iso/'
-!output_dir='/scratch/dr86/ttg562/fgas10_ramses_fork_iso/'
-output_dir='/project/RDS-FSC-GalSims-RW//fgas10_ramses_fork_iso/'
+!output_dir='/import/photon1/tepper/fgas10_agama_iso_rf/'
+!output_dir='/scratch/dr86/ttg562/fgas10_agama_iso_rf/'
+output_dir='/project/GalSims//fgas10_agama_iso_rf/'
 /
 
 &REFINE_PARAMS
@@ -98,7 +98,7 @@ epsilon=5.0e-4
 /
 
 &DICE_PARAMS
-ic_file='fgas10_ramses_fork_iso_proc.g2'           ! Name of the initial conditions file
+ic_file='fgas10_agama_proc.g2'           ! Name of the initial conditions file
 ic_nfile=4                    ! If greater than one, look for files with name matching ic_file//'.n'
 ic_ifout=1                    ! Change ramses output index for restarts
 ic_format='Gadget2'           ! Format of the initial conditions. 'Gadget1' or 'Gadget2'

@@ -77,7 +77,7 @@ kbound_max= 0, 0,  0,  0, -1,  1
 &INIT_PARAMS
 filetype='dice'
 initfile(1)='/g/data/aa8/ttg562/hizb_08_lr_s8/ic/'
-!initfile(1)='/project/RDS-FSC-GalSims-RW/hizb_08_lr_s8/ic/'
+!initfile(1)='/project/GalSims/hizb_08_lr_s8/ic/'
 !initfile(1)='/import/silo5/tepper/hizb_08_lr_s8/ic/'
 /
 
@@ -126,6 +126,6 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 tend = 20.
 delta_tout = 0.1
 output_dir='/g/data/aa8/ttg562/hizb_08_lr_s8/'
-!output_dir='/project/RDS-FSC-GalSims-RW/hizb_08_lr_s8/'
+!output_dir='/project/GalSims/hizb_08_lr_s8/'
 !output_dir='/import/silo5/tepper/hizb_08_lr_s8/'
 /
