@@ -74,7 +74,7 @@ kbound_max= 0, 0,  0,  0, -1,  1
 filetype='dice'
 !initfile(1)='/scratch/dr86/ttg562/sch_01/ic/'
 !initfile(1)='/project/GalSims/sch_01/ic/'
-initfile(1)='/import/photon1/tepper/sch_01/ic/'
+initfile(1)='/import/photon2/tepper/sch_01/ic/'
 /
 
 
@@ -100,5 +100,5 @@ tend = 20.
 delta_tout = 0.1
 !output_dir='/scratch/dr86/ttg562/sch_01/'
 !output_dir='/project/GalSims/sch_01/'
-output_dir='/import/photon1/tepper/sch_01/'
+output_dir='/import/photon2/tepper/sch_01/'
 /

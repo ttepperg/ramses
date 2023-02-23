@@ -72,7 +72,7 @@ kbound_max= 0, 0,  0,  0, -1,  1
 filetype='dice'
 !initfile(1)='/p8/mcc_uspa/tepper/output/scaling_nbody_1/ic/'
 !initfile(1)='/scratch/dr86/ttg562/scaling_nbody_1/ic/'
-initfile(1)='/import/photon1/tepper/scaling_nbody_1/ic/'
+initfile(1)='/import/photon2/tepper/scaling_nbody_1/ic/'
 /
 
 
@@ -98,5 +98,5 @@ tend = 1.
 delta_tout = 0.1
 !output_dir='/p8/mcc_uspa/tepper/output/scaling_nbody_1/'
 !output_dir='/scratch/dr86/ttg562/scaling_nbody_1/'
-output_dir='/import/photon1/tepper/scaling_nbody_1/'
+output_dir='/import/photon2/tepper/scaling_nbody_1/'
 /

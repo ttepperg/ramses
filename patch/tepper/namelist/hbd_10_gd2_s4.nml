@@ -88,7 +88,7 @@ no_inflow=.false.				  ! ...  without inflow
 &INIT_PARAMS
 filetype='dice'
 !initfile(1)='/scratch/dr86/ttg562/hbd_10_gd2_s4/ic/'
-initfile(1)='/import/photon1/tepper/hbd_10_gd2_s4/ic/'
+initfile(1)='/import/photon2/tepper/hbd_10_gd2_s4/ic/'
 !initfile(1)='/project/GalSims/hbd_10_gd2_s4/ic/'
 /
 
@@ -138,6 +138,6 @@ IG_metal=0.0                   ! IGM metallicity (defaul:t 1.0d-2)
 tend = 10.
 delta_tout = 0.1
 !output_dir='/scratch/dr86/ttg562/hbd_10_gd2_s4/'
-output_dir='/import/photon1/tepper/hbd_10_gd2_s4/'
+output_dir='/import/photon2/tepper/hbd_10_gd2_s4/'
 !output_dir='/project/GalSims/hbd_10_gd2_s4/'
 /
