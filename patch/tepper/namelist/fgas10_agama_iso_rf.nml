@@ -2,7 +2,7 @@
 !
 ! Identical to hbd_19_gd7_lr.nml, with 'hbd_19_gd7_lr' replaced by 'fgas10_agama_iso_rf' everywhere.
 !
-! See the latter's header for more info. This duplicate exists to create a consistent set of fgas10_ramses_fork* models, and it shall replace hbd_19_gd7_lr.nml in the future.
+! See the latter's header for more info. This duplicate exists to create a consistent set of fgas10_ramses_fork* models, and it may replace hbd_19_gd7_lr.nml in the future.
 
 
 &RUN_PARAMS
@@ -63,7 +63,7 @@ boxlen=600.0
 
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/import/photon1/tepper/fgas10_agama_iso_rf/ic/'
+!initfile(1)='/import/photon2/tepper/fgas10_agama_iso_rf/ic/'
 !initfile(1)='/scratch/dr86/ttg562/fgas10_agama_iso_rf/ic/'
 initfile(1)='/project/GalSims//fgas10_agama_iso_rf/ic/'
 d_region=1.0d-6
@@ -76,7 +76,7 @@ tend=1.0
 delta_tout=0.005
 walltime_hrs=1.0
 minutes_dump=5
-!output_dir='/import/photon1/tepper/fgas10_agama_iso_rf/'
+!output_dir='/import/photon2/tepper/fgas10_agama_iso_rf/'
 !output_dir='/scratch/dr86/ttg562/fgas10_agama_iso_rf/'
 output_dir='/project/GalSims//fgas10_agama_iso_rf/'
 /

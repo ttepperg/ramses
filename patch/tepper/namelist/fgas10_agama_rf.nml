@@ -11,8 +11,6 @@
 !
 ! MAKE SURE to set the correct path to the ICs (initfile)
 !
-! IMPORTANT:
-! - In this Ramses version output_dir does not exist and so outputs are dumped into the bin directory!
 ! - MOVIE_PARAMS block removed because I have not included the necessary code snippets, which are particular to O.Agertz setup and not a Ramses standard
 
 &RUN_PARAMS
@@ -99,8 +97,8 @@ levelmin=7
 levelmax=13
 !ngridmax=3000000
 !npartmax=4000000
-ngridmax=800000 ! ~ 0.64 GB/core; 32 cores <-> 20.5 GB
-npartmax=1500000 ! ~ 0.15 GB/core; 32 cores <-> 4.8 GB
+ngridmax=800000 ! ~ 0.64 GB/core
+npartmax=1500000 ! ~ 0.15 GB/core
 boxlen=600.0
 /
 
@@ -108,28 +106,28 @@ boxlen=600.0
 !collectively has len < 80 characters
 !the longest file name reads:
 !initfile(1)output_xxxxx/part_file_descriptor.txt
-!check: $> echo initfile(1)output_xxxxx/part_file_descriptor.txt | wc -c
+!check: $> echo initfile(1)/output_xxxxx/part_file_descriptor.txt | wc -c
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/g/data/aa8/ttg562/fgas10_agama_rf/ic/'
-!initfile(1)='/import/silo5/tepper/fgas10_agama_rf/ic/'
-initfile(1)='/project/GalSims/fgas10_agama_rf/ic/'
+initfile(1)='/g/data/aa8/ttg562/fgas10_agama_rf/ic/'
+!initfile(1)='/import/photon2/tepper/fgas10_agama_rf/ic/'
+!initfile(1)='/project/GalSims/fgas10_agama_rf/ic/'
 d_region=1.0d-6
 p_region=1.0d6
 /
 
 !output_dir name must have len < 40 characters to accomodate
 !the longest Ramses output file names
-!check: $> echo /project/GalSims/fgas10_agama_rf/ | wc -c
+!check: $> echo output_dir | wc -c
 &OUTPUT_PARAMS
 noutput=200
 tend=1.0
 delta_tout=0.005
 walltime_hrs=1.0
 minutes_dump=5
-!output_dir='/g/data/aa8/ttg562/fgas10_agama_rf/'
-!output_dir='/import/silo5/tepper/fgas10_agama_rf/'
-output_dir='/project/GalSims/fgas10_agama_rf/'
+output_dir='/g/data/aa8/ttg562/fgas10_agama_rf/'
+!output_dir='/import/photon2/tepper/fgas10_agama_rf/'
+!output_dir='/project/GalSims/fgas10_agama_rf/'
 /
 
 &REFINE_PARAMS
