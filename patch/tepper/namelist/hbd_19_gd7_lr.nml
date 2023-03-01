@@ -4,6 +4,8 @@
 !
 ! /Users/tepper/codes/ramses_agertz/fgas10_agama/fgas10_agama_iso.nml
 !
+! But it is used with my Ramses patch rather than Oscar's Setup.
+!
 ! IMPORTANT: This NML leads to a ~10x faster evolution compared to hbd_19_gd7_lr_SLOW.nml!!!! Apparently, it is the nsubcycle parameter that makes the difference (O.Agertz, priv.comm.)
 
 &RUN_PARAMS
