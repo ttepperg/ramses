@@ -1,5 +1,11 @@
 ! COMPILE CODE WITH: Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
-! IMPORTANT: This NML leads to a ~10x slower evolution compared to hbd_19_gd7_lr.nml!!!! Apparently, it is the nsubcycle parameter that makes the difference (O.Agertz, priv.comm.)
+!
+! The NML is a copy of:
+!
+! /Users/tepper/codes/ramses_agertz/fgas10_agama/fgas10_agama_iso.nml
+!
+! But it is used with my Ramses patch rather than Oscar's Setup.
+!! IMPORTANT: This NML leads to a ~10x slower evolution compared to hbd_19_gd7_lr.nml!!!! Apparently, it is the nsubcycle parameter that makes the difference (O.Agertz, priv.comm.)
 
 &RUN_PARAMS
 print_when_io=.true.
