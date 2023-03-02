@@ -1,3 +1,6 @@
+! 02 MAR 2023: Changed the name of this NML to hbd_19_gd7_lr_star.nml for
+! consistency with other NML, as names such as this one imply isothermal runs
+!
 ! COMPILE CODE WITH: Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
 !
 ! The NML is a copy of:
@@ -66,9 +69,9 @@ boxlen=600.0
 
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/import/photon2/tepper/hbd_19_gd7_lr/ic/'
-!initfile(1)='/scratch/dr86/ttg562/hbd_19_gd7_lr/ic/'
-initfile(1)='/project/GalSims//hbd_19_gd7_lr/ic/'
+!initfile(1)='/import/photon2/tepper/hbd_19_gd7_lr_star/ic/'
+!initfile(1)='/scratch/dr86/ttg562/hbd_19_gd7_lr_star/ic/'
+initfile(1)='/project/GalSims//hbd_19_gd7_lr_star/ic/'
 d_region=1.0d-6
 p_region=1.0d6
 /
@@ -79,9 +82,9 @@ tend=1.0
 delta_tout=0.005
 walltime_hrs=1.0
 minutes_dump=5
-!output_dir='/import/photon2/tepper/hbd_19_gd7_lr/'
-!output_dir='/scratch/dr86/ttg562/hbd_19_gd7_lr/'
-output_dir='/project/GalSims//hbd_19_gd7_lr/'
+!output_dir='/import/photon2/tepper/hbd_19_gd7_lr_star/'
+!output_dir='/scratch/dr86/ttg562/hbd_19_gd7_lr_star/'
+output_dir='/project/GalSims//hbd_19_gd7_lr_star/'
 /
 
 &REFINE_PARAMS
