@@ -7,9 +7,48 @@ About:
 This subdirectory contains a number of patches
 to files originally in patch/init/dice, unless stated otherwise.
 
+init_flow_fine.f90:
+- multiply IG_metal by ic_scale_metal to have freedom in the adopted units
+
 init_part.f90:
 - added 'use pm_parameters, only: sink_restart'
 - added TRIM(output_dir) to filename strings where relevant
+- split all if-clauses of the form:
+  if(star.or.sink)then
+	if(metal)then
+	endif
+  endif
+into
+  if(star.or.sink)then
+  endif
+  if(metal)then
+  endif
+
+
+particle_tree.f90:
+- split all if-clauses of the form:
+  if(star.or.sink)then
+	if(metal)then
+	endif
+  endif
+into
+  if(star.or.sink)then
+  endif
+  if(metal)then
+  endif
+
+
+add_list.f90:
+- split all if-clauses of the form:
+  if(star.or.sink)then
+	if(metal)then
+	endif
+  endif
+into
+  if(star.or.sink)then
+  endif
+  if(metal)then
+
 
 read_params.f90:
 - added variable 'output_dir' to namelist block 'output_params'
