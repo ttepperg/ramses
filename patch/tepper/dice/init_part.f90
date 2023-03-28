@@ -111,10 +111,10 @@
   if(star.or.sink)then
      allocate(tp(npartmax))
      tp=0.0
-     if(metal)then
-        allocate(zp(npartmax))
-        zp=0.0
-     end if
+  end if
+  if(metal)then
+     allocate(zp(npartmax))
+     zp=0.0
   end if
 
   !--------------------
@@ -213,13 +213,15 @@
                   call getProperTime(tp(i),tp(i))
                enddo
             endif
-            if(metal)then
-               ! Read metallicity
-               read(ilun)xdp
-               zp(1:npart2)=xdp
-            end if
             deallocate(xdp)
          end if
+         if(metal)then
+            ! Read metallicity
+            allocate(xdp(1:npart2))
+            read(ilun)xdp
+            zp(1:npart2)=xdp
+            deallocate(xdp)
+          end if
      end if
 
      close(ilun)
@@ -888,9 +890,11 @@ contains
     if(star.or.sink)then
        do ipart=1,npart
           tp(ipart)=0d0
-          if(metal)then
-             zp(ipart)=0d0
-          end if
+       end do
+    end if
+    if(metal)then
+       do ipart=1,npart
+          zp(ipart)=0d0
        end do
     end if
 
@@ -1418,11 +1422,11 @@ contains
                    levelp(ipart)  = levelmin
                    if(star) then
                       tp(ipart)    = tt(i)
-                      ! Particle metallicity
-                      if(metal) then
-                         zp(ipart)  = zz(i)
-                      endif
-                   endif
+                    endif
+                    ! Particle metallicity
+                    if(metal) then
+                       zp(ipart)  = zz(i)
+                    endif
                    if(type_index.gt.2)then
                       if(star)then
                          typep(ipart)%family = FAM_STAR
