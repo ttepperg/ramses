@@ -659,8 +659,8 @@ subroutine init_uold(ilevel)
               endif
               if(metal) then
 !                if(ivar.eq.imetal) uold(active(ilevel)%igrid(i)+iskip,ivar) = max(IG_rho/scale_nH,smallr)*IG_metal
-                if(ivar.eq.imetal) uold(active(ilevel)%igrid(i)+iskip,ivar) = 0.333*max(IG_rho/scale_nH,smallr)*IG_metal*0.02
-                if(ivar.eq.imetal+1) uold(active(ilevel)%igrid(i)+iskip,ivar) = 0.333*max(IG_rho/scale_nH,smallr)*IG_metal*0.02
+                if(ivar.eq.imetal) uold(active(ilevel)%igrid(i)+iskip,ivar) = 0.333*max(IG_rho/scale_nH,smallr)*IG_metal*ic_scale_metal
+                if(ivar.eq.imetal+1) uold(active(ilevel)%igrid(i)+iskip,ivar) = 0.333*max(IG_rho/scale_nH,smallr)*IG_metal*ic_scale_metal
               endif
            endif
         end do
@@ -1473,4 +1473,3 @@ subroutine mag_toroidal(pos,dir,A)
   end do
 end subroutine
 #endif
-
