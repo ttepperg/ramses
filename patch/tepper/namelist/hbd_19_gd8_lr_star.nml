@@ -5,7 +5,7 @@
 !
 ! /Users/tepper/codes/ramses_fork/bin/Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH
 !
-! ICs created with my AGAMA + gas framwork
+! ICs created with my AGAMA + gas framework
 !
 ! MAKE SURE to set the correct path to the ICs (initfile)
 

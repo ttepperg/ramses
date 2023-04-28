@@ -1,6 +1,6 @@
 ! COMPILE CODE WITH: Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
 !
-! ICs created with my AGAMA + gas framwork
+! ICs created with my AGAMA + gas framework
 !
 ! MAKE SURE to set the correct path to the ICs (initfile)
 
