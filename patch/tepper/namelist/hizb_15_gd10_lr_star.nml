@@ -88,8 +88,8 @@ beta_fix=0.5
 ! ~ 0.8 * [ (ngridmax/10^6) + (npartmax/10^7) ] GB
 ! Note that the more cores, the smaller ngridmax and npartmax can be
 &AMR_PARAMS
-levelmin=8 ! was 7
-levelmax=14 ! was 13
+levelmin=7		! is 8 in hizb_15
+levelmax=12		! is 14 in hizb_15 and 13 in hbd_19_gd8_lr_star
 ngridmax=800000 ! ~ 0.64 GB/core
 npartmax=1500000 ! ~ 0.15 GB/core
 boxlen=100.0 ! was 600 before
@@ -102,8 +102,8 @@ boxlen=100.0 ! was 600 before
 !check: $> echo initfile(1)/output_xxxxx/part_file_descriptor.txt | wc -c
 &INIT_PARAMS
 filetype='dice'
-!initfile(1)='/g/data/aa8/ttg562/hizb_15_gd10_lr_star/ic/'
-initfile(1)='/import/photon2/tepper/hizb_15_gd10_lr_star/ic/'
+initfile(1)='/g/data/aa8/ttg562/hizb_15_gd10_lr_star/ic/'
+!initfile(1)='/import/photon2/tepper/hizb_15_gd10_lr_star/ic/'
 !initfile(1)='/project/GalSims/hizb_15_gd10_lr_star/ic/'
 d_region=1.0d-6
 p_region=1.0d6
@@ -115,10 +115,10 @@ p_region=1.0d6
 &OUTPUT_PARAMS
 tend=2.0
 delta_tout=0.01 ! was 0.005
-walltime_hrs=24.0 ! was 1.0
+walltime_hrs=48 !24.0 ! was 1.0
 minutes_dump=5
-!output_dir='/g/data/aa8/ttg562/hizb_15_gd10_lr_star/'
-output_dir='/import/photon2/tepper/hizb_15_gd10_lr_star/'
+output_dir='/g/data/aa8/ttg562/hizb_15_gd10_lr_star/'
+!output_dir='/import/photon2/tepper/hizb_15_gd10_lr_star/'
 !output_dir='/project/GalSims/hizb_15_gd10_lr_star/'
 /
 
