@@ -20,7 +20,6 @@ NPRE = 8
 # hydro/mhd/rhd solver
 SOLVER = hydro
 # Patch (add here as many patch patch as desired)
-# Note that this requires a change in VPATH at (*)
 # IMPORTANT: The ORDER matters! If files with the same name are present,
 # only the first found is considered!
 # Also, directories are NOT looked into recursively!
@@ -156,8 +155,6 @@ endif
 LIBS = $(LIBMPI) $(LIBS_GRACKLE) $(LIBS_TURB)
 #############################################################################
 # Sources directories are searched in this exact order
-# (*) Need to change the following for the PATCH patch to work:
-#VPATH = $(shell [ -z $(PATCH) ] || find $(PATCH) -type d):../$(SOLVER):../aton:
 VPATH = $(PATCH):../$(SOLVER):../aton:
 ifeq ($(RT),1)
    VPATH += ../rt:
