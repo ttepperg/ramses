@@ -27,7 +27,7 @@ in module pm_parameters
 
 
 init_sink.f90:
-- added a warnig of file 'ic_sink' or 'ic_sink_restart' not found
+- abort if file 'ic_sink' or 'ic_sink_restart' cannot found or read
 - added 'use pm_parameters, only: sink_restart'
 - added kpc2cm, km2cm conversion factors from amr/constants.f90
 - added scale_m (type real(db))
