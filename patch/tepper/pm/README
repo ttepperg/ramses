@@ -48,7 +48,7 @@ init_sink.f90:
 
 
 output_sink.f90:
-- changed output file header string 'msink' to 'mass' for
+- changed (again) output file header string 'msink' to 'mass' for
 	convenience when analysing sims with Pynbody
 
 
