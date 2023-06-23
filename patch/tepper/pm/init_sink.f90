@@ -238,8 +238,10 @@ subroutine init_sink
      end if
   end if
 
-  if(.not. ic_sink.and. myid==1)write(*,*) 'WARNING: Could not find file ',&
-  &filename
+  if(.not. ic_sink.and. myid==1)then
+    write(*,*) 'ERROR: Could not find or read file ',filename
+    call clean_stop
+  end if
 
   if (ic_sink)then
 
@@ -298,16 +300,25 @@ subroutine init_sink
   call compute_ncloud_sink
 
   ! Output sink properties to screen
-  if (myid==1.and.nsink-nsinkold>0)then
-     write(*,*)'sinks read from file '//filename
-     write(*,'("   Id           M             x             y             z            vx            vy            vz            lx            ly            lz       ")')
-     write(*,'("======================================================================================================================================================")')
-     do isink=nsinkold+1,nsink
-        write(*,'(I8,2X,10(2X,E12.5))')idsink(isink),msink(isink),xsink(isink,1:ndim),&
-             vsink(isink,1:ndim),lsink(isink,1:ndim)
-        if(direct_force_sink(isink))write(*,*)'Direct force scheme for sink with ID: ',&
-        &idsink(isink)
-     end do
+  if (myid==1)then
+    if(nsink-nsinkold>0)then
+      write(*,*)'sinks read from file '//filename
+      write(*,'("   Id           M             x             y             z            vx            vy            vz            lx            ly            lz       ")')
+      write(*,'("======================================================================================================================================================")')
+      do isink=nsinkold+1,nsink
+         write(*,'(I8,2X,10(2X,E12.5))')idsink(isink),msink(isink),xsink(isink,1:ndim),&
+              vsink(isink,1:ndim),lsink(isink,1:ndim)
+         if(direct_force_sink(isink))write(*,*)'Direct force scheme for sink  with ID: ',&
+         &idsink(isink)
+      end do
+   else
+     write(*,*) 'ERROR: Could not read sinks from file ',filename
+     write(*,*) 'Make sure the file has the correct structure:'
+     write(*,*) '13 columns corresponding to:'
+     write(*,*) 'sm1,sx1,sx2,sx3,sv1,sv2,sv3,sl1,sl2,sl3,sm2,sid,dmf'
+ 	write(*,*)
+     call clean_stop
+   end if
   end if
 
   ! Set direct force boolean
