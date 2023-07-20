@@ -165,3 +165,22 @@ gadget_scale_v=1.0D+5 				! AGAMA file velocity unit -> 1 km/s
 gadget_scale_m=1.9891D+33			! AGAMA file mass unit     -> 1 solar mass
 gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this is NOT the simulation time unit)
 /
+
+&MOVIE_PARAMS
+imovout=10000
+imov=1
+tendmov=2.0
+movie=.true.
+nw_frame=512
+nh_frame=512
+levelmax_frame=12
+ivar_frame=1
+xcentre_frame=50.0,0.0,0.0,0.0,50.0,0.0,0.0,0.0
+ycentre_frame=50.0,0.0,0.0,0.0,50.0,0.0,0.0,0.0
+zcentre_frame=50.0,0.0,0.0,0.0,50.0,0.0,0.0,0.0
+deltax_frame=12.5,0.0,12.5,0.0
+deltay_frame=12.5,0.0,12.5,0.0
+deltaz_frame=12.5,0.0,12.5,0.0
+movie_vars_txt='dens','temp','var6','var7','stars','lum'
+proj_axis='zx'
+/
