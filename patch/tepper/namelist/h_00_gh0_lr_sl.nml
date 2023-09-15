@@ -6,7 +6,7 @@
 !
 ! MAKE SURE to set the correct path to the ICs (initfile)
 !
-! This setup is similar to h_00_gh0_lr_star.nml but with a higher SF density threshold n_star, which should lead to a lower SFR
+! This setup is similar to h_00_gh0_lr_star.nml but with a higher SF density threshold n_star, which should lead to a lower SFR, and a less violent evolution
 !
 
 &RUN_PARAMS

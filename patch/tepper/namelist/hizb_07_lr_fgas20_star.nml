@@ -113,7 +113,7 @@ p_region=1.0d6
 &OUTPUT_PARAMS
 tend=2.0
 delta_tout=0.01 ! was 0.005
-walltime_hrs=48 !24.0 ! was 1.0
+walltime_hrs=24.0 ! was 1.0
 minutes_dump=5
 !output_dir='/g/data/aa8/ttg562/hizb_07_lr_fgas20_star/'
 !output_dir='/import/photon2/tepper/hizb_07_lr_fgas20_star/'
