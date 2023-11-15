@@ -3,7 +3,7 @@
 ! ICs created with my AGAMA + gas framework
 ! They are similar to h_00_gh0_lr's but the gas halo does not spin
 !
-! This NML is similar to h_00_gh0_lr, but withouth cooling (i.e adiabatic)
+! This NML is similar to h_00_gh0_lr, but without cooling (i.e adiabatic)
 !
 ! MAKE SURE to set the correct path to the ICs (initfile)
 !
