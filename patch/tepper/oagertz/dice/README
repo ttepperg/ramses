@@ -17,7 +17,7 @@ The necessary modifications have been accomplished by:
 Notes:
 
 	- See also:
-		/Users/tepper/codes/ramses_agertz/ramses/patch/dice/TTG_README
+		/Users/tepper/codes/ramses_agertz/ramses/patch/dice/README
 
 IMPORTANT:
 	- The current dice patch DOES NOT take into account all of the modifications to the corresponding source files in the main branch since 01 APR 2021, e.g. the use of the LIGHT_MPI_COMM directive, among much more, so
