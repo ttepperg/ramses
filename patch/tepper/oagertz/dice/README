@@ -12,13 +12,35 @@ The necessary modifications have been accomplished by:
 	1) Copying to this directory *all* the file in /Users/tepper/codes/ramses_fork/patch/init/dice/.
 	2) Comparing with FileMerge the files *common* to the two above directories (add_list.f90, init_part.f90, particle_tree.f90), and adding the required code snippets
 	3) Some files needed to be additionally edited by hand:
-		- init_part.f90: make zp array consistent
+		- init_part.f90: make the zp array consistent with nmetals, i.e. 2D
 
 Notes:
-
+	- Some modifications are flagged by 'ERIC', 'EDGE2', or 'TTG', but not all
 	- See also:
 		/Users/tepper/codes/ramses_agertz/ramses/patch/dice/README
+	- The bck_21DEC023 folder is temporary until I've made sure that the most recent update (22 DEC 2023) is working
 
 IMPORTANT:
-	- The current dice patch DOES NOT take into account all of the modifications to the corresponding source files in the main branch since 13 NOV 2019, e.g. the use of the LIGHT_MPI_COMM directive, among much more, so
-	BE CAREFUL!
+
+	1) These patches do not split all if-clauses of the form:
+
+		if(star.or.sink)then
+			if(metal)then
+			endif
+		endif
+	into:
+		if(star.or.sink)then
+			...
+		endif
+		if(metal)then
+			...
+		endif
+
+	as does my dice patch in, e.g. particle_tree.f90. TO DO!!!
+
+	2) From Tine Colman:
+	"There are SOLVERmhd blocks [in the following files] but this file is not compatible with MHD:
+
+		- init_flow_fine.f90
+
+	It doesn't take into account that for MHD nvar is at least 8.""
