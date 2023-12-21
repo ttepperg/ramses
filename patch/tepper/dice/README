@@ -7,9 +7,12 @@ About:
 This subdirectory contains a number of patches
 to files originally in patch/init/dice, unless stated otherwise.
 
-IMPORTANT:
-	- The current dice patch DOES NOT take into account all of the modifications to the corresponding source files in the main branch since 13 NOV 2019, e.g. the use of the LIGHT_MPI_COMM directive, among much more, so
-	BE CAREFUL!
+Notes:
+	- The bck_21DEC023 folder is temporary until I've made sure that the most recent update (22 DEC 2023) is working
+
+
+
+Modified files
 
 init_flow_fine.f90:
 - multiply IG_metal by ic_scale_metal to have freedom in the adopted units
