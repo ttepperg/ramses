@@ -1895,29 +1895,27 @@ contains
 	                                  read_center=.false.
 	                               endif
 	                               ! Reading cell density
-	!							   if(hydro) then
-		                               read(ilun3,pos=hydro_var_blck(ilevel,ibound,ind,1)+sizeof(dummy_real)*(kpart-1)) mm(jpart)
-		                               ! Converting to mass
-		                               mm(jpart)=mm(jpart)*vol_loc
-		                               ! Updating total mass
-		                               mgas_tot=mgas_tot+mm(jpart)
-		                               ! Updating leaf cells counter
-		                               ngas_loc = ngas_loc+1
-		                               ! Reading velocities
-		                               do idim=1,ndim
-		                                  read(ilun3,pos=hydro_var_blck(ilevel,ibound,ind,idim+1)+sizeof(dummy_real)*(kpart-1)) vv(jpart,idim)
-		                                  xx(jpart,idim)=(xxg(idim)+xc(ind,idim)-skip_loc(idim))*scale
-		                               end do
-		                               ! Reading gas temperature
-		                               read(ilun3,pos=hydro_var_blck(ilevel,ibound,ind,header_amr%ndim+2)+sizeof(dummy_real)*(kpart-1)) uu(jpart,1)
-		                               uu(jpart,1)=uu(jpart,1)/(header_hydro%gamma-1d0)
-		                               ! Reading passive hydro variables
-		                               do ivar=1,nvar_min-1
-		                                 if(restart_vars(ivar).gt.header_amr%ndim+2.and.restart_vars(ivar).le.header_hydro%nvar) then
-		                                    read(ilun3,pos=hydro_var_blck(ilevel,ibound,ind,restart_vars(ivar))+sizeof(dummy_real)*(kpart-1)) uu(jpart,ivar+1)
-		                                 endif
-		                               enddo
-!								   endif !if(hydro)
+	                               read(ilun3,pos=hydro_var_blck(ilevel,ibound,ind,1)+sizeof(dummy_real)*(kpart-1)) mm(jpart)
+	                               ! Converting to mass
+	                               mm(jpart)=mm(jpart)*vol_loc
+	                               ! Updating total mass
+	                               mgas_tot=mgas_tot+mm(jpart)
+	                               ! Updating leaf cells counter
+	                               ngas_loc = ngas_loc+1
+	                               ! Reading velocities
+	                               do idim=1,ndim
+	                                  read(ilun3,pos=hydro_var_blck(ilevel,ibound,ind,idim+1)+sizeof(dummy_real)*(kpart-1)) vv(jpart,idim)
+	                                  xx(jpart,idim)=(xxg(idim)+xc(ind,idim)-skip_loc(idim))*scale
+	                               end do
+	                               ! Reading gas temperature
+	                               read(ilun3,pos=hydro_var_blck(ilevel,ibound,ind,header_amr%ndim+2)+sizeof(dummy_real)*(kpart-1)) uu(jpart,1)
+	                               uu(jpart,1)=uu(jpart,1)/(header_hydro%gamma-1d0)
+	                               ! Reading passive hydro variables
+	                               do ivar=1,nvar_min-1
+	                                 if(restart_vars(ivar).gt.header_amr%ndim+2.and.restart_vars(ivar).le.header_hydro%nvar) then
+	                                    read(ilun3,pos=hydro_var_blck(ilevel,ibound,ind,restart_vars(ivar))+sizeof(dummy_real)*(kpart-1)) uu(jpart,ivar+1)
+	                                 endif
+	                               enddo
 	                            endif
 	                         enddo
 	                         ! Check the End Of Block
