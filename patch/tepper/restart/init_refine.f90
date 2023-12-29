@@ -1,3 +1,4 @@
+! RESTART patch
 module restart_commons
   use amr_commons
   use hydro_commons
@@ -25,7 +26,6 @@ end module restart_commons
 subroutine init_refine
   use amr_commons
   use pm_commons
-  use hydro_commons
   implicit none
   !-------------------------------------------
   ! This routine builds the initial AMR grid
@@ -71,8 +71,8 @@ subroutine init_refine_2
   !--------------------------------------------------------------
   ! This routine builds additional refinements to the
   ! the initial AMR grid for filetype ne 'grafic'
-  ! Restart patch: It is ensured that all the particles are
-  ! transfered down to level 1 before initialising the grid
+  ! RESTART patch: It is ensured that all the particles are
+  ! transferred down to level 1 before initialising the grid
   !--------------------------------------------------------------
   use amr_commons
   use restart_commons
@@ -85,24 +85,24 @@ subroutine init_refine_2
   implicit none
   integer::ilevel,i,ivar
 
-  if(filetype.eq.'grafic')return
+  if(filetype.ne.'grafic') then
 
-  do i=levelmin,nlevelmax+1
+     do i=levelmin,nlevelmax+1
 
-     ! Restart patch ------
+     ! RESTART patch ------
      do ilevel=levelmin-1,1,-1
         if(pic)call merge_tree_fine(ilevel)
      enddo
      ! --------------------
-     call refine_coarse
-     do ilevel=1,nlevelmax
-        call build_comm(ilevel)
-        call make_virtual_fine_int(cpu_map(1),ilevel)
-        call refine_fine(ilevel)
-        ! Restart patch ------
+        call refine_coarse
+        do ilevel=1,nlevelmax
+           call build_comm(ilevel)
+           call make_virtual_fine_int(cpu_map(1),ilevel)
+           call refine_fine(ilevel)
+        ! RESTART patch ------
         if(pic)call make_tree_fine(ilevel)
         ! --------------------
-        if(hydro)call init_flow_fine(ilevel)
+           if(hydro)call init_flow_fine(ilevel)
         ! Restart patch ------
         if(pic)then
            call kill_tree_fine(ilevel)
@@ -110,88 +110,104 @@ subroutine init_refine_2
         endif
         ! --------------------
 #ifdef RT
-        if(rt)call rt_init_flow_fine(ilevel)
+           if(rt)call rt_init_flow_fine(ilevel)
 #endif
-     end do
+        end do
 
-     ! Restart patch ------
+     ! RESTART patch ------
      do ilevel=nlevelmax-1,levelmin,-1
         if(pic)call merge_tree_fine(ilevel)
      enddo
      ! --------------------
-     if(nremap>0)call load_balance
+        if(nremap>0)call load_balance
 
-     do ilevel=levelmin,nlevelmax
-        if(pic)call make_tree_fine(ilevel)
-        if(poisson)call rho_fine(ilevel,2)
-        if(hydro)call init_flow_fine(ilevel)
+        do ilevel=levelmin,nlevelmax
+           if(pic)call make_tree_fine(ilevel)
+           if(poisson)call rho_fine(ilevel,2)
+           if(hydro)call init_flow_fine(ilevel)
+           if(pic)then
+              call kill_tree_fine(ilevel)
+              call virtual_tree_fine(ilevel)
+           endif
+        end do
+
+        do ilevel=nlevelmax,levelmin,-1
+           if(pic)call merge_tree_fine(ilevel)
+           if(hydro)then
+              call upload_fine(ilevel)
+#ifdef SOLVERmhd
+              do ivar=1,nvar+3
+#else
+                 do ivar=1,nvar
+#endif
+                    call make_virtual_fine_dp(uold(1,ivar),ilevel)
+#ifdef SOLVERmhd
+                 end do
+#else
+              end do
+#endif
+              if(simple_boundary)call make_boundary_hydro(ilevel)
+           endif
+#ifdef RT
+           if(rt)then
+              call rt_upload_fine(ilevel)
+              do ivar=1,nrtvar
+                 call make_virtual_fine_dp(rtuold(1,ivar),ilevel)
+              end do
+              if(simple_boundary)call rt_make_boundary_hydro(ilevel)
+           end if
+#endif
+        end do
+
+        do ilevel=nlevelmax,1,-1
+           call flag_fine(ilevel,2)
+        end do
+        call flag_coarse
+
+     end do
+     ! RESTART patch ------
+     do ilevel=levelmin-1,1,-1
+       if(pic)call merge_tree_fine(ilevel)
+     enddo
+     call kill_gas_part(1)
+     do ilevel=1,nlevelmax
         if(pic)then
+           call make_tree_fine(ilevel)
            call kill_tree_fine(ilevel)
            call virtual_tree_fine(ilevel)
         endif
      end do
-
      do ilevel=nlevelmax,levelmin,-1
-        if(pic)call merge_tree_fine(ilevel)
-        if(hydro)then
-           call upload_fine(ilevel)
-#ifdef SOLVERmhd
-           do ivar=1,nvar+3
-#else
-           do ivar=1,nvar
-#endif
-              call make_virtual_fine_dp(uold(1,ivar),ilevel)
-#ifdef SOLVERmhd
-           end do
-#else
-           end do
-#endif
-           if(simple_boundary)call make_boundary_hydro(ilevel)
-        endif
-#ifdef RT
-        if(rt)then
-           call rt_upload_fine(ilevel)
-           do ivar=1,nrtvar
-              call make_virtual_fine_dp(rtuold(1,ivar),ilevel)
-           end do
-           if(simple_boundary)call rt_make_boundary_hydro(ilevel)
-        end if
-#endif
+        call merge_tree_fine(ilevel)
      end do
+     ! --------------------
 
-     do ilevel=nlevelmax,1,-1
-        call flag_fine(ilevel,2)
-     end do
-     call flag_coarse
+  endif ! if .not. 'grafic'
 
-  end do
-  ! Restart patch ------
-  do ilevel=levelmin-1,1,-1
-    if(pic)call merge_tree_fine(ilevel)
-  enddo
-  call kill_gas_part(1)
-  do ilevel=1,nlevelmax
-     if(pic)then
-        call make_tree_fine(ilevel)
-        call kill_tree_fine(ilevel)
-        call virtual_tree_fine(ilevel)
-     endif
-  end do
-  do ilevel=nlevelmax,levelmin,-1
-     call merge_tree_fine(ilevel)
-  end do
-  ! --------------------
 
 #ifdef RT
-  if(rt_is_init_xion .and. rt_nregion .eq. 0) then
+  if(neq_chem .and. rt_is_init_xion) then
      if(myid==1) write(*,*) 'Initializing ionization states from T profile'
      do ilevel=nlevelmax,1,-1
         call rt_init_xion(ilevel)
         call upload_fine(ilevel)
+#ifdef SOLVERmhd
+        do ivar=1,nvar+3
+#else
+        do ivar=1,nvar
+#endif
+           call make_virtual_fine_dp(uold(1,ivar),ilevel)
+#ifdef SOLVERmhd
+        end do
+#else
+        end do
+#endif
+        if(simple_boundary)call make_boundary_hydro(ilevel)
      end do
   endif
 #endif
 
+  ! RESTART patch
   deallocate(varp)
   restart_init = .false.
 
@@ -304,6 +320,3 @@ subroutine kill_gas_part(ilevel)
 111 format('   Entering kill_gas_part for level ',I2)
 !---------------------------------------------
 end subroutine
-
-
-

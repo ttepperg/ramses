@@ -7,3 +7,32 @@ About:
 For now just a copy of the patch in patch/init
 
 To be modified to work with my Ramses fork.
+
+22 DEC 2023:
+	- Start updating patch by copying files from the respective locations:
+	rsync -avzP ../../../amr/adaptive_loop.f90  .
+	rsync -avzP ../../../amr/init_refine.f90 .
+	rsync -avzP ../../../amr/init_time.f90 .
+	rsync -avzP ../../../hydro/init_flow_fine.f90 .
+	rsync -avzP ../../../pm/add_list.f90  .
+	rsync -avzP ../../../pm/init_part.f90 .
+	rsync -avzP ../../../pm/particle_tree.f90 .
+	rsync -avzP ../../../pm/rho_fine.f90 .
+
+IMPORTANT:
+
+	1) These patches do not split all if-clauses of the form:
+
+		if(star.or.sink)then
+			if(metal)then
+			endif
+		endif
+	into:
+		if(star.or.sink)then
+			...
+		endif
+		if(metal)then
+			...
+		endif
+
+	as does my dice patch in, e.g. particle_tree.f90. TO DO!!!

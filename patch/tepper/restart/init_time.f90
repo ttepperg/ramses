@@ -3,19 +3,25 @@ subroutine init_time
   use hydro_commons
   use pm_commons
   use cooling_module
+#ifdef grackle
+  use grackle_parameters
+#endif
 #ifdef RT
   use rt_cooling_module
 #endif
+  use mpi_mod
   implicit none
   integer::i,Nmodel
   real(kind=8)::T2_sim
 #ifdef grackle
-  integer:: iresult, initialize_grackle, UVbackground
-  real(kind=8)::density_units,length_units,time_units,velocity_units,temperature_units,a_units=1.0,a_value=1.0
   real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v
   logical::file_exists
+#ifndef WITHOUTMPI
+  integer::info
+#endif
 #endif
 
+  ! RESTART patch
   if(nrestart<=0)then
      if(cosmo)then
         ! Get cosmological parameters from input files
@@ -25,8 +31,8 @@ subroutine init_time
         if(initfile(levelmin).ne.' '.and.filetype.eq.'grafic')then
            call init_file
         endif
-        t=0.0
-        aexp=1.0
+        t=0
+        aexp=1
      end if
   end if
 
@@ -65,52 +71,187 @@ subroutine init_time
   end if
 
   ! Initialize cooling model
-
 #ifdef grackle
-  if(myid==1)write(*,*)'Grackle: Computing cooling model'
-  INQUIRE(FILE=grackle_data_file,EXIST=file_exists)
-  if(.not.file_exists) then
-     if(myid==1) write(*,*) TRIM(grackle_data_file)," not found"
-     call clean_stop
-  endif
-  UVbackground = grackle_UVbackground
-  if(cosmo) then
-     grackle_comoving_coordinates = 1
-     a_value = aexp
-     ! Reonization redshift has to be later than starting redshift
-     z_reion=min(1./(1.1*aexp_ini)-1.,z_reion)
-     ! Turn on UV background only after z_reion
-     if(1d0/aexp-1d0.lt.z_reion) then
-        UVbackground = 1
-        grackle_UVbackground_on = .true.
-     else
-        UVbackground = 0
-        grackle_UVbackground_on = .false.
+  if(use_grackle==1)then
+     if(myid==1)then
+        write(*,'(A50)')"__________________________________________________"
+        write(*,*)'Grackle - Computing cooling model'
+        write(*,*)'Grackle - Loading ',TRIM(grackle_data_file)
+        write(*,'(A50)')"__________________________________________________"
      endif
-     ! Approximate initial temperature
-     T2_start=1.356d-2/aexp_ini**2
-     if(nrestart==0)then
-        if(myid==1)write(*,*)'Starting with T/mu (K) = ',T2_start
+     INQUIRE(FILE=grackle_data_file,EXIST=file_exists)
+     if(.not.file_exists) then
+        if(myid==1) write(*,*) grackle_data_file," not found"
+        call clean_stop
+     endif
+
+     iresult = set_default_chemistry_parameters(my_grackle_data)
+     if(iresult.eq.0)then
+         write(*,*) 'Grackle - error in initialize_chemistry_data'
+#ifndef WITHOUTMPI
+         call MPI_ABORT(MPI_COMM_WORLD,1,info)
+#else
+         stop
+#endif
+     endif
+     my_grackle_data%use_grackle = use_grackle
+     my_grackle_data%with_radiative_cooling = grackle_with_radiative_cooling
+     my_grackle_data%primordial_chemistry = grackle_primordial_chemistry
+     my_grackle_data%metal_cooling = grackle_metal_cooling
+     my_grackle_data%UVbackground = grackle_UVbackground
+     my_grackle_data%cmb_temperature_floor = grackle_cmb_temperature_floor
+     my_grackle_data%h2_on_dust = grackle_h2_on_dust
+     my_grackle_data%photoelectric_heating = grackle_photoelectric_heating
+     my_grackle_data%use_volumetric_heating_rate = grackle_use_volumetric_heating_rate
+     my_grackle_data%use_specific_heating_rate = grackle_use_specific_heating_rate
+     my_grackle_data%three_body_rate = grackle_three_body_rate
+     my_grackle_data%cie_cooling = grackle_cie_cooling
+     my_grackle_data%h2_optical_depth_approximation = grackle_h2_optical_depth_approximation
+     my_grackle_data%ih2co = grackle_ih2co
+     my_grackle_data%ipiht = grackle_ipiht
+     my_grackle_data%NumberOfTemperatureBins = grackle_NumberOfTemperatureBins
+     my_grackle_data%CaseBRecombination = grackle_CaseBRecombination
+     my_grackle_data%Compton_xray_heating = grackle_Compton_xray_heating
+     my_grackle_data%LWbackground_sawtooth_suppression = grackle_LWbackground_sawtooth_suppression
+     my_grackle_data%NumberOfDustTemperatureBins = grackle_NumberOfDustTemperatureBins
+     my_grackle_data%use_radiative_transfer = grackle_use_radiative_transfer
+     my_grackle_data%radiative_transfer_coupled_rate_solver = grackle_radiative_transfer_coupled_rate_solver
+     my_grackle_data%radiative_transfer_intermediate_step = grackle_radiative_transfer_intermediate_step
+     my_grackle_data%radiative_transfer_hydrogen_only = grackle_radiative_transfer_hydrogen_only
+     my_grackle_data%self_shielding_method = grackle_self_shielding_method
+     my_grackle_data%Gamma = grackle_Gamma
+     my_grackle_data%photoelectric_heating_rate = grackle_photoelectric_heating_rate
+     my_grackle_data%HydrogenFractionByMass = grackle_HydrogenFractionByMass
+     my_grackle_data%DeuteriumToHydrogenRatio = grackle_DeuteriumToHydrogenRatio
+     my_grackle_data%SolarMetalFractionByMass = grackle_SolarMetalFractionByMass
+     my_grackle_data%TemperatureStart = grackle_TemperatureStart
+     my_grackle_data%TemperatureEnd = grackle_TemperatureEnd
+     my_grackle_data%DustTemperatureStart = grackle_DustTemperatureStart
+     my_grackle_data%DustTemperatureEnd = grackle_DustTemperatureEnd
+     my_grackle_data%LWbackground_intensity = grackle_LWbackground_intensity
+     my_grackle_data%UVbackground_redshift_on = grackle_UVbackground_redshift_on
+     my_grackle_data%UVbackground_redshift_off = grackle_UVbackground_redshift_off
+     my_grackle_data%UVbackground_redshift_fullon = grackle_UVbackground_redshift_fullon
+     my_grackle_data%UVbackground_redshift_drop = grackle_UVbackground_redshift_drop
+     my_grackle_data%cloudy_electron_fraction_factor = grackle_cloudy_electron_fraction_factor
+     grackle_data_file = TRIM(grackle_data_file)//C_NULL_CHAR
+     my_grackle_data%grackle_data_file = C_LOC(grackle_data_file(1:1))
+
+     ! Grackle units
+     call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
+     my_grackle_units%comoving_coordinates = 0
+     my_grackle_units%density_units = scale_d
+     my_grackle_units%length_units = scale_l
+     my_grackle_units%time_units = scale_t
+     my_grackle_units%velocity_units = scale_v
+     my_grackle_units%a_units = 1.0d0
+     !Set initial expansion factor (for internal units).
+     !Set expansion factor to 1 for non-cosmological simulation
+     ! Safety for GRACKLE initialisation
+     my_grackle_units%a_value = aexp_ini
+
+     if(cosmo) then
+        my_grackle_units%comoving_coordinates = 1
+        ! Reonization redshift has to be later than starting redshift
+        z_reion=min(1d0/(1.1d0*aexp_ini)-1d0,z_reion)
+        ! Approximate initial temperature
+        T2_start=1.356d-2/aexp_ini**2
+        if(nrestart==0)then
+           if(myid==1)write(*,*)'Starting with T/mu (K) = ',T2_start
+        end if
+     endif
+
+     ! Initialize the Grackle data
+     iresult = initialize_chemistry_data(my_grackle_units)
+     ! Enforce UVbackground starting redshift in grackle
+     my_grackle_data%UVbackground_redshift_on = grackle_UVbackground_redshift_on
+     my_grackle_data%UVbackground_redshift_fullon = grackle_UVbackground_redshift_fullon
+     if(iresult.eq.0)then
+         write(*,*) 'Grackle - error in initialize_chemistry_data'
+#ifndef WITHOUTMPI
+         call MPI_ABORT(MPI_COMM_WORLD,1,info)
+#else
+         stop
+#endif
+     endif
+     my_grackle_fields%grid_dimension = C_LOC(gr_dimension)
+     my_grackle_fields%grid_start = C_LOC(gr_start)
+     my_grackle_fields%grid_end = C_LOC(gr_end)
+     ! Point to grackle fields
+     my_grackle_fields%density = C_LOC(gr_density)
+     my_grackle_fields%HI_density = C_LOC(gr_HI_density)
+     my_grackle_fields%HII_density = C_LOC(gr_HII_density)
+     my_grackle_fields%HM_density = C_LOC(gr_HM_density)
+     my_grackle_fields%HeI_density = C_LOC(gr_HeI_density)
+     my_grackle_fields%HeII_density = C_LOC(gr_HeII_density)
+     my_grackle_fields%HeIII_density = C_LOC(gr_HeIII_density)
+     my_grackle_fields%H2I_density = C_LOC(gr_H2I_density)
+     my_grackle_fields%H2II_density = C_LOC(gr_H2II_density)
+     my_grackle_fields%DI_density = C_LOC(gr_DI_density)
+     my_grackle_fields%DII_density = C_LOC(gr_DII_density)
+     my_grackle_fields%HDI_density = C_LOC(gr_HDI_density)
+     my_grackle_fields%e_density = C_LOC(gr_e_density)
+     my_grackle_fields%metal_density = C_LOC(gr_metal_density)
+     my_grackle_fields%internal_energy = C_LOC(gr_energy)
+     my_grackle_fields%x_velocity = C_LOC(gr_x_velocity)
+     my_grackle_fields%y_velocity = C_LOC(gr_y_velocity)
+     my_grackle_fields%z_velocity = C_LOC(gr_z_velocity)
+     my_grackle_fields%volumetric_heating_rate = C_LOC(gr_volumetric_heating_rate)
+     my_grackle_fields%specific_heating_rate = C_LOC(gr_specific_heating_rate)
+     my_grackle_fields%RT_HI_ionization_rate = C_LOC(gr_RT_HI_ionization_rate)
+     my_grackle_fields%RT_HeI_ionization_rate = C_LOC(gr_RT_HeI_ionization_rate)
+     my_grackle_fields%RT_HeII_ionization_rate = C_LOC(gr_RT_HeII_ionization_rate)
+     my_grackle_fields%RT_H2_dissociation_rate = C_LOC(gr_RT_H2_dissociation_rate)
+     my_grackle_fields%RT_heating_rate = C_LOC(gr_RT_heating_rate)
+     do i=1,nvector
+        gr_x_velocity(i) = 0d0
+        gr_y_velocity(i) = 0d0
+        gr_z_velocity(i) = 0d0
+        gr_HII_density(i) = 0d0
+        gr_HM_density(i) = 0d0
+        gr_HeII_density(i) = 0d0
+        gr_HeIII_density(i) = 0d0
+        gr_H2I_density(i) = 0d0
+        gr_H2II_density(i) = 0d0
+        gr_DII_density(i) = 0d0
+        gr_HDI_density(i) = 0d0
+        gr_e_density(i) = 0d0
+        gr_volumetric_heating_rate(i) = 0d0
+        gr_specific_heating_rate(i) = 0d0
+        gr_RT_HI_ionization_rate(i) = 0d0
+        gr_RT_HeI_ionization_rate(i) = 0d0
+        gr_RT_HeII_ionization_rate(i) = 0d0
+        gr_RT_H2_dissociation_rate(i) = 0d0
+        gr_RT_heating_rate(i) = 0d0
+     enddo
+  else
+     if(cooling.and..not.(neq_chem.or.rt).and..not.cooling_ism)then
+        if(myid==1)write(*,*)'Computing cooling model'
+        Nmodel=-1
+        if(.not. haardt_madau)then
+           Nmodel=2
+        endif
+        if(cosmo)then
+           ! Reonization redshift has to be later than starting redshift
+           z_reion=min(1d0/(1.1d0*aexp_ini)-1d0,z_reion)
+           call set_model(Nmodel,dble(J21*1d-21),-1.0d0,dble(a_spec),-1.0d0,dble(z_reion), &
+                & -1,2, &
+                & dble(h0/100),dble(omega_b),dble(omega_m),dble(omega_l), &
+                & dble(aexp_ini),T2_sim)
+           T2_start=T2_sim
+           if(nrestart==0)then
+              if(myid==1)write(*,*)'Starting with T/mu (K) = ',T2_start
+           end if
+        else
+           call set_model(Nmodel,dble(J21*1d-21),-1.0d0,dble(a_spec),-1.0d0,dble(z_reion), &
+                & -1,2, &
+                & dble(70d0/100d0),0.04d0,0.3d0,0.7d0, &
+                & dble(aexp_ini),T2_sim)
+        endif
      end if
   endif
-  call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
-  density_units=scale_d
-  length_units=scale_l
-  time_units=scale_t
-  velocity_units=scale_v
-  ! Initialize the Grackle data
-   iresult = initialize_grackle(                                &
-     &     grackle_comoving_coordinates,                        &
-     &     density_units, length_units,                         &
-     &     time_units, velocity_units,                          &
-     &     a_units, a_value,                                    &
-     &     use_grackle, grackle_with_radiative_cooling,         &
-     &     TRIM(grackle_data_file),                             &
-     &     grackle_primordial_chemistry, grackle_metal_cooling, &
-     &     UVbackground, grackle_h2_on_dust,            &
-     &     grackle_cmb_temperature_floor, gamma)
 #else
-  if(cooling.and..not.(neq_chem.or.rt))then
+  if(cooling.and..not.(neq_chem.or.rt).and..not.cooling_ism) then
      if(myid==1)write(*,*)'Computing cooling model'
      Nmodel=-1
      if(.not. haardt_madau)then
@@ -118,7 +259,7 @@ subroutine init_time
      endif
      if(cosmo)then
         ! Reonization redshift has to be later than starting redshift
-        z_reion=min(1./(1.1*aexp_ini)-1.,z_reion)
+        z_reion=min(1d0/(1.1d0*aexp_ini)-1d0,z_reion)
         call set_model(Nmodel,dble(J21*1d-21),-1.0d0,dble(a_spec),-1.0d0,dble(z_reion), &
              & -1,2, &
              & dble(h0/100.),dble(omega_b),dble(omega_m),dble(omega_l), &
@@ -144,19 +285,15 @@ subroutine init_time
      endif
      if(cosmo)then
         ! Reonization redshift has to be later than starting redshift
-        z_reion=min(1./(1.1*aexp_ini)-1.,z_reion)
-        call rt_set_model(Nmodel,dble(J21*1d-21),-1.0d0,dble(a_spec),-1.0d0,dble(z_reion), &
-             & -1,2, &
-             & dble(h0/100.),dble(omega_b),dble(omega_m),dble(omega_l), &
+        z_reion=min(1d0/(1.1d0*aexp_ini)-1d0,z_reion)
+        call rt_set_model(dble(h0/100.),dble(omega_b),dble(omega_m),dble(omega_l), &
              & dble(aexp_ini),T2_sim)
         T2_start=T2_sim
         if(nrestart==0)then
            if(myid==1)write(*,*)'Starting with T/mu (K) = ',T2_start
         end if
      else
-        call rt_set_model(Nmodel,dble(J21*1d-21),-1.0d0,dble(a_spec),-1.0d0,dble(z_reion), &
-             & -1,2, &
-             & dble(70./100.),dble(0.04),dble(0.3),dble(0.7), &
+        call rt_set_model(dble(70./100.),dble(0.04),dble(0.3),dble(0.7), &
              & dble(aexp_ini),T2_sim)
      endif
   end if
@@ -168,10 +305,8 @@ subroutine init_file
   use amr_commons
   use hydro_commons
   use pm_commons
+  use mpi_mod
   implicit none
-#ifndef WITHOUTMPI
-  include 'mpif.h'
-#endif
   !------------------------------------------------------
   ! Read geometrical parameters in the initial condition files.
   ! Initial conditions are supposed to be made by
@@ -182,7 +317,9 @@ subroutine init_file
   character(LEN=80)::filename
   logical::ok
   integer,parameter::tag=1116
+#ifndef WITHOUTMPI
   integer::dummy_io,info2
+#endif
 
   if(verbose)write(*,*)'Entering init_file'
 
@@ -228,8 +365,6 @@ subroutine init_file
            end if
         endif
 #endif
-
-
 
         dxini(ilevel)=dxini0
         xoff1(ilevel)=xoff10
@@ -282,11 +417,8 @@ subroutine init_cosmo
   use hydro_commons
   use pm_commons
   use gadgetreadfilemod
-
+  use mpi_mod
   implicit none
-#ifndef WITHOUTMPI
-  include 'mpif.h'
-#endif
   !------------------------------------------------------
   ! Read cosmological and geometrical parameters
   ! in the initial condition files.
@@ -301,11 +433,13 @@ subroutine init_cosmo
   TYPE(gadgetheadertype) :: gadgetheader
   integer::i
   integer,parameter::tag=1117
+#ifndef WITHOUTMPI
   integer::dummy_io,info2
+#endif
 
+  ! RESTART patch
   integer::ilun,mypos,size_blck,dummy_int,info,icpu
   character(LEN=80)::fileloc
-
   TYPE ramses_amr_headertype
      integer::ncpu
      integer::ndim
@@ -327,8 +461,8 @@ subroutine init_cosmo
      real(dp)::aexp,hexp,aexp_old,epot_tot_int,epot_tot_old
      real(dp)::mass_sph
   END TYPE ramses_amr_headertype
-
   type(ramses_amr_headertype)   :: header_amr
+  ! RESTART patch
 
   if(verbose)write(*,*)'Entering init_cosmo'
 
@@ -340,7 +474,7 @@ subroutine init_cosmo
   SELECT CASE (filetype)
   case ('grafic', 'ascii')
      ! Reading initial conditions parameters only
-     aexp=2.0
+     aexp=2
      nlevelmax_part=levelmin-1
      do ilevel=levelmin,nlevelmax
         if(initfile(ilevel).ne.' ')then
@@ -360,7 +494,6 @@ subroutine init_cosmo
               end if
            endif
 #endif
-
 
            INQUIRE(file=filename,exist=ok)
            if(.not.ok)then
@@ -388,7 +521,6 @@ subroutine init_cosmo
            endif
 #endif
 
-
            dxini(ilevel)=dxini0
            xoff1(ilevel)=xoff10
            xoff2(ilevel)=xoff20
@@ -396,8 +528,6 @@ subroutine init_cosmo
            astart(ilevel)=astart0
            omega_m=omega_m0
            omega_l=omega_l0
-           if(hydro)omega_b=0.045
-           !!!if(hydro)omega_b=0.999999*omega_m
            h0=h00
            aexp=MIN(aexp,astart(ilevel))
            nlevelmax_part=nlevelmax_part+1
@@ -431,7 +561,7 @@ subroutine init_cosmo
      end if
 
      ! Compute box length in the initial conditions in units of h-1 Mpc
-     boxlen_ini=dble(nx)*2**levelmin*dxini(levelmin)*(h0/100.)
+     boxlen_ini=dble(nx)*2**levelmin*dxini(levelmin)*(h0/100)
 
   CASE ('gadget')
      if (verbose) write(*,*)'Reading in gadget format from '//TRIM(initfile(levelmin))
@@ -462,94 +592,7 @@ subroutine init_cosmo
      xoff1(levelmin)=0
      xoff2(levelmin)=0
      xoff3(levelmin)=0
-     dxini(levelmin) = boxlen_ini/(nx*2**levelmin*(h0/100.0))
-
-  CASE ('ramses')
-     if(myid==1)then
-        icpu = 1
-        ! Conversion factor from user units to cgs units
-        call title(abs(nrestart),nchar)
-        fileloc='output_'//TRIM(nchar)//'/amr_'//TRIM(nchar)//'.out'
-        call title(icpu,nchar)
-        fileloc=TRIM(fileloc)//TRIM(nchar)
-        INQUIRE(file=fileloc,exist=ok)
-        if(.not.ok)then
-           write(*,*) TRIM(fileloc),' not found'
-           call clean_stop
-        endif
-        ilun = 2
-        OPEN(unit=ilun,file=fileloc,status='old',action='read',form='unformatted',access="stream")
-        mypos = 1
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%ncpu; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%ndim; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%nx,header_amr%ny,header_amr%nz; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%nlevelmax; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%ngridmax; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%nboundary; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%ngrid_current; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%boxlen; mypos=mypos+sizeof(dummy_int)+size_blck
-
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%noutput,header_amr%iout,header_amr%ifout; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%tout(1:header_amr%noutput); mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%aout(1:header_amr%noutput); mypos=mypos+sizeof(dummy_int)+size_blck
-
-        ! Old output times
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%t; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%dtold(1:header_amr%nlevelmax); mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%dtnew(1:header_amr%nlevelmax); mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%nstep,header_amr%nstep_coarse; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%const,header_amr%mass_tot_0,header_amr%rho_tot; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%omega_m,header_amr%omega_l,header_amr%omega_k, &
-           & header_amr%omega_b,header_amr%h0,header_amr%aexp_ini,header_amr%boxlen_ini; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%aexp,header_amr%hexp,header_amr%aexp_old,header_amr%epot_tot_int,header_amr%epot_tot_old; mypos=mypos+sizeof(dummy_int)+size_blck
-        read(ilun,pos=mypos)size_blck; mypos=mypos+sizeof(dummy_int)
-        read(ilun,pos=mypos)header_amr%mass_sph; mypos=mypos+sizeof(dummy_int)+size_blck
-        close(ilun)
-     endif
-#ifndef WITHOUTMPI
-     call MPI_BARRIER(MPI_COMM_WORLD,info)
-     call MPI_BCAST(header_amr%t,1           ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
-     call MPI_BCAST(header_amr%omega_m,1     ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
-     call MPI_BCAST(header_amr%omega_l,1     ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
-     call MPI_BCAST(header_amr%h0,1          ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
-     call MPI_BCAST(header_amr%boxlen_ini,1  ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
-     call MPI_BCAST(header_amr%aexp,1        ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
-     call MPI_BARRIER(MPI_COMM_WORLD,info)
-#endif
-
-     t = header_amr%t
-     omega_m = header_amr%omega_m
-     omega_l = header_amr%omega_l
-     h0 = header_amr%h0
-     boxlen_ini = header_amr%boxlen_ini
-     aexp = header_amr%aexp
-     if(myid==1) write(*,*) 'aexp restart = ',aexp
-     aexp_ini = aexp
-     mass_sph=omega_b/omega_m*0.5d0**(ndim*levelmin)
-     nlevelmax_part = levelmin
-     astart(levelmin) = aexp
-     xoff1(levelmin)=0
-     xoff2(levelmin)=0
-     xoff3(levelmin)=0
-     dxini(levelmin) = boxlen_ini/(nx*2**levelmin*(h0/100.0))
+     dxini(levelmin) = boxlen_ini/(nx*2**levelmin*(h0/100))
 
   CASE DEFAULT
      write(*,*) 'Unsupported input format '//filetype
@@ -560,7 +603,7 @@ subroutine init_cosmo
   if(myid==1)then
      write(*,'(" Cosmological parameters:")')
      write(*,'(" aexp=",1pe10.3," H0=",1pe10.3," km s-1 Mpc-1")')aexp,h0
-     write(*,'(" omega_m=",F7.3," omega_l=",F7.3)')omega_m,omega_l
+     write(*,'(" omega_m=",F7.3," omega_l=",F7.3," omega_b=",F7.3)')omega_m,omega_l,omega_b
      write(*,'(" box size=",1pe10.3," h-1 Mpc")')boxlen_ini
   end if
   omega_k=1d0-omega_l-omega_m
@@ -792,7 +835,9 @@ subroutine friedman(O_mat_0,O_vac_0,O_k_0,alpha,axp_min, &
 
   end do
 
-!  write(*,666)-t
+  if(debug)then
+     write(*,666)-t
+  end if
   666 format(' Age of the Universe (in unit of 1/H0)=',1pe10.3)
 
   nskip=nstep/ntable
