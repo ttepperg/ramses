@@ -1,6 +1,7 @@
 !========================================================================================
 !== Patch RESTART
 !== Valentin Perret - February 2015
+!== Ported to Ramses version 22 DEC 2023 by Thor Tepper García - December 2023
 !========================================================================================
 
 !################################################################
@@ -34,17 +35,22 @@ subroutine init_flow_fine(ilevel)
   use amr_commons
   use hydro_commons
   use cooling_module
+  ! RESTART patch
   use restart_commons
+  use mpi_mod
+#if USE_TURB==1
+  use turb_commons
+#endif
   implicit none
 #ifndef WITHOUTMPI
-  include 'mpif.h'
+  integer::info,info2,dummy_io
 #endif
   integer::ilevel
 
   integer::i,icell,igrid,ncache,iskip,ngrid,ilun
   integer::ind,idim,ivar,ix,iy,iz,nx_loc
   integer::i1,i2,i3,i1_min,i1_max,i2_min,i2_max,i3_min,i3_max
-  integer::buf_count,info,nvar_in
+  integer::buf_count
   integer ,dimension(1:nvector),save::ind_grid,ind_cell
 
   real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v
@@ -58,11 +64,13 @@ subroutine init_flow_fine(ilevel)
   real(dp),allocatable,dimension(:,:,:)::init_array
   real(kind=4),allocatable,dimension(:,:)  ::init_plane
 
-  logical::error,ok_file1,ok_file2,ok_file3,ok_file
+  logical::error,ok_file1,ok_file2,ok_file3,ok_file,ok_velb
   character(LEN=80)::filename
   character(LEN=5)::nchar,ncharvar
 
-  ! Restart patch
+  integer,parameter::tag=1107
+
+  ! RESTART patch
   logical,save::init_restart_nml=.false.
   logical::nml_ok=.true.
   character(LEN=80)::infile
@@ -111,6 +119,9 @@ subroutine init_flow_fine(ilevel)
   else
      filename=TRIM(initfile(ilevel))//'/ic_deltab'
      INQUIRE(file=filename,exist=ok_file2)
+     ! check if ic_velbx exists, otherwise we fall back to ic_velcx/y/z
+     filename=TRIM(initfile(ilevel))//'/ic_velbx'
+     INQUIRE(file=filename,exist=ok_velb)
   endif
   ok_file = ok_file1 .or. ok_file2
   if(ok_file)then
@@ -173,9 +184,15 @@ subroutine init_flow_fine(ilevel)
               if(ivar==5)filename=TRIM(initfile(ilevel))//'/dir_tempb/ic_tempb.'//TRIM(nchar)
            else
               if(ivar==1)filename=TRIM(initfile(ilevel))//'/ic_deltab'
-              if(ivar==2)filename=TRIM(initfile(ilevel))//'/ic_velcx'
-              if(ivar==3)filename=TRIM(initfile(ilevel))//'/ic_velcy'
-              if(ivar==4)filename=TRIM(initfile(ilevel))//'/ic_velcz'
+              if(ok_velb) then
+                if(ivar==2)filename=TRIM(initfile(ilevel))//'/ic_velbx'
+                if(ivar==3)filename=TRIM(initfile(ilevel))//'/ic_velby'
+                if(ivar==4)filename=TRIM(initfile(ilevel))//'/ic_velbz'
+              else
+                if(ivar==2)filename=TRIM(initfile(ilevel))//'/ic_velcx'
+                if(ivar==3)filename=TRIM(initfile(ilevel))//'/ic_velcy'
+                if(ivar==4)filename=TRIM(initfile(ilevel))//'/ic_velcz'
+              endif
               if(ivar==5)filename=TRIM(initfile(ilevel))//'/ic_tempb'
            endif
         else
@@ -197,7 +214,18 @@ subroutine init_flow_fine(ilevel)
            ! Reading the existing file
            if(myid==1)write(*,*)'Reading file '//TRIM(filename)
            if(multiple)then
-              ilun=ncpu+myid+10
+              ilun=ncpu+myid+103
+
+              ! Wait for the token
+#ifndef WITHOUTMPI
+              if(IOGROUPSIZE>0) then
+                 if (mod(myid-1,IOGROUPSIZE)/=0) then
+                    call MPI_RECV(dummy_io,1,MPI_INTEGER,myid-1-1,tag,&
+                         & MPI_COMM_WORLD,MPI_STATUS_IGNORE,info2)
+                 end if
+              endif
+#endif
+
               open(ilun,file=filename,form='unformatted')
               rewind ilun
               read(ilun) ! skip first line
@@ -211,6 +239,16 @@ subroutine init_flow_fine(ilevel)
                  endif
               end do
               close(ilun)
+              ! Send the token
+#ifndef WITHOUTMPI
+              if(IOGROUPSIZE>0) then
+                 if(mod(myid,IOGROUPSIZE)/=0 .and.(myid.lt.ncpu))then
+                    dummy_io=1
+                    call MPI_SEND(dummy_io,1,MPI_INTEGER,myid-1+1,tag, &
+                         & MPI_COMM_WORLD,info2)
+                 end if
+              endif
+#endif
            else
               if(myid==1)then
                  open(10,file=filename,form='unformatted')
@@ -221,7 +259,7 @@ subroutine init_flow_fine(ilevel)
                  if(myid==1)then
                     read(10) ((init_plane(i1,i2),i1=1,n1(ilevel)),i2=1,n2(ilevel))
                  else
-                    init_plane=0.0
+                    init_plane=0
                  endif
                  buf_count=n1(ilevel)*n2(ilevel)
 #ifndef WITHOUTMPI
@@ -244,9 +282,9 @@ subroutine init_flow_fine(ilevel)
            if(ncache>0)then
               init_array=0d0
               ! Default value for metals
-              if(cosmo.and.ivar==imetal.and.metal)init_array=z_ave*0.02 ! from solar units
+              if(cosmo.and.ivar==imetal.and.metal)init_array=z_ave*0.02d0 ! from solar units
               ! Default value for ionization fraction
-              if(cosmo)xval=sqrt(omega_m)/(h0/100.*omega_b) ! From the book of Peebles p. 173
+              if(cosmo)xval=sqrt(omega_m)/(h0/100*omega_b) ! From the book of Peebles p. 173
               if(cosmo.and.ivar==ixion.and.aton)init_array=1.2d-5*xval
            endif
         endif
@@ -257,11 +295,11 @@ subroutine init_flow_fine(ilevel)
         if(cosmo)then
            ! Compute approximate average temperature in K
            if(.not. cooling)T2_start=1.356d-2/aexp**2
-           if(ivar==1)init_array=(1.0+dfact(ilevel)*init_array)*omega_b/omega_m
+           if(ivar==1)init_array=(1.0d0+dfact(ilevel)*init_array)*omega_b/omega_m
            if(ivar==2)init_array=dfact(ilevel)*vfact(1)*dx_loc/dxini(ilevel)*init_array/vfact(ilevel)
            if(ivar==3)init_array=dfact(ilevel)*vfact(1)*dx_loc/dxini(ilevel)*init_array/vfact(ilevel)
            if(ivar==4)init_array=dfact(ilevel)*vfact(1)*dx_loc/dxini(ilevel)*init_array/vfact(ilevel)
-           if(ivar==ndim+2)init_array=(1.0+init_array)*T2_start/scale_T2
+           if(ivar==ndim+2)init_array=(1.0d0+init_array)*T2_start/scale_T2
         endif
 
         ! Loop over cells
@@ -314,7 +352,7 @@ subroutine init_flow_fine(ilevel)
               end do
               ! Prevent negative density
               do i=1,ngrid
-                 rr=max(uold(ind_cell(i),1),0.1*omega_b/omega_m)
+                 rr=max(uold(ind_cell(i),1),0.1d0*omega_b/omega_m)
                  uold(ind_cell(i),1)=rr
               end do
               ! Compute pressure from temperature and density
@@ -336,8 +374,8 @@ subroutine init_flow_fine(ilevel)
         do i=1,ngrid
            ind_grid(i)=active(ilevel)%igrid(igrid+i-1)
         end do
-        vy=0.0
-        vz=0.0
+        vy=0
+        vz=0
         ! Loop over cells
         do ind=1,twotondim
            ! Gather cell indices
@@ -357,7 +395,7 @@ subroutine init_flow_fine(ilevel)
 #endif
               pp=uold(ind_cell(i),ndim+2)
               ek=0.5d0*(vx**2+vy**2+vz**2)
-              ei=pp/(gamma-1.0)
+              ei=pp/(gamma-1.0d0)
               vv(i)=ei+rr*ek
            end do
            ! Scatter to corresponding conservative variable
@@ -395,7 +433,7 @@ subroutine init_flow_fine(ilevel)
   ! Compute initial conditions from subroutine condinit
   !-------------------------------------------------------
   else
-    ! Restart patch - Reading the namelist datablock
+    ! RESTART patch - Reading the namelist datablock
     if (.not.init_restart_nml) then
       ! Get the name of the namelist
       call getarg(1,infile)
@@ -431,7 +469,15 @@ subroutine init_flow_fine(ilevel)
        do ivar=1,nvar
            call make_virtual_fine_dp(uold(1,ivar),ilevel)
        end do
-    endif
+     end if
+
+#if USE_TURB==1
+     ! Add initial turbulent velocity
+     if (turb .AND. turb_type == 3) then
+        call calc_turb_forcing(ilevel)
+        call synchro_hydro_fine(ilevel,1.0_dp,2)
+     end if
+#endif
 
   end if
 
@@ -451,8 +497,11 @@ subroutine region_condinit(x,q,dx,nn)
   real(dp),dimension(1:nvector,1:nvar)::q
   real(dp),dimension(1:nvector,1:ndim)::x
 
-  integer::i,ivar,k
+  integer::i,k
   real(dp)::vol,r,xn,yn,zn,en
+#if NVAR > NDIM + 2 || NENER > 0
+  integer::ivar
+#endif
 
   ! Set some (tiny) default values in case n_region=0
   q(1:nn,1)=smallr
@@ -489,7 +538,7 @@ subroutine region_condinit(x,q,dx,nn)
 #endif
            ! Compute cell "radius" relative to region center
            if(exp_region(k)<10)then
-              r=(xn**en+yn**en+zn**en)**(1.0/en)
+              r=(xn**en+yn**en+zn**en)**(1.0d0/en)
            else
               r=max(xn,yn,zn)
            end if
@@ -525,13 +574,13 @@ subroutine region_condinit(x,q,dx,nn)
         vol=dx**ndim
         ! Compute CIC weights relative to region center
         do i=1,nn
-           xn=1.0; yn=1.0; zn=1.0
-           xn=max(1.0-abs(x(i,1)-x_center(k))/dx,0.0_dp)
+           xn=1; yn=1; zn=1
+           xn=max(1d0-abs(x(i,1)-x_center(k))/dx, 0.0_dp)
 #if NDIM>1
-           yn=max(1.0-abs(x(i,2)-y_center(k))/dx,0.0_dp)
+           yn=max(1d0-abs(x(i,2)-y_center(k))/dx, 0.0_dp)
 #endif
 #if NDIM>2
-           zn=max(1.0-abs(x(i,3)-z_center(k))/dx,0.0_dp)
+           zn=max(1d0-abs(x(i,3)-z_center(k))/dx, 0.0_dp)
 #endif
            r=xn*yn*zn
            ! If cell lies within CIC cloud,
