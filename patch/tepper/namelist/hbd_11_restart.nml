@@ -6,7 +6,7 @@
 ! - MUST have negative nrestart value (i.e. -snapshot)
 ! - MUST set filetype='ramses'
 ! - MUST set &RESTAR_PARAMS block if hydro = .true.
-! - MAY need to *significantly* increase (up tp 20x) npartmax and ngridmax relative to the original NML restarting from, if hydro = .true.
+! - MAY need to *significantly* increase (up tp 20x) npartmax and ngridmax relative to the original NML restarting from, IF hydro = .true.
 !
 !
 &RUN_PARAMS
@@ -51,7 +51,7 @@ gravity_type=0	! requires to set units such that G=1
 boxlen=6.0d2
 levelmin=8
 levelmax=14
-ngridmax=200000 !1000000   ! was 200000
+ngridmax=200000
 npartmax=1000000
 nexpand=1
 /
