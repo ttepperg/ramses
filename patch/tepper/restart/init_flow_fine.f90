@@ -469,7 +469,7 @@ subroutine init_flow_fine(ilevel)
        do ivar=1,nvar
            call make_virtual_fine_dp(uold(1,ivar),ilevel)
        end do
-     end if
+    end if
 
 #if USE_TURB==1
      ! Add initial turbulent velocity
