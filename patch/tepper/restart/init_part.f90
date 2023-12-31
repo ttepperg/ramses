@@ -1784,7 +1784,7 @@ contains
 		  nvar_min = 0
 		  if(hydro) then
              nvar_min       = min(header_hydro%nvar-header_hydro%ndim-1,nvar-ndim-1)
-			 write(*,*) 'Found ', nvar_min, 'passive variables (including temp)'
+			 if(myid==1) write(*,*) 'Found ', nvar_min, 'passive hydro variables (including temperature)'
 		  endif
           restart_boxlen = header_amr%boxlen
           if(cosmo) then
