@@ -750,9 +750,6 @@ subroutine condinit_loc(ilevel)
   use amr_parameters
   use hydro_parameters
   implicit none
-#ifndef WITHOUTMPI
-  include 'mpif.h'
-#endif
 
   integer::ilevel
   integer::igrid,jgrid,ipart,jpart,next_part
