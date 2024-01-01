@@ -24,7 +24,7 @@ SOLVER = hydro
 # only the first found is considered! Therefore, ../patch/init/dice is
 # added last to honour my patched versions of files in there.
 # Also, directories are NOT looked into recursively!
-PATCH = ../patch/tepper/restart:../patch/tepper/amr:../patch/tepper/pm:../patch/tepper/poisson
+PATCH = ../patch/tepper/restart:../patch/tepper/amr:../patch/tepper/hydro:../patch/tepper/pm:../patch/tepper/poisson
 # Use RT? 1=Yes, 0=No
 RT = 0
 # Use turbulence? 1=Yes, 0=No (requires fftw3)
