@@ -1860,7 +1860,7 @@ contains
     endif
 
 	if(.not.hydro)then
-		if(myid==1)write(*,*)' WARNING: hydro = .false.'
+		if(myid==1) write(*,*) 'WARNING: hydro = .false.'
 	endif
 
     do while(.not.eocpu)
