@@ -1714,6 +1714,7 @@ contains
   subroutine load_ramses
     use restart_commons
     use iso_fortran_env, only: int8 ! <- VERY important
+    use constants, only: M_sun
 	integer::nx_loc
 	real(dp)::scale,dx_loc
 	real(dp),dimension(1:3)::skip_loc
@@ -1833,8 +1834,14 @@ contains
 
 
     ! Initialisation
-!    restart_init = .true. ! -> perhaps not needed
-    dice_init = .true.
+
+    !restart_init = .true. ! -> not used
+    dice_init = .true. ! <- VERY important
+
+    ! Conversion factor from user units to cgs units
+    call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
+    scale_m = scale_d*scale_l**3
+
     eocpu        = .false.
     error        = .false.
     icpu         = 1
@@ -2799,9 +2806,9 @@ contains
        write(*,*) '----> ',nhalo_tot_restart,' halo particles'
        write(*,*) '----> ',nstar_tot_restart,' star particles'
        if(hydro) write(*,*) '----> ',lpart_restart,' leaf cells'
-       write(*,'(A,F16.5,A)') '----> m_dm    = ',mhalo_tot_restart,' [dm]'
-       write(*,'(A,F16.5,A)') '----> m_stars =',mstar_tot_restart,' [stars]'
-       if(hydro) write(*,'(A,F16.5,A)') '----> m_gas   = ',mgas_tot_restart,' [gas]'
+       write(*,'(A,1pe10.2)') '----> m_dm [Msun]    = ', mhalo_tot_restart*(scale_m/M_sun)
+       write(*,'(A,1pe12.4)') '----> m_stars [Msun] = ', mstar_tot_restart*(scale_m/M_sun)
+       if(hydro) write(*,'(A,1pe12.4)') '----> m_gas [Msun]   = ', mgas_tot_restart*(scale_m/M_sun)
        write(*,'(A50)')"__________________________________________________"
     endif
 
