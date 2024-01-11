@@ -1854,9 +1854,9 @@ contains
     nstar_tot_restart    = 0
 
     if(myid==1) then
-       write(*,'(A50)')"__________________________________________________"
-       write(*,*)" RAMSES restart"
-       write(*,'(A50)')"__________________________________________________"
+       write(*,'(A50)') "__________________________________________________"
+       write(*,*) "RAMSES restart"
+       write(*,'(A50)') "__________________________________________________"
     endif
 
 	if(.not.hydro)then
@@ -1874,7 +1874,7 @@ contains
        if(myid==1)then
 
           call title(abs(nrestart),nchar)
-          if(icpu==1) write(*,*) " Loading -> "//TRIM(output_dir)//'output_'//TRIM(nchar)
+          if(icpu==1) write(*,*) "Loading -> "//TRIM(output_dir)//'output_'//TRIM(nchar)
           fileloc=TRIM(output_dir)//'output_'//TRIM(nchar)//'/part_'//TRIM(nchar)//'.out'
           call title(icpu,nchar)
           fileloc=TRIM(fileloc)//TRIM(nchar)
