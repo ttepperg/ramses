@@ -2806,7 +2806,7 @@ contains
        write(*,*) '----> ',nhalo_tot_restart,' halo particles'
        write(*,*) '----> ',nstar_tot_restart,' star particles'
        if(hydro) write(*,*) '----> ',lpart_restart,' leaf cells'
-       write(*,'(A,1pe10.2)') '----> m_dm [Msun]    = ', mhalo_tot_restart*(scale_m/M_sun)
+       write(*,'(A,1pe12.4)') '----> m_dm [Msun]    = ', mhalo_tot_restart*(scale_m/M_sun)
        write(*,'(A,1pe12.4)') '----> m_stars [Msun] = ', mstar_tot_restart*(scale_m/M_sun)
        if(hydro) write(*,'(A,1pe12.4)') '----> m_gas [Msun]   = ', mgas_tot_restart*(scale_m/M_sun)
        write(*,'(A50)')"__________________________________________________"
