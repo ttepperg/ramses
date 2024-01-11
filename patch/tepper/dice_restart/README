@@ -1,6 +1,6 @@
 Author: Dr. Thorsten Tepper Garcia
 
-Created: 08 FEB 2021
+Created: 01 JAN 2024
 
 About:
 
@@ -10,7 +10,13 @@ This directory contains a patch intended to run DICE simulations
 with the capability to restart and include additional DICE initial conditions
 at restart.
 
-The core of the patch is a new snippet in init_part.f90, case('dice_restart'), which consists of a merge between the case('dice') snippet in the same file and the case('ramses') snippet in patch/init/restart, available here as two separate files: load_dice_restart and load_ramses, to be merged.
+The base of the patch is the DICE patch (in my case composed of the original patch in patch/init/dice and my patched version in patch/tepper/dice).
+
+The first patch modification consists of an addition of a modified version of the case('ramses') snippet in taken from patch/init/restart/init_part.f90, available via the subroutine load_ramses.
+
+This patch requires additions to the already dice-patched read_param.f90, and to include a patched  version of adaptive_loop.f90, init_time.f90 due to the nature if nrestart < 0.
+
+The next, yet to to, patch modification is the addition of a code snippet in init_part.f90, identified by case('dice_restart'), which consists of a merge between the case('dice') snippet in the same file and the case('ramses') snippet in patch/init/restart, available here as via the yet to do subroutine load_dice_restart
 
 IMPORTANT: See /Users/tepper/codes/ramses_020217/ramses/trunk/ramses/patch/mySIMS/Nbody+HD/dice/myics/dice_restart/src/init_part.f90, DICE_RESTART snippet
 for a guide on how to achieve this.
@@ -20,7 +26,8 @@ The required patches should all correctly included via the appropriate make file
 Specific modifications.
 
 init_part.f90:
-- added case('dice_restart') and corresponding routine load_dice_restart
+- added case('ramses') and corresponding routine load_ramses
 
-init_refine.f90: See differences between dice and restart versions of the file.
-In particular, may have to include module restart_commons, although the latter appears to be a subset of dice_commons.
+read_param.f90:
+- added restart_commons
+- added restart_params

@@ -86,6 +86,9 @@ filetype='ramses'
 initfile(1)='/import/photon2/tepper/hbd_11/ic/'
 /
 
+&RESTART_PARAMS
+!restart_vars=6   	!-> this is mandatory and needs to corresponds to the actual indices of passive scalars
+/
 
 !MAKE SURE TO USE THE CORRECT UNITS FOR length, velocity, and mass
 !For more information see:
