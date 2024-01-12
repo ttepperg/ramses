@@ -2095,15 +2095,18 @@ contains
                    endif
                 endif
 
-                ! Updating total masses
-                if(tt_restart(jpart)==0d0) then
+                ! Updating total masses (elevant for output info only)
+                !if(tt_restart(jpart)==0d0) then ! <- prone to fail
+                if(fam(jpart)==FAM_DM) then
                    mhalo_tot_restart = mhalo_tot_restart+mm(jpart)
                    nhalo_tot_restart = nhalo_tot_restart+1
                    nhalo_loc = nhalo_loc+1
-                else
+                else if(fam(jpart)==FAM_STAR) then
                    mstar_tot_restart = mstar_tot_restart+mm(jpart)
                    nstar_tot_restart = nstar_tot_restart+1
                    nstar_loc = nstar_loc+1
+				else
+				   ! TO DO: add more families here
                 endif
                 ! Check the End Of Block
                 if(kpart_restart.ge.header_part%npart) then
@@ -2112,6 +2115,7 @@ contains
                 endif
              enddo ! i=1,nvector
           endif ! if(myid==1)
+
 #ifndef WITHOUTMPI
           call MPI_BCAST(eob_restart,1        ,MPI_LOGICAL         ,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(xx,nvector*3 ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
@@ -2137,6 +2141,7 @@ contains
           call MPI_BARRIER(MPI_COMM_WORLD,info)
           call cmp_cpumap(xx,cc,jpart)
 #endif
+
           do i=1,jpart
 #ifndef WITHOUTMPI
               ! Check the CPU map
