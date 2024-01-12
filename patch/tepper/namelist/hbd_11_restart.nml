@@ -5,7 +5,7 @@
 ! IMPORTANT:
 ! - MUST have negative nrestart value (i.e. -snapshot)
 ! - MUST set filetype='ramses'
-! - MUST set &RESTAR_PARAMS block if hydro = .true.
+! - MUST set &RESTART_PARAMS block if hydro = .true.
 ! - MAY need to *significantly* increase (up tp 20x) npartmax and ngridmax relative to the original NML restarting from, IF hydro = .true.
 !
 !
