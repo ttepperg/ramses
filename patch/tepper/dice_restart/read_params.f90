@@ -63,9 +63,9 @@ module restart_commons
   use hydro_commons
 
   ! misc
-  !real(dp)::IG_rho         = 1.0D-5 -> already defined in dice_commons
-  !real(dp)::IG_T2          = 1.0D7 -> already defined in dice_commons
-  !real(dp)::IG_metal       = 0.01 -> already defined in dice_commons
+  real(dp)::IG_rho_restart         = 1.0D-5
+  real(dp)::IG_T2_restart          = 1.0D7
+  real(dp)::IG_metal_restart       = 0.01
   real(dp),dimension(1:3)::ic_center_restart = (/ 0.0, 0.0, 0.0 /)
   integer,dimension(1:100)::restart_vars=0
   integer::nvar_min
@@ -171,7 +171,7 @@ subroutine read_params
        & ,ic_mag_scale_R,ic_mag_scale_H,ic_mag_scale_B,cosmo_add_gas_index,ic_skip_type &
        & ,ic_mask_ivar,ic_mask_min,ic_mask_max,ic_mask_ptype
   ! RESTART patch
-  namelist/restart_params/IG_rho,IG_T2,IG_metal,ic_center_restart,restart_vars
+  namelist/restart_params/IG_rho_restart,IG_T2_restart,IG_metal_restart,ic_center_restart,restart_vars
 
 
   ! MPI initialization
