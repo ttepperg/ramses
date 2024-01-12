@@ -1737,7 +1737,7 @@ contains
 	real(kind=8),dimension(1:nvector)::tt_restart,zz_restart
 	real(kind=8),dimension(1:nvector)::myphi
 
-	! The following declaration are EXTREMELY IMPORTANT, as their kinds (e.g. i8b) MUST exactly match their output formar (see pm/output_part.f90)
+	! The following declaration are EXTREMELY IMPORTANT, as their kinds (e.g. i8b) MUST exactly match their output format (see pm/output_part.f90)
 	integer(i8b), dimension(1:nvector) :: ii8 ! identity
 	integer(i8b):: dummy_int_i8b ! identity
 	integer, dimension(1:nvector) :: lev
