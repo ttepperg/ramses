@@ -2782,7 +2782,8 @@ contains
 
 	   endif !if(hydro)
 
-       ! HERE was a sink-related block (outdated)
+       ! HERE was an (outdated) sink-related block -> TO BE ADDED
+       ! See pm/init_sink.f90 for a guide
 
        if(myid==1) then
           close(ilun1)
