@@ -1980,9 +1980,6 @@ contains
           level_blck_restart = mypos
 		  mypos = mypos+size_blck+sizeof(dummy_int_restart)
 
-! NOT YET WORKING BELOW THE LINE
-!--------------------------------
-
           ! Family
           read(ilun1,pos=mypos) size_blck
           mypos = mypos+sizeof(dummy_int_restart)
@@ -2064,12 +2061,15 @@ contains
                 read(ilun1,pos=id_blck_restart+sizeof(dummy_int_i8b)*(kpart_restart-1)) ii8(jpart)
 
 				! Read level
+				! VERY important to use the right integer kind
                 read(ilun1,pos=level_blck_restart+sizeof(dummy_int_restart)*(kpart_restart-1)) lev(jpart)
 
 				! Read family
+				! VERY important to use the right integer kind
                 read(ilun1,pos=family_blck_restart+sizeof(dummy_int_int8)*(kpart_restart-1)) fam(jpart)
 
 				! Read tag
+				! VERY important to use the right integer kind
                 read(ilun1,pos=tag_blck_restart+sizeof(dummy_int_int8)*(kpart_restart-1)) tag(jpart)
 
 
@@ -2161,8 +2161,8 @@ contains
                     up(ipart)      = uu(i) ! <- IRRELEVANT
                     levelp(ipart)  = levelmin ! why don't use lev(i)?
 
-                    typep(ipart)%family = FAM_DM
-                    typep(ipart)%tag = 0
+                    typep(ipart)%family = fam(i) !FAM_DM
+                    typep(ipart)%tag = tag(i) !0
 
                     if(star.or.sink) then
                        tp(ipart)    = tt_restart(i)
