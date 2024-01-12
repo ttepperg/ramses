@@ -1,23 +1,29 @@
 Author: Dr. Thorsten Tepper Garcia
 
-Created: 12 SEP 2023
+Created: 22 DEC 2024
 
 About:
 
-For now just a copy of the patch in patch/init
+An attempt to port the outdated (pre 2024) ramses/patch/init/restart patch into the most recent one.
 
-To be modified to work with my Ramses fork.
+Despite my efforts, the patch does not work yet as expected.
+In particular, when restarting a N-body/hydro simulations, the code runs out of memory, requiring to increase ngridmax to values beyond what is reasonable.
+Pure N-body simulations work just fine.
 
-22 DEC 2023:
-	- Start updating patch by copying files from the respective locations:
-	rsync -avzP ../../../amr/adaptive_loop.f90  .
-	rsync -avzP ../../../amr/init_refine.f90 .
-	rsync -avzP ../../../amr/init_time.f90 .
-	rsync -avzP ../../../hydro/init_flow_fine.f90 .
-	rsync -avzP ../../../pm/add_list.f90  .
-	rsync -avzP ../../../pm/init_part.f90 .
-	rsync -avzP ../../../pm/particle_tree.f90 .
-	rsync -avzP ../../../pm/rho_fine.f90 .
+I'll try to collaborare with some Ramses experts to identify the issue.
+
+In the meantime, I've created a similar patch of my own that basically borrows (and modifies) the load_ramses subroutine from here with the dice patch (and my patched version); see patch/tepper/dice_restart. This patch works just fine.
+
+
+These are the required files and their respective locations:
+rsync -avzP ../../../amr/adaptive_loop.f90  .
+rsync -avzP ../../../amr/init_refine.f90 .
+rsync -avzP ../../../amr/init_time.f90 .
+rsync -avzP ../../../hydro/init_flow_fine.f90 .
+rsync -avzP ../../../pm/add_list.f90  .
+rsync -avzP ../../../pm/init_part.f90 .
+rsync -avzP ../../../pm/particle_tree.f90 .
+rsync -avzP ../../../pm/rho_fine.f90 .
 
 IMPORTANT:
 
