@@ -16,12 +16,12 @@ The first patch modification consists of an addition of a modified version of th
 
 This patch requires additions to the already dice-patched read_param.f90, and to include a patched  version of adaptive_loop.f90, init_time.f90 due to the nature if nrestart < 0.
 
-The next, yet to to, patch modification is the addition of a code snippet in init_part.f90, identified by case('dice_restart'), which consists of a merge between the case('dice') snippet in the same file and the case('ramses') snippet in patch/init/restart, available here as via the yet to do subroutine load_dice_restart
+The next, yet to do, patch modification is the addition of a code snippet in init_part.f90, identified by case('dice_restart'), which consists of a merge between the case('dice') snippet in the same file and the case('ramses') snippet in patch/init/restart, available here as via the yet to do subroutine load_dice_restart
 
 IMPORTANT: See /Users/tepper/codes/ramses_020217/ramses/trunk/ramses/patch/mySIMS/Nbody+HD/dice/myics/dice_restart/src/init_part.f90, DICE_RESTART snippet
 for a guide on how to achieve this.
 
-The required patches should all correctly included via the appropriate make file (to be created). Note that, with luck, only init_part.f90 needs to be modified, and the patch will work by including my patches, my dice patch included. NOTE that this requires actually getting the dice_restart patch to work. Alternateively, I'll try to include the Ramses restart patch separately, which however requires modifications to several files (see patch/init/restart)
+The required patches should all correctly included via the appropriate make file (to be created). Note that, with luck, only init_part.f90 needs to be modified, and the patch will work by including my patches, my dice patch included. NOTE that this requires actually getting the dice_restart patch to work. Alternatively, I'll try to include the Ramses restart patch separately, which however requires modifications to several files (see patch/init/restart)
 
 Specific modifications.
 
