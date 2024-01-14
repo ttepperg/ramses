@@ -1734,8 +1734,8 @@ contains
 	integer::nhalo_tot_restart,nstar_tot_restart
 	integer::nstar_loc,nhalo_loc,ngas_loc,nsink_loc
 	real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v
-	real(kind=8),dimension(1:nvector)::tt_restart,zz_restart
-	real(kind=8),dimension(1:nvector)::myphi
+	real(dp),dimension(1:nvector)::tt_restart,zz_restart
+	real(dp),dimension(1:nvector)::myphi
 
 	! The following declaration are EXTREMELY IMPORTANT, as their kinds (e.g. i8b) MUST exactly match their output format (see pm/output_part.f90)
 	integer(i8b), dimension(1:nvector) :: ii8 ! identity
@@ -2082,9 +2082,6 @@ contains
                 read(ilun1,pos=phi_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) myphi(jpart)
 #endif
 
-!--------------------------------
-! NOT YET TESTED ABOVE THE LINE
-
 				! Read birth epoch
                 if(star.or.sink) then
                    read(ilun1,pos=age_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) tt_restart(jpart)
@@ -2094,6 +2091,9 @@ contains
                       read(ilun1,pos=metal_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) zz_restart(jpart)
                    endif
                 endif
+
+!--------------------------------
+! NOT YET TESTED ABOVE THE LINE
 
                 ! Updating total masses (elevant for output info only)
                 !if(tt_restart(jpart)==0d0) then ! <- prone to fail
