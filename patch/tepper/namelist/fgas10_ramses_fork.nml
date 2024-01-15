@@ -10,7 +10,6 @@
 !
 ! IMPORTANT:
 ! - In this Ramses version output_dir does not exist and so outputs are dumped into the bin directory!
-! - MOVIE_PARAMS block removed because I have not included the necessary code snippets, which are particular to O.Agertz setup and not a Ramses standard
 
 &RUN_PARAMS
 verbose=.false.
@@ -103,9 +102,9 @@ boxlen=600.0
 
 &INIT_PARAMS
 filetype='ascii'
-initfile(1)='/home/ttep1144/ramses_agertz/fgas10/IC/'
+!initfile(1)='/home/ttep1144/ramses_agertz/fgas10/IC/'
 !initfile(1)='/suphys/tepper/ramses_agertz/fgas10/IC/'
-!initfile(1)='/import/photon2/tepper/fgas10_ramses_fork/ic/'
+initfile(1)='/import/photon2/tepper/fgas10_ramses_fork/ic/'
 d_region=1.0d-6
 p_region=1.0d6
 /
@@ -160,4 +159,24 @@ gal_axis2= 0.0D0 , 0.0D0 , 1.0D0
 Vgal1= 0.0D0 , 0.0D0, 0.0D0
 Vgal2= 0.0D0 , 0.0D0, 0.0D0
 Zgas= 1.0
+/
+
+
+&MOVIE_PARAMS
+imovout=5000
+imov=1
+tendmov=1.0
+movie=.true.
+nw_frame=512
+nh_frame=512
+levelmax_frame=15
+ivar_frame=1
+xcentre_frame=300.0,0.0,0.0,0.0,300.0,0.0,0.0,0.0
+ycentre_frame=300.0,0.0,0.0,0.0,300.0,0.0,0.0,0.0
+zcentre_frame=300.0,0.0,0.0,0.0,300.0,0.0,0.0,0.0
+deltax_frame=24.0,0.0,24.0,0.0
+deltay_frame=24.0,0.0,24.0,0.0
+deltaz_frame=24.0,0.0,24.0,0.0
+movie_vars_txt='dens','temp','var6','var7','stars'
+proj_axis='zx'
 /
