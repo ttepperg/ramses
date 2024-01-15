@@ -270,6 +270,10 @@ module amr_parameters
   real(kind=8),dimension(1:4*NMOV)::xcentre_frame=0d0
   real(kind=8),dimension(1:4*NMOV)::ycentre_frame=0d0
   real(kind=8),dimension(1:4*NMOV)::zcentre_frame=0d0
+  logical :: center_on_particles = .false. ! If true, center on a set of particles
+  character(len=1024)::center_on_particles_file=""
+  logical :: do_particle_snapshot = .false.   ! If true, dump particle data at each movie frame
+  character(len=1024)::particle_snapshot_file=""
   real(kind=8),dimension(1:2*NMOV)::deltax_frame=0d0
   real(kind=8),dimension(1:2*NMOV)::deltay_frame=0d0
   real(kind=8),dimension(1:2*NMOV)::deltaz_frame=0d0
@@ -304,6 +308,7 @@ module amr_parameters
   integer::i_mv_fp=-1,    i_mv_pmag=-1
   integer,dimension(1:50)::movie_vars=-1
   integer,dimension(1:50)::movie_var_number=1
+  integer(i8b), dimension(:), allocatable :: movie_particle_ids
 
 
                                                  ! Refinement parameters for each level
