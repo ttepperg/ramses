@@ -57,7 +57,8 @@ subroutine read_params
        & ,static_dm,static_gas,static_stars,convert_birth_times,use_proper_time,remap_pscalar &
        & ,unbind,make_mergertree,stellar
   namelist/output_params/noutput,foutput,aout,tout &
-       & ,tend,delta_tout,aend,delta_aout,gadget_output,walltime_hrs,minutes_dump
+       & ,tend,delta_tout,aend,delta_aout,gadget_output,walltime_hrs,minutes_dump &
+       & ,output_dir
   namelist/amr_params/levelmin,levelmax,ngridmax,ngridtot &
        & ,npartmax,nparttot,nexpand,boxlen,nlevel_collapse
   namelist/poisson_params/epsilon,gravity_type,gravity_params &
@@ -235,7 +236,7 @@ subroutine read_params
     write(*,*) "       - emission_part(1:nlevelmax)    : ", dble(sizeof(emission_part))/1.0e6," MB"
     write(*,*) "       - reception(1:ncpu,1:nlevelmax) : ", dble(sizeof(reception))*ncpu/1.0e8," MB"
     if (poisson) then
-        allocate(reception(1:100, 1:levelmax-1)) ! active_mg 
+        allocate(reception(1:100, 1:levelmax-1)) ! active_mg
         allocate(emission(1:levelmax-1)) ! emission_mg
         mem_used_new_buff_mg = dble(sizeof(emission)) + dble(sizeof(reception))*ncpu/100.0
         deallocate(reception)
@@ -261,12 +262,12 @@ subroutine read_params
 
   if (myid==1 .and. nrestart .gt. 0) then
      call title(nrestart,nchar)
-     info_file='output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
+     info_file=TRIM(output_dir)//'output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
      inquire(file=info_file, exist=info_ok)
      do while(.not. info_ok .and. nrestart .gt. 1)
         nrestart = nrestart - 1
         call title(nrestart,nchar)
-        info_file='output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
+        info_file=TRIM(output_dir)//'output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
         inquire(file=info_file, exist=info_ok)
      enddo
   endif
@@ -443,7 +444,7 @@ subroutine read_params
      if (tracer_ivar_refine == -1) tracer_ivar_refine = ivar_refine
      if (tracer_var_cut_refine == 0) tracer_var_cut_refine = var_cut_refine
   end if
-  
+
   !----------------------------------------
   ! Diagnostics for star formation events
   !----------------------------------------
@@ -475,7 +476,7 @@ subroutine read_params
      ! Create directory for log files.
      logdir = 'SN_log/'
      call create_output_dirs(logdir)
-     
+
      ! Create and open log files.
      write(filename,'("SN_", I5.5, ".dat")') myid
      filename=trim(logdir)//trim(filename)
@@ -487,9 +488,9 @@ subroutine read_params
      else
         open(unit=SNunit_out,file=filename,status="new",action="write")
         write(SNunit_out,*)"# 'nstep'   'type'   'index'   'ilevel'   'numSN'   't [Myr]'   'aexp'   'age [Myr]'   'momST'   'rho [H/cc]'   'mstar [Msun]'   'Zgas'   'mp [Msun]'   'x [kpc]'   'y [kpc]'   'z [kpc]'"
-     endif  
+     endif
   endif
-  
+
   !-----------------------------------
   ! Rearrange level dependent arrays
   !-----------------------------------
