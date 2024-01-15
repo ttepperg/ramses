@@ -451,7 +451,7 @@ subroutine read_params
   if(SFdiagnostics)then
      if(myid==1)write(*,*) "SF diagnostics active"
      ! Create directory for log files.
-     logdir = 'SF_log/'
+     logdir = TRIM(output_dir)//'SF_log/'
      call create_output_dirs(logdir)
 
      ! Create and open log files.
@@ -474,7 +474,7 @@ subroutine read_params
   if(SNdiagnostics)then
      if(myid==1)write(*,*) "SN diagnostics active"
      ! Create directory for log files.
-     logdir = 'SN_log/'
+     logdir = TRIM(output_dir)//'SN_log/'
      call create_output_dirs(logdir)
 
      ! Create and open log files.
