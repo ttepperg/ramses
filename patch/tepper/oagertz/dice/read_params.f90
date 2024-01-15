@@ -76,11 +76,14 @@ subroutine read_params
   integer(kind=8)::nparttot=0
   real(kind=8)::tend=0
   real(kind=8)::aend=0
-  logical::nml_ok, info_ok
+  logical::nml_ok, info_ok, log_exist
   integer,parameter::tag=1134
 #ifndef WITHOUTMPI
   integer::dummy_io,ierr,info2
 #endif
+  character(LEN=128)::logdir,filename
+
+
 #if NDIM==1
   integer, parameter :: max_level_wout_quadhilbert = 61
 #elif NDIM==2
@@ -127,10 +130,11 @@ subroutine read_params
        & ,imovout,imov,tstartmov,astartmov,tendmov,aendmov,proj_axis,movie_vars_txt &
        & ,theta_camera,phi_camera,dtheta_camera,dphi_camera,focal_camera,dist_camera,ddist_camera &
        & ,perspective_camera,smooth_frame,shader_frame,tstart_theta_camera,tstart_phi_camera &
-       & ,tend_theta_camera,tend_phi_camera,method_frame,varmin_frame,varmax_frame
+       & ,tend_theta_camera,tend_phi_camera,method_frame,varmin_frame,varmax_frame &
+       & ,center_on_particles,center_on_particles_file,do_particle_snapshot,particle_snapshot_file
   namelist/tracer_params/MC_tracer,tracer_feed,tracer_feed_fmt &
        & ,tracer_mass,tracer_first_balance_part_per_cell &
-       & ,tracer_first_balance_levelmin
+       & ,tracer_first_balance_levelmin, tracer_ivar_refine, tracer_var_cut_refine
   namelist/dice_params/ ic_file,ic_nfile,ic_format,IG_rho,IG_T2,IG_metal &
        & ,ic_head_name,ic_pos_name,ic_vel_name,ic_id_name,ic_mass_name &
        & ,ic_u_name,ic_metal_name,ic_age_name &
@@ -305,7 +309,7 @@ subroutine read_params
     write(*,*) "       - emission_part(1:nlevelmax)    : ", dble(sizeof(emission_part))/1.0e6," MB"
     write(*,*) "       - reception(1:ncpu,1:nlevelmax) : ", dble(sizeof(reception))*ncpu/1.0e8," MB"
     if (poisson) then
-        allocate(reception(1:100, 1:levelmax-1)) ! active_mg 
+        allocate(reception(1:100, 1:levelmax-1)) ! active_mg
         allocate(emission(1:levelmax-1)) ! emission_mg
         mem_used_new_buff_mg = dble(sizeof(emission)) + dble(sizeof(reception))*ncpu/100.0
         deallocate(reception)
@@ -509,6 +513,57 @@ subroutine read_params
      call clean_stop
   end if
 
+  if(MC_tracer) then
+     if (tracer_ivar_refine == -1) tracer_ivar_refine = ivar_refine
+     if (tracer_var_cut_refine == 0) tracer_var_cut_refine = var_cut_refine
+  end if
+
+  !----------------------------------------
+  ! Diagnostics for star formation events
+  !----------------------------------------
+  if(SFdiagnostics)then
+     if(myid==1)write(*,*) "SF diagnostics active"
+     ! Create directory for log files.
+     logdir = TRIM(output_dir)//'SF_log/'
+     call create_output_dirs(logdir)
+
+     ! Create and open log files.
+     write(filename,'("SF_", I5.5, ".dat")') myid
+     filename=trim(logdir)//trim(filename)
+     SFunit_out=5000
+     if(myid==1) write(*,*) "SF log keeps one file per CPU with unit 5000."
+     inquire(file=filename, exist=log_exist)
+     if(log_exist)then
+        open(unit=SFunit_out,file=filename,status="old",position="append",action="write")
+     else
+        open(unit=SFunit_out,file=filename,status="new",action="write")
+        write(SFunit_out,*)"# 'nstep'   'index'   'ilevel'  'rho [H/cc]'   'x [kpc]'   'y [kpc]'   'z [kpc]'   'mstar [Msun]'   'tform [s]'    'aexp'"
+     endif
+  endif
+
+  !-----------------
+  ! Supernova diagnostics
+  !-----------------
+  if(SNdiagnostics)then
+     if(myid==1)write(*,*) "SN diagnostics active"
+     ! Create directory for log files.
+     logdir = TRIM(output_dir)//'SN_log/'
+     call create_output_dirs(logdir)
+
+     ! Create and open log files.
+     write(filename,'("SN_", I5.5, ".dat")') myid
+     filename=trim(logdir)//trim(filename)
+     SNunit_out=5001
+     if(myid==1) write(*,*) "SN log keeps one file per CPU with unit 5001."
+     inquire(file=filename, exist=log_exist)
+     if(log_exist)then
+        open(unit=SNunit_out,file=filename,status="old",position="append",action="write")
+     else
+        open(unit=SNunit_out,file=filename,status="new",action="write")
+        write(SNunit_out,*)"# 'nstep'   'type'   'index'   'ilevel'   'numSN'   't [Myr]'   'aexp'   'age [Myr]'   'momST'   'rho [H/cc]'   'mstar [Msun]'   'Zgas'   'mp [Msun]'   'x [kpc]'   'y [kpc]'   'z [kpc]'"
+     endif
+  endif
+
   !-----------------------------------
   ! Rearrange level dependent arrays
   !-----------------------------------
@@ -548,6 +603,18 @@ subroutine read_params
      if(myid==1)write(*,*)'Too many errors in the namelist'
      if(myid==1)write(*,*)'Aborting...'
      call clean_stop
+  end if
+
+  if (center_on_particles .and. trim(center_on_particles_file) == "") then
+     if(myid==1)write(*,*)'You need to specify a file containing particle ids (`center_on_particles_file`) when centering a movie on a set of particles'
+     call clean_stop
+  end if
+
+  if (center_on_particles .and. (any(xcentre_frame /= 0) .or. any(ycentre_frame /= 0) .or. any(zcentre_frame /= 0))) then
+     if(myid==1)write(*,*)'WARNING: the parameters {xyz}centre_frame will be ignored as center_on_particles is set to .true.'
+     xcentre_frame = 0
+     ycentre_frame = 0
+     zcentre_frame = 0
   end if
 
 #ifndef WITHOUTMPI
