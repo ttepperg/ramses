@@ -14,7 +14,13 @@ The base of the patch is the DICE patch (in my case composed of the original pat
 
 The first patch modification consists of an addition of a modified version of the case('ramses') snippet in taken from patch/init/restart/init_part.f90, available via the subroutine load_ramses.
 
-This patch requires additions to the already dice-patched read_param.f90, and to include a patched  version of adaptive_loop.f90, init_time.f90 due to the nature if nrestart < 0.
+This patch REQUIRES additions to the already dice-patched read_param.f90,
+and TO INCLUDE A PATCHED VERSION OF:
+
+	adaptive_loop.f90
+	init_time.f90
+
+due to the nature if nrestart < 0.
 
 The next, yet to do, patch modification is the addition of a code snippet in init_part.f90, identified by case('dice_restart'), which consists of a merge between the case('dice') snippet in the same file and the case('ramses') snippet in patch/init/restart, available here as via the yet to do subroutine load_dice_restart
 
