@@ -2,9 +2,14 @@ Author: Dr. Thorsten Tepper Garcia
 
 Created: 01 JAN 2024
 
-About:
+	Last modified:
 
-¡¡¡¡ IN DEVELOPMENT !!!!
+	16 JAN 2024:
+	I've introduced a new RESTART_PARAMS specific parameter, nrestart2, to remove the complication introduced by the complication of having nrestart < 0 as the traditional restart patch requires, in particular the need for patched versions of adaptive_loop.f90 and init_time.f90.
+	With this change, the DICE_RESTART is virtually identical to DICE with except of the loading routine in init_part.f90 and some additions to read_params.f90.
+
+
+About:
 
 This directory contains a patch intended to run DICE simulations
 with the capability to restart and include additional DICE initial conditions
@@ -14,20 +19,11 @@ The base of the patch is the DICE patch (in my case composed of the original pat
 
 The first patch modification consists of an addition of a modified version of the case('ramses') snippet in taken from patch/init/restart/init_part.f90, available via the subroutine load_ramses.
 
-This patch REQUIRES additions to the already dice-patched read_param.f90,
-and TO INCLUDE A PATCHED VERSION OF:
-
-	adaptive_loop.f90
-	init_time.f90
-
-due to the nature if nrestart < 0.
-
 The next, yet to do, patch modification is the addition of a code snippet in init_part.f90, identified by case('dice_restart'), which consists of a merge between the case('dice') snippet in the same file and the case('ramses') snippet in patch/init/restart, available here as via the yet to do subroutine load_dice_restart
 
-IMPORTANT: See /Users/tepper/codes/ramses_020217/ramses/trunk/ramses/patch/mySIMS/Nbody+HD/dice/myics/dice_restart/src/init_part.f90, DICE_RESTART snippet
-for a guide on how to achieve this.
+	IMPORTANT: See /Users/tepper/codes/ramses_020217/ramses/trunk/ramses/patch/mySIMS/Nbody+HD/dice/myics/dice_restart/src/init_part.f90, DICE_RESTART snippet
+	for a guide on how to achieve this.
 
-The required patches should all correctly included via the appropriate make file (to be created). Note that, with luck, only init_part.f90 needs to be modified, and the patch will work by including my patches, my dice patch included. NOTE that this requires actually getting the dice_restart patch to work. Alternatively, I'll try to include the Ramses restart patch separately, which however requires modifications to several files (see patch/init/restart)
 
 Specific modifications.
 
