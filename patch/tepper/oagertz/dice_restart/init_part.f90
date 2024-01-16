@@ -2178,11 +2178,8 @@ contains
                     mp(ipart)      = mm(i)
                     up(ipart)      = uu(i) ! <- IRRELEVANT
                     levelp(ipart)  = levelmin ! why don't use lev(i)?
-
                     typep(ipart)%family = fam(i) !FAM_DM
                     typep(ipart)%tag    = tag(i) !0
-
-					! IN DEVELOPMENT
 					ptcl_phi(ipart) = myphi(i)
 
                     if(star.or.sink) then
