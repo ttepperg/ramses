@@ -1,0 +1,20 @@
+Author: Dr. Thorsten Tepper Garcia
+
+Created: 16 JAN 2024
+
+	Last modified:
+
+Notes:
+
+
+About:
+
+An attempt to incorporate my dice_restart patch into the oagertz patch, which makes use of dice.
+
+It boils down to adapting two files: init_part.f90 and read_param.f90.
+
+The strategy is to insert the missing snippets into these two from the corresponding files in oagertz/dice. Some other adjustements in init_part.f90 will be necessary, such as:
+
+		- updating zp
+		- readining in nmetals (rather than one only)
+		- reading in stellar birth masses
