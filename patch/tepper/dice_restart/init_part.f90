@@ -1873,7 +1873,7 @@ contains
 
        if(myid==1)then
 
-          call title(abs(nrestart),nchar)
+          call title(abs(nrestart2),nchar)
           if(icpu==1) write(*,*) "Loading -> "//TRIM(output_dir)//'output_'//TRIM(nchar)
           fileloc=TRIM(output_dir)//'output_'//TRIM(nchar)//'/part_'//TRIM(nchar)//'.out'
           call title(icpu,nchar)
@@ -2193,7 +2193,7 @@ contains
        if(myid==1)then
           ! Conversion factor from user units to cgs units
           call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
-          call title(abs(nrestart),nchar)
+          call title(abs(nrestart2),nchar)
           fileloc=TRIM(output_dir)//'output_'//TRIM(nchar)//'/amr_'//TRIM(nchar)//'.out'
           call title(icpu,nchar)
           fileloc=TRIM(fileloc)//TRIM(nchar)
@@ -2460,7 +2460,7 @@ contains
           ! Read hydro variables
 		  if(hydro) then
 
-	          call title(abs(nrestart),nchar)
+	          call title(abs(nrestart2),nchar)
 	          fileloc=TRIM(output_dir)//'output_'//TRIM(nchar)//'/hydro_'//TRIM(nchar)//'.out'
 	          call title(icpu,nchar)
 	          fileloc=TRIM(fileloc)//TRIM(nchar)

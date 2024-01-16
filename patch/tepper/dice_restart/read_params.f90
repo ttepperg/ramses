@@ -63,6 +63,7 @@ module restart_commons
   use hydro_commons
 
   ! misc
+  integer::nrestart2               = 0
   real(dp)::IG_rho_restart         = 1.0D-5
   real(dp)::IG_T2_restart          = 1.0D7
   real(dp)::IG_metal_restart       = 0.01
@@ -171,8 +172,8 @@ subroutine read_params
        & ,ic_mag_scale_R,ic_mag_scale_H,ic_mag_scale_B,cosmo_add_gas_index,ic_skip_type &
        & ,ic_mask_ivar,ic_mask_min,ic_mask_max,ic_mask_ptype
   ! RESTART patch
-  namelist/restart_params/IG_rho_restart,IG_T2_restart,IG_metal_restart,ic_center_restart,restart_vars
-
+  namelist/restart_params/IG_rho_restart,IG_T2_restart,IG_metal_restart,ic_center_restart,restart_vars&
+  & ,nrestart2
 
   ! MPI initialization
 #ifndef WITHOUTMPI
@@ -502,24 +503,28 @@ subroutine read_params
 
 
   ! RESTART patch
-  ! ADDED BY TTG MAY 2017
   if(init_restart_nml)then
-  	  if(nrestart>=0)then
+  	  if(nrestart/=0)then
      	if(myid==1)write(*,*)'Error in the namelist:'
-  	  	if(myid==1)write(*,*)'Need to set nrestart < 0 when using RESTART_PARAMS!'
+  	  	if(myid==1)write(*,*)'Need to set nrestart = 0 in RUN_PARAMS when using RESTART_PARAMS!'
+     	nml_ok=.false.
+  	  endif
+  	  if(nrestart2==0)then
+     	if(myid==1)write(*,*)'Error in the namelist:'
+  	  	if(myid==1)write(*,*)'Need to set nrestart2 > 0 when using RESTART_PARAMS!'
      	nml_ok=.false.
   	  endif
      if((TRIM(filetype)/='ramses').and.(TRIM(filetype)/='dice_restart')) then
      	if(myid==1)write(*,*)'Error in the namelist:'
-  	  	if(myid==1)write(*,*)'Need to set filetype="ramses" or "dice_restart" with RESTART_PARAMS!'
+  	  	if(myid==1)write(*,*)'Need to set filetype="ramses" or "dice_restart" in INIT_PARAMS when using RESTART_PARAMS!'
       nml_ok=.false.
      endif
   else
-	  if(nrestart<0)then
-     	if(myid==1)write(*,*)'Error in the namelist:'
-  	  	if(myid==1)write(*,*)'Need to set RESTART_PARAMS if nrestart < 0!'
-     	nml_ok=.false.
-     endif
+  	 if(nrestart<0)then
+        if(myid==1)write(*,*)'Error in the namelist:'
+  	    if(myid==1)write(*,*)'Need to set nrestart >= 0 in RUN_PARAMS if not using RESTART_PARAMS!'
+        nml_ok=.false.
+  	 endif
      if(TRIM(filetype)=='ramses') then
      	if(myid==1)write(*,*)'Error in the namelist:'
   	  	if(myid==1)write(*,*)'Need to set RESTART_PARAMS if filetype="ramses"!'
