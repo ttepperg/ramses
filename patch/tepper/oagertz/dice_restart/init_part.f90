@@ -1743,7 +1743,8 @@ contains
 	integer::nhalo_tot_restart,nstar_tot_restart
 	integer::nstar_loc,nhalo_loc,ngas_loc,nsink_loc
 	real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v
-	real(dp),dimension(1:nvector)::tt_restart,zz_restart
+	real(dp),dimension(1:nvector)::tt_restart
+	real(dp),dimension(1:nvector,1:nmetals)::zz_restart
 	real(dp),dimension(1:nvector)::myphi
 
 	! The following declaration are EXTREMELY IMPORTANT, as their kinds (e.g. i8b) MUST exactly match their output format (see pm/output_part.f90)
@@ -2097,7 +2098,9 @@ contains
 
 				   ! Read metallicity
                    if(metal) then
-                      read(ilun1,pos=metal_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) zz_restart(jpart)
+                      read(ilun1,pos=metal_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) zz_restart(jpart,1)
+					  ! IN DEVELOPMENT: must read actual value instead of setting by hand and assuming nmetals = 2
+                       zz_restart(jpart,2) =  zz_restart(jpart,1)
                    endif
                 endif
 
@@ -2142,7 +2145,8 @@ contains
           call MPI_BCAST(fam,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(tag,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
 
-          call MPI_BCAST(zz_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
+          call MPI_BCAST(zz_restart,nvector*nmetals   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
+
           call MPI_BCAST(tt_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
           call MPI_BCAST(jpart,1      ,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
@@ -2183,7 +2187,7 @@ contains
                        if(metal) then
                           !zp(ipart) = zz_restart(i)
 						  ! IN DEVELOPMENT (need to have a 2-D zz_restart)
-                          zp(ipart,1:nmetals) = zz_restart(i)
+                          zp(ipart,1:nmetals) = zz_restart(i,1:nmetals)
                        endif
                     endif
 				 else
