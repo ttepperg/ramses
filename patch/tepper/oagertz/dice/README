@@ -2,6 +2,12 @@ Author: Dr. Thorsten Tepper Garcia
 
 Created: 08 FEB 2023
 
+	Last modified:
+
+	15 JAN 2024:
+	Changes to read_params.f90 in response to changes to some files one level up (see corresponding change log in ../README)
+
+
 About:
 
 This subdirectory contains a number of patches to files originally in /Users/tepper/codes/ramses_fork/patch/init/dice/.

@@ -2,29 +2,23 @@ Author: Dr. Thorsten Tepper Garcia
 
 Created: 01 FEB 2023
 
--------------------------------------------------------------------------------
-IMPORTANT:
+	Last modified:
 
-MAJOR CHANGE on 15 JAN 2024:
+	15 JAN 2024:
+	Added some missing files:
+		- adaptive_loop.f90
+		- movie.f90
+		- particle_snapshot.f90
+		- pm_parameters.f90
+		- read_params.f90
+	which required CHANGES to:
+		- amr_parameters.f90
+	The changes have been carried out including the changes required by O.Agertz patch and my own patches (where applicable)
+	This in turn required some changes to the relevant files in oagertz/dice
 
-Added some missing files:
-	- adaptive_loop.f90
-	- movie.f90
-	- particle_snapshot.f90
-	- pm_parameters.f90
-	- read_params.f90
-
-which required CHANGES to:
-	- amr_parameters.f90
-
-The changes have been carried out including the changes required by O.Agertz patch and my own patches (where applicable)
-
-This in turn requires some changes to the relevant files in oagertz/dice and init/dice - TO DO
-
-I will keep this block until I've made sure that everything is working as it should!
-
--------------------------------------------------------------------------------
-
+Notes:
+	- POTENTIAL BUG in star_formation.f90 related to SNunit_out and SFunit_out
+		- assess and fix if necessary
 
 About:
 
