@@ -9,6 +9,11 @@ Created: 01 JAN 2024
 	With this change, the DICE_RESTART is virtually identical to DICE with except of the loading routine in init_part.f90 and some additions to read_params.f90.
 
 
+Notes:
+
+	- Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
+
+
 About:
 
 This directory contains a patch intended to run DICE simulations
