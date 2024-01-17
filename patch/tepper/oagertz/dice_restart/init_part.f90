@@ -2651,6 +2651,10 @@ contains
 		  if(hydro) then
              nvar_min       = min(header_hydro%nvar-header_hydro%ndim-1,nvar-ndim-1) - 1
 			 if(myid==1) write(*,*) 'Found ', nvar_min, 'passive hydro variable(s) (EXCLUDING gas temperature)'
+             if(nvar_min /= nmetals)then
+			    write(*,*)'ERROR: nvar_min and nmetals do not match!'
+				call clean_stop
+			 endif
 		  endif
           !restart_boxlen = header_amr%boxlen -> not used yet
           if(cosmo) then
