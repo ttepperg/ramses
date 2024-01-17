@@ -4,6 +4,9 @@ Created: 16 JAN 2024
 
 	Last modified:
 
+	17 JAN 2024:
+	Now correctly reading particle potential and 'nmetal' metals
+
 Notes:
 
 
@@ -13,8 +16,14 @@ An attempt to incorporate my dice_restart patch into the oagertz patch, which ma
 
 It boils down to adapting two files: init_part.f90 and read_param.f90.
 
-The strategy is to insert the missing snippets into these two from the corresponding files in oagertz/dice. Some other adjustements in init_part.f90 will be necessary, such as:
+The strategy is to insert the missing snippets into these two from the corresponding files in oagertz/dice. Some other adjustments in init_part.f90 will be necessary, such as:
 
-		- updating zp
-		- readining in nmetals (rather than one only)
-		- reading in stellar birth masses
+		- Reading in 'nmetals' metals (rather than one only and setting to 2)
+			- for gas cells
+				-> seems to be taken care of by nvar_min but CHECK consistency between nvar_min and nmetals
+
+		- Reading in stellar birth masses (need to get the previous right)
+
+		- Reading TRACER properties (need to get the previous right)
+
+See oagertz/output_partf.f90 for a guide (and pm_commons.f90 for the correct corresponding variable kinds)
