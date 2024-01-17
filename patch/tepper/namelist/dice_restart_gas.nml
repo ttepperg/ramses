@@ -1,14 +1,25 @@
-! COMPILE CODE WITH: Makefile_3D_GNU_(DEBUG)_OLDMPI0_RESTARTMULTIPATCH_GAS
-! Used to test the newly updated RESTART patch
-! STILL testing!!!
+! COMPILE CODE WITH:
+! make -f Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH_GAS
 !
-! IMPORTANT:
-! - MUST have negative nrestart value (i.e. -snapshot)
-! - MUST set filetype='ramses'
-! - MUST set &RESTART_PARAMS block IF hydro = .true.
-! - MAY need to *significantly* increase (up tp 20x) npartmax and ngridmax relative to the original NML restarting from IF hydro = .true.
+! Modified copy of hbd_11_gd0_new.nml
 !
+! Allows for to change number of cores at restart for an N-body/HYDRO
+! simulation W/O galaxy formation physics (star formation, feedback)
 !
+! For a normal run comment out RESTART_PARAMS and set:
+!	- nrestart = 0 in RUN_PARAMS
+!	- filetype='dice' in INIT_PARAMS
+!
+! For a normal restart comment out RESTART_PARAMS and set:
+!	- nrestart = 0 in RUN_PARAMS
+!
+! For a restart to change number of cores uncomment RESTART_PARAMS
+! and set:
+!	- nrestart = 0 in RUN_PARAMS
+!	- nrestart2 > 0 in RESTART_PARAMS
+!	- filetype='ramses' in INIT_PARAMS
+
+
 &RUN_PARAMS
 print_when_io=.true.
 verbose=.false.
@@ -16,7 +27,7 @@ cosmo=.false.
 hydro=.true.
 pic=.true.
 poisson=.true.
-nrestart=-1
+nrestart=0
 nremap=10
 nsubcycle=7*1
 ncontrol=1
@@ -108,9 +119,13 @@ initfile(1)='/import/photon2/tepper/hbd_11_gd0_new/ic/'
 !initfile(1)='/scratch/dr86/ttg562/hbd_11_gd0_new/ic/'
 /
 
+
+! The followong block must be commented out if filetype != 'ramses'
 &RESTART_PARAMS
+nrestart2=1
 restart_vars=6   	!-> this is mandatory and needs to corresponds to the actual indices of passive scalars
 /
+
 
 &DICE_PARAMS
 ic_file='hbd_11_gd0_new_proc.g2'           ! Name of the initial conditions file
