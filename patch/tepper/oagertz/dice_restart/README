@@ -6,6 +6,9 @@ Created: 16 JAN 2024
 
 	17 JAN 2024:
 	Now correctly reading particle potential, 'nmetal' metals, and initial particle mass. Particle tracer pointer has been added BUT NOT YET TESTED!
+	18 JAN 2024:
+	Added check about nvar_min == nmetals
+	May not be appropriate if other passive variables are included, e.g. a colour tracer.
 
 Notes:
 
