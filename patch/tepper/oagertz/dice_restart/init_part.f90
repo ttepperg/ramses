@@ -1755,7 +1755,7 @@ contains
 	integer(i8b):: dummy_int_i8b ! identity
 	integer, dimension(1:nvector) :: lev
 	integer::dummy_int_restart
-	integer(int8), dimension(1:nvector) :: fam, tag
+	integer(int8), dimension(1:nvector) :: fam_restart, tag_restart
 	integer(int8):: dummy_int_int8
 
 
@@ -2050,8 +2050,8 @@ contains
           ii8=0.
           mm=0.
 		  lev = 0
-		  fam = 0
-		  tag = 0
+		  fam_restart = 0
+		  tag_restart = 0
 		  phi_restart = 0.
           tt_restart=0.
           zz_restart= 0.
@@ -2092,11 +2092,11 @@ contains
 
 				! Read family
 				! VERY important to use the right integer kind
-                read(ilun1,pos=family_blck_restart+sizeof(dummy_int_int8)*(kpart_restart-1)) fam(jpart)
+                read(ilun1,pos=family_blck_restart+sizeof(dummy_int_int8)*(kpart_restart-1)) fam_restart(jpart)
 
 				! Read tag
 				! VERY important to use the right integer kind
-                read(ilun1,pos=tag_blck_restart+sizeof(dummy_int_int8)*(kpart_restart-1)) tag(jpart)
+                read(ilun1,pos=tag_blck_restart+sizeof(dummy_int_int8)*(kpart_restart-1)) tag_restart(jpart)
 
 #ifdef OUTPUT_PARTICLE_POTENTIAL
 				! Read potential
@@ -2119,13 +2119,13 @@ contains
                 ! Read initial mass
                 read(ilun1,pos=mpb_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) mpb_restart(jpart)
 
-                ! Updating total masses (elevant for output info only)
+                ! Updating total masses (relevant for output info only)
                 !if(tt_restart(jpart)==0d0) then ! <- prone to fail
-                if(fam(jpart)==FAM_DM) then
+                if(fam_restart(jpart)==FAM_DM) then
                    mhalo_tot_restart = mhalo_tot_restart+mm(jpart)
                    nhalo_tot_restart = nhalo_tot_restart+1
                    nhalo_loc = nhalo_loc+1
-                else if(fam(jpart)==FAM_STAR) then
+                else if(fam_restart(jpart)==FAM_STAR) then
                    mstar_tot_restart = mstar_tot_restart+mm(jpart)
                    nstar_tot_restart = nstar_tot_restart+1
                    nstar_loc = nstar_loc+1
@@ -2150,12 +2150,14 @@ contains
 		  ! The following  is not read in but may be needed for consistency
           call MPI_BCAST(uu,nvector           ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
-		  ! The following may be irrelevant as is not used:
+		  ! The following may be irrelevant as is not used (why not?)
           call MPI_BCAST(lev,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
+
           call MPI_BCAST(phi_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
-          call MPI_BCAST(fam,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
-          call MPI_BCAST(tag,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
+          call MPI_BCAST(fam_restart,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
+
+          call MPI_BCAST(tag_restart,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
 
           call MPI_BCAST(zz_restart,nvector*nmetals   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
@@ -2194,8 +2196,8 @@ contains
                     up(ipart)      = uu(i) ! <- IRRELEVANT
 
                     levelp(ipart)  = levelmin ! why don't use lev(i)?
-                    typep(ipart)%family = fam(i) !FAM_DM
-                    typep(ipart)%tag    = tag(i) ! is NOT being broadcasted!!!
+                    typep(ipart)%family = fam_restart(i)
+                    typep(ipart)%tag    = tag_restart(i)
 					ptcl_phi(ipart) = phi_restart(i)
 
                     if(star.or.sink) then
