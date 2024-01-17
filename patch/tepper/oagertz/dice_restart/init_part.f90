@@ -1737,6 +1737,7 @@ contains
 	integer::level_blck_restart,family_blck_restart,tag_blck_restart
 	integer::age_blck_restart
 	integer,dimension(1:nmetals)::metal_blck_restart
+	integer::mpb_blck_restart
 	integer,allocatable,dimension(:,:,:)::amr_pos_blck
 	integer,allocatable,dimension(:,:,:)::amr_son_blck
 	integer,allocatable,dimension(:,:,:,:)::hydro_var_blck
@@ -1747,6 +1748,7 @@ contains
 	real(dp),dimension(1:nvector)::tt_restart
 	real(dp),dimension(1:nvector,1:nmetals)::zz_restart
 	real(dp),dimension(1:nvector)::phi_restart
+	real(dp),dimension(1:nvector)::mpb_restart
 
 	! The following declaration are EXTREMELY IMPORTANT, as their kinds (e.g. i8b) MUST exactly match their output format (see pm/output_part.f90)
 	integer(i8b), dimension(1:nvector) :: ii8 ! identity
@@ -2031,6 +2033,13 @@ contains
 
 	      endif
 
+		  ! Initial mass
+          read(ilun1,pos=mypos) size_blck
+          mypos = mypos+sizeof(dummy_int_restart)
+          mpb_blck_restart = mypos
+          mypos = mypos+size_blck+sizeof(dummy_int_restart) ! <- VERY important
+		  													! for following
+															! block (if any)
        endif !if(myid==1)
 
        eob_restart      = .false.
@@ -2046,6 +2055,7 @@ contains
 		  phi_restart = 0.
           tt_restart=0.
           zz_restart= 0.
+		  mpb_restart = 0.
 
           uu=0. ! <- IRRELEVANT for particles
 
@@ -2088,11 +2098,6 @@ contains
 				! VERY important to use the right integer kind
                 read(ilun1,pos=tag_blck_restart+sizeof(dummy_int_int8)*(kpart_restart-1)) tag(jpart)
 
-
-
-! NOT YET TESTED BELOW THE LINE
-!--------------------------------
-
 #ifdef OUTPUT_PARTICLE_POTENTIAL
 				! Read potential
                 read(ilun1,pos=phi_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) phi_restart(jpart)
@@ -2111,8 +2116,8 @@ contains
 
                 endif
 
-!--------------------------------
-! NOT YET TESTED ABOVE THE LINE
+                ! Read initial mass
+                read(ilun1,pos=mpb_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) mpb_restart(jpart)
 
                 ! Updating total masses (elevant for output info only)
                 !if(tt_restart(jpart)==0d0) then ! <- prone to fail
@@ -2156,6 +2161,8 @@ contains
 
           call MPI_BCAST(tt_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
+          call MPI_BCAST(mpb_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
+
           call MPI_BCAST(jpart,1      ,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
 
           call MPI_BARRIER(MPI_COMM_WORLD,info)
@@ -2183,10 +2190,12 @@ contains
                     vp(ipart,1:3)  = vv(i,1:3)
                     idp(ipart)     = ii8(i)+1
                     mp(ipart)      = mm(i)
+
                     up(ipart)      = uu(i) ! <- IRRELEVANT
+
                     levelp(ipart)  = levelmin ! why don't use lev(i)?
                     typep(ipart)%family = fam(i) !FAM_DM
-                    typep(ipart)%tag    = tag(i) !0
+                    typep(ipart)%tag    = tag(i) ! is NOT being broadcasted!!!
 					ptcl_phi(ipart) = phi_restart(i)
 
                     if(star.or.sink) then
@@ -2197,6 +2206,9 @@ contains
 						  enddo
                        endif
                     endif
+
+					mpb(ipart) = mpb_restart(i)
+
 				 else
                    write(*,*) 'particle outside box!'
                  endif
