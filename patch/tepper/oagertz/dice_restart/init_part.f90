@@ -1753,7 +1753,7 @@ contains
 	! The following declaration are EXTREMELY IMPORTANT, as their kinds (e.g. i8b) MUST exactly match their output format (see pm/output_part.f90)
 	integer(i8b), dimension(1:nvector) :: ii8 ! identity
 	integer(i8b):: dummy_int_i8b ! identity
-	integer, dimension(1:nvector) :: lev
+	integer, dimension(1:nvector) :: lev_restart
 	integer::dummy_int_restart
 	integer(int8), dimension(1:nvector) :: fam_restart, tag_restart
 	integer(int8):: dummy_int_int8
@@ -2049,7 +2049,7 @@ contains
           vv=0.
           ii8=0.
           mm=0.
-		  lev = 0
+		  lev_restart = 0
 		  fam_restart = 0
 		  tag_restart = 0
 		  phi_restart = 0.
@@ -2088,7 +2088,7 @@ contains
 
 				! Read level
 				! VERY important to use the right integer kind
-                read(ilun1,pos=level_blck_restart+sizeof(dummy_int_restart)*(kpart_restart-1)) lev(jpart)
+                read(ilun1,pos=level_blck_restart+sizeof(dummy_int_restart)*(kpart_restart-1)) lev_restart(jpart)
 
 				! Read family
 				! VERY important to use the right integer kind
@@ -2151,7 +2151,7 @@ contains
           call MPI_BCAST(uu,nvector           ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
 		  ! The following may be irrelevant as is not used (why not?)
-          call MPI_BCAST(lev,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
+          call MPI_BCAST(lev_restart,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
 
           call MPI_BCAST(phi_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
@@ -2195,7 +2195,7 @@ contains
 
                     up(ipart)      = uu(i) ! <- IRRELEVANT
 
-                    levelp(ipart)  = levelmin ! why don't use lev(i)?
+                    levelp(ipart)  = levelmin ! why don't use lev_restart(i)?
                     typep(ipart)%family = fam_restart(i)
                     typep(ipart)%tag    = tag_restart(i)
 					ptcl_phi(ipart) = phi_restart(i)
