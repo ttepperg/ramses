@@ -1746,7 +1746,7 @@ contains
 	real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v
 	real(dp),dimension(1:nvector)::tt_restart
 	real(dp),dimension(1:nvector,1:nmetals)::zz_restart
-	real(dp),dimension(1:nvector)::myphi
+	real(dp),dimension(1:nvector)::phi_restart
 
 	! The following declaration are EXTREMELY IMPORTANT, as their kinds (e.g. i8b) MUST exactly match their output format (see pm/output_part.f90)
 	integer(i8b), dimension(1:nvector) :: ii8 ! identity
@@ -2043,7 +2043,7 @@ contains
 		  lev = 0
 		  fam = 0
 		  tag = 0
-		  myphi = 0.
+		  phi_restart = 0.
           tt_restart=0.
           zz_restart= 0.
 
@@ -2095,7 +2095,7 @@ contains
 
 #ifdef OUTPUT_PARTICLE_POTENTIAL
 				! Read potential
-                read(ilun1,pos=phi_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) myphi(jpart)
+                read(ilun1,pos=phi_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) phi_restart(jpart)
 #endif
 
 				! Read birth epoch
@@ -2147,7 +2147,7 @@ contains
 
 		  ! The following may be irrelevant as is not used:
           call MPI_BCAST(lev,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
-          call MPI_BCAST(myphi,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
+          call MPI_BCAST(phi_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
           call MPI_BCAST(fam,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(tag,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
@@ -2187,7 +2187,7 @@ contains
                     levelp(ipart)  = levelmin ! why don't use lev(i)?
                     typep(ipart)%family = fam(i) !FAM_DM
                     typep(ipart)%tag    = tag(i) !0
-					ptcl_phi(ipart) = myphi(i)
+					ptcl_phi(ipart) = phi_restart(i)
 
                     if(star.or.sink) then
                        tp(ipart)    = tt_restart(i)
