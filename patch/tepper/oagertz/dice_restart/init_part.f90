@@ -1637,7 +1637,7 @@ contains
 	               ! Particle metallicity
 	               if(metal) then
 !                         zp(ipart)  = zz(i)
-! TTG: The following modification is relevant for gas particles only and is adapted from /Users/tepper/codes/ramses_agertz/ramses/patch/disc/condinit.f90; it assumes nmetals = 2 (note tha zz is already scaled by ic_scale_metal):
+! TTG: The following modification is relevant for gas particles only and is adapted from /Users/tepper/codes/ramses_agertz/ramses/patch/disc/condinit.f90; it assumes nmetals = 2 (note that zz is already scaled by ic_scale_metal):
                          zp(ipart,1)  = 0.333*zz(i) !Iron
                          zp(ipart,2)  = 0.333*zz(i) !Oxygen, (Z ~ 2O+1Fe, Madau)
                       endif
@@ -1735,7 +1735,8 @@ contains
 	integer,dimension(1:3)::pos_blck_restart,vel_blck_restart
 	integer::id_blck_restart,mass_blck_restart,phi_blck_restart
 	integer::level_blck_restart,family_blck_restart,tag_blck_restart
-	integer::age_blck_restart,metal_blck_restart
+	integer::age_blck_restart
+	integer,dimension(1:nmetals)::metal_blck_restart
 	integer,allocatable,dimension(:,:,:)::amr_pos_blck
 	integer,allocatable,dimension(:,:,:)::amr_son_blck
 	integer,allocatable,dimension(:,:,:,:)::hydro_var_blck
@@ -2020,9 +2021,12 @@ contains
 
 			 ! Metallicity
 	         if(metal) then
-	            read(ilun1,pos=mypos) size_blck
-                mypos = mypos+sizeof(dummy_int_restart)
-	            metal_blck_restart = mypos
+                do imet=1,nmetals ! TTG / ERIC
+	               read(ilun1,pos=mypos) size_blck
+                   mypos = mypos+sizeof(dummy_int_restart)
+	               metal_blck_restart(imet) = mypos
+                   mypos = mypos+size_blck+sizeof(dummy_int_restart)
+			    enddo
 	         endif
 
 	      endif
@@ -2041,8 +2045,10 @@ contains
 		  tag = 0
 		  myphi = 0.
           tt_restart=0.
-          zz_restart=0.
-          uu=0.
+          zz_restart= 0.
+
+          uu=0. ! <- IRRELEVANT for particles
+
           if(myid==1)then
              jpart=0
              do i=1,nvector
@@ -2098,10 +2104,11 @@ contains
 
 				   ! Read metallicity
                    if(metal) then
-                      read(ilun1,pos=metal_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) zz_restart(jpart,1)
-					  ! IN DEVELOPMENT: must read actual value instead of setting by hand and assuming nmetals = 2
-                       zz_restart(jpart,2) =  zz_restart(jpart,1)
+                      do imet=1,nmetals ! TTG / ERIC
+                         read(ilun1,pos=metal_blck_restart(imet)+sizeof(dummy_real_restart)*(kpart_restart-1)) zz_restart(jpart,imet)
+                      enddo
                    endif
+
                 endif
 
 !--------------------------------
@@ -2185,9 +2192,9 @@ contains
                     if(star.or.sink) then
                        tp(ipart)    = tt_restart(i)
                        if(metal) then
-                          !zp(ipart) = zz_restart(i)
-						  ! IN DEVELOPMENT (need to have a 2-D zz_restart)
-                          zp(ipart,1:nmetals) = zz_restart(i,1:nmetals)
+                          do imet=1,nmetals ! ERIC
+                             zp(ipart,imet) = zz_restart(i,imet)
+						  enddo
                        endif
                     endif
 				 else
@@ -2678,7 +2685,7 @@ contains
 	                   xxg   = 0.
 	                   vv    = 0.
 	                   mm    = 0.
-	                   zz_restart    = 0.
+	                   zz_restart    = 0. ! <- NO USED; remove!
 	                   passvar_restart    = 0.
                        uu    = 0.
 	                   jpart = 0
