@@ -1738,6 +1738,10 @@ contains
 	integer::age_blck_restart
 	integer,dimension(1:nmetals)::metal_blck_restart
 	integer::mpb_blck_restart
+
+	! NOT YET TESTED
+	integer::pp_blck_restart
+
 	integer,allocatable,dimension(:,:,:)::amr_pos_blck
 	integer,allocatable,dimension(:,:,:)::amr_son_blck
 	integer,allocatable,dimension(:,:,:,:)::hydro_var_blck
@@ -1750,12 +1754,15 @@ contains
 	real(dp),dimension(1:nvector)::phi_restart
 	real(dp),dimension(1:nvector)::mpb_restart
 
+	! NOT YET TESTED
+	integer,dimension(1:nvector)::pp_restart
+
 	! The following declaration are EXTREMELY IMPORTANT, as their kinds (e.g. i8b) MUST exactly match their output format (see pm/output_part.f90)
-	integer(i8b), dimension(1:nvector) :: ii8 ! identity
+	integer(i8b),dimension(1:nvector) :: ii8 ! identity
 	integer(i8b):: dummy_int_i8b ! identity
-	integer, dimension(1:nvector) :: lev_restart
+	integer,dimension(1:nvector) :: lev_restart
 	integer::dummy_int_restart
-	integer(int8), dimension(1:nvector) :: fam_restart, tag_restart
+	integer(int8),dimension(1:nvector) :: fam_restart, tag_restart
 	integer(int8):: dummy_int_int8
 
 
@@ -2037,9 +2044,18 @@ contains
           read(ilun1,pos=mypos) size_blck
           mypos = mypos+sizeof(dummy_int_restart)
           mpb_blck_restart = mypos
-          mypos = mypos+size_blck+sizeof(dummy_int_restart) ! <- VERY important
-		  													! for following
-															! block (if any)
+          mypos = mypos+size_blck+sizeof(dummy_int_restart)
+
+
+		  ! NOT YET TESTED
+		  ! Particle pointer mass (for tracer particles only)
+		  if (MC_tracer) then
+             read(ilun1,pos=mypos) size_blck
+             mypos = mypos+sizeof(dummy_int_restart)
+             pp_blck_restart = mypos
+             mypos = mypos+size_blck+sizeof(dummy_int_restart)
+		  endif
+
        endif !if(myid==1)
 
        eob_restart      = .false.
@@ -2056,6 +2072,11 @@ contains
           tt_restart=0.
           zz_restart= 0.
 		  mpb_restart = 0.
+
+		  ! NOT YET TESTED
+		  if (MC_tracer) then
+		     pp_restart = 0
+		  endif
 
           uu=0. ! <- IRRELEVANT for particles
 
@@ -2119,6 +2140,12 @@ contains
                 ! Read initial mass
                 read(ilun1,pos=mpb_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) mpb_restart(jpart)
 
+				! NOT YET TESTED
+				! Particle pointer mass (for tracer particles only)
+				if (MC_tracer) then
+                   read(ilun1,pos=pp_blck_restart+sizeof(dummy_int_restart)*(kpart_restart-1)) pp_restart(jpart)
+				endif
+
                 ! Updating total masses (relevant for output info only)
                 !if(tt_restart(jpart)==0d0) then ! <- prone to fail
                 if(fam_restart(jpart)==FAM_DM) then
@@ -2165,6 +2192,11 @@ contains
 
           call MPI_BCAST(mpb_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
+		  ! NOT YET TESTED
+		  if (MC_tracer) then
+             call MPI_BCAST(pp_restart,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
+		  endif
+
           call MPI_BCAST(jpart,1      ,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
 
           call MPI_BARRIER(MPI_COMM_WORLD,info)
@@ -2195,7 +2227,7 @@ contains
 
                     up(ipart)      = uu(i) ! <- IRRELEVANT
 
-                    levelp(ipart)  = levelmin ! why don't use lev_restart(i)?
+                    levelp(ipart)  = levelmin ! DON'T use lev_restart(i)
                     typep(ipart)%family = fam_restart(i)
                     typep(ipart)%tag    = tag_restart(i)
 					ptcl_phi(ipart) = phi_restart(i)
@@ -2210,6 +2242,11 @@ contains
                     endif
 
 					mpb(ipart) = mpb_restart(i)
+
+					! NOT YET TESTED
+					if (MC_tracer) then
+					   partp(ipart) = pp_restart(i)
+					endif
 
 				 else
                    write(*,*) 'particle outside box!'
