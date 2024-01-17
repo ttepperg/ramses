@@ -9,7 +9,7 @@ Created: 16 JAN 2024
 
 Notes:
 
-	- Gas mass and cell number increases slightly at restart, presumably because IG_rho > 0 (however small) -> TO BE FIXED
+	- GAS MASS AND CELL NUMBER INCREASES slightly at restart, presumably because IG_rho > 0 (however small) -> TO BE FIXED
 
 About:
 
