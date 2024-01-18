@@ -307,8 +307,8 @@ subroutine init_part
         call load_gadget
      case ('dice')
         call load_dice
-     case ('ramses')
-        call load_ramses
+     case ('ramses_dice')
+        call load_ramses_dice
 
      case DEFAULT
         write(*,*) 'Unsupported format file ' // filetype
@@ -1725,7 +1725,7 @@ contains
   end subroutine load_dice
 
   ! RESTART patch
-  subroutine load_ramses
+  subroutine load_ramses_dice
     use restart_commons
     use iso_fortran_env, only: int8 ! <- VERY important
     use constants, only: M_sun
@@ -2857,7 +2857,7 @@ contains
 	   call load_dice
 	endif
 
-  end subroutine load_ramses
+  end subroutine load_ramses_dice
   ! RESTART patch
 
 end subroutine init_part

@@ -507,18 +507,18 @@ subroutine read_params
   ! RESTART patch
   if(init_restart_nml)then
   	  if(nrestart/=0)then
-     	if(myid==1)write(*,*)'Error in the namelist:'
-  	  	if(myid==1)write(*,*)'Need to set nrestart = 0 in RUN_PARAMS when using RESTART_PARAMS!'
-     	nml_ok=.false.
+        if(myid==1)write(*,*)'Error in the namelist:'
+        if(myid==1)write(*,*)'Need to set nrestart = 0 in RUN_PARAMS when using RESTART_PARAMS!'
+        nml_ok=.false.
   	  endif
   	  if(nrestart2==0)then
      	if(myid==1)write(*,*)'Error in the namelist:'
   	  	if(myid==1)write(*,*)'Need to set nrestart2 > 0 when using RESTART_PARAMS!'
      	nml_ok=.false.
   	  endif
-     if((TRIM(filetype)/='ramses').and.(TRIM(filetype)/='dice_restart')) then
-     	if(myid==1)write(*,*)'Error in the namelist:'
-  	  	if(myid==1)write(*,*)'Need to set filetype="ramses" or "dice_restart" in INIT_PARAMS when using RESTART_PARAMS!'
+     if((TRIM(filetype)/='ramses_dice')) then
+        if(myid==1)write(*,*)'Error in the namelist:'
+        if(myid==1)write(*,*)'Need to set filetype="ramses_dice" in INIT_PARAMS when using RESTART_PARAMS!'
       nml_ok=.false.
      endif
   else
@@ -527,9 +527,9 @@ subroutine read_params
   	    if(myid==1)write(*,*)'Need to set nrestart >= 0 in RUN_PARAMS if not using RESTART_PARAMS!'
         nml_ok=.false.
   	 endif
-     if(TRIM(filetype)=='ramses') then
-     	if(myid==1)write(*,*)'Error in the namelist:'
-  	  	if(myid==1)write(*,*)'Need to set RESTART_PARAMS if filetype="ramses"!'
+     if(TRIM(filetype)=='ramses_dice') then
+        if(myid==1)write(*,*)'Error in the namelist:'
+        if(myid==1)write(*,*)'Need to set RESTART_PARAMS if filetype="ramses_dice"!'
       nml_ok=.false.
      endif
   endif
