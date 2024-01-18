@@ -1229,7 +1229,6 @@ contains
   end subroutine load_ascii
 
   subroutine load_dice
-    ! IN DEVELOPMENT
     use restart_commons, only: restart_init
 !!! DICE
     dice_init=.true.
@@ -1239,10 +1238,9 @@ contains
     ! Reading header of the Gadget file
     error=.false.
 
-	! IN DEVELOPMENT: DO NOT reset particle count if loading a ramses output before
-    !ipart    = 0
+	! IMPORTANT: DO NOT reset particle count if pre-loading a ramses output
 	if(.not.restart_init)ipart = 0
-	if(myid==1)write(*,*)'load_dice: wil not reset ipart = ', ipart
+	if(restart_init.and.myid==1)write(*,*)'Will not reset ipart = ', ipart
 
     do ifile=1,ic_nfile
        write(ifile_str,*) ifile
@@ -1713,12 +1711,10 @@ contains
     end do
     if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
 
-	! IN DEVELOPMENT: DO NOT reset output number nor simulation time if loading a ramses output before
-    !ifout = ic_ifout
-    !t = ic_t_restart
+	! IMPORTANT: DO NOT reset output number nor simulation time if pre-loading a ramses output
 	if(.not.restart_init)then
 	   ifout = ic_ifout
-	   t=ic_t_restart
+	   t     = ic_t_restart
 	endif
 	if(myid==1)then
 	   write(*,*)'Next output number (ifout): ', ifout
@@ -2855,7 +2851,7 @@ contains
     !if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
 
 
-	! IN DEVELOPMENT: load additional DICE ICs
+	! load additional DICE ICs
 	if(add_dice_ic)then
 	   if(myid==1)write(*,*)'Loading additional DICE ICs...'
 	   call load_dice

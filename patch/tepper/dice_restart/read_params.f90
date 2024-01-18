@@ -71,8 +71,7 @@ module restart_commons
   integer,dimension(1:100)::restart_vars=0
   integer::nvar_min
   logical::restart_init=.false.
-  ! IN DEVELOPMENT: allow to load additional DICE ICs at restart:
-  logical::add_dice_ic = .false.
+  logical::add_dice_ic=.false. ! load additional DICE ICs at restart
   real(dp)::restart_boxlen
   real(dp)::restart_unit_t
   real(dp)::restart_unit_l
