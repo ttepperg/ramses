@@ -1229,6 +1229,8 @@ contains
   end subroutine load_ascii
 
   subroutine load_dice
+    ! IN DEVELOPMENT
+    use restart_commons, only: restart_init
 !!! DICE
     dice_init=.true.
     ! Conversion factor from user units to cgs units
@@ -1236,7 +1238,12 @@ contains
     scale_m = scale_d*scale_l**3
     ! Reading header of the Gadget file
     error=.false.
-    ipart    = 0
+
+	! IN DEVELOPMENT: DO NOT reset particle count if loading a ramses output before
+    !ipart    = 0
+	if(.not.restart_init)ipart = 0
+	if(myid==1)write(*,*)'load_dice: wil not reset ipart = ', ipart
+
     do ifile=1,ic_nfile
        write(ifile_str,*) ifile
        if(ic_nfile.eq.1) then
@@ -1705,8 +1712,19 @@ contains
        npart_cpu(icpu)=npart_cpu(icpu-1)+npart_all(icpu)
     end do
     if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
-    ifout = ic_ifout
-    t = ic_t_restart
+
+	! IN DEVELOPMENT: DO NOT reset output number nor simulation time if loading a ramses output before
+    !ifout = ic_ifout
+    !t = ic_t_restart
+	if(.not.restart_init)then
+	   ifout = ic_ifout
+	   t=ic_t_restart
+	endif
+	if(myid==1)then
+	   write(*,*)'Next output number (ifout): ', ifout
+	   write(*,*)'Simulation time (t): ', t
+	endif
+
     ! DICE patch
   end subroutine load_dice
 
@@ -1835,8 +1853,8 @@ contains
 
     ! Initialisation
 
-    !restart_init = .true. ! -> not used
-    dice_init = .true. ! <- VERY important
+    restart_init = .true. ! <- VERY important if additional ICs loaded
+    dice_init    = .true. ! <- VERY important
 
     ! Conversion factor from user units to cgs units
     call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
@@ -2835,6 +2853,13 @@ contains
        npart_cpu(icpu)=npart_cpu(icpu-1)+npart_all(icpu)
     end do
     !if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
+
+
+	! IN DEVELOPMENT: load additional DICE ICs
+	if(add_dice_ic)then
+	   if(myid==1)write(*,*)'Loading additional DICE ICs...'
+	   call load_dice
+	endif
 
   end subroutine load_ramses
   ! RESTART patch
