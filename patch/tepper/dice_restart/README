@@ -13,9 +13,18 @@ Created: 01 JAN 2024
 	IMPORTANT: May need to increase npartmax and ngridmax (understandably)
 	Replaced 'ramses' to 'ramses_dice' where relevant to distinguish this patch from the original.
 
+To do:
+
+	- Remove obsolete bits such as uu for particles, etc.
+	- Add MC_tracer blocks (see oagertz/dice_restart)
+
 Notes:
 
+	- As of 18 JAN 2024, there may be a potential issue with duplicate particle ids (iord) when loading additonal DICE ICs
+		- ASSES AND FIX
+
 	- Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
+		- ASSES AND FIX
 
 
 About:
