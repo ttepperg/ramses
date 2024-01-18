@@ -2174,7 +2174,7 @@ contains
           call MPI_BCAST(ii8,nvector   ,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(mm,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
-		  ! The following  is not read in but may be needed for consistency
+		  ! The following is not read in but may be needed for consistency
           call MPI_BCAST(uu,nvector           ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
 		  ! The following may be irrelevant as is not used (why not?)
