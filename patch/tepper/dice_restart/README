@@ -11,6 +11,7 @@ Created: 01 JAN 2024
 	18 JAN 2024:
 	Allow to load additional DICE ICs at restart; note that this change implies that load_dice is now linked to load_ramses through two parameters: restart_init and add_dice_ic (new!)
 	IMPORTANT: May need to increase npartmax and ngridmax (understandably)
+	Replaced 'ramses' to 'ramses_dice' where relevant to distinguish this patch from the original.
 
 Notes:
 
@@ -23,21 +24,9 @@ This directory contains a patch intended to run DICE simulations
 with the capability to restart and include additional DICE initial conditions
 at restart.
 
-The base of the patch is the DICE patch (in my case composed of the original patch in patch/init/dice and my patched version in patch/tepper/dice).
+The base of the patch are the original RESTART patch and the DICE patch (in my case composed of the original patch in patch/init/dice and my patched version in patch/tepper/dice).
 
 The first patch modification consists of an addition of a modified version of the case('ramses') snippet in taken from patch/init/restart/init_part.f90, available via the subroutine load_ramses.
 
-The next, yet to do, patch modification is the addition of a code snippet in init_part.f90, identified by case('dice_restart'), which consists of a merge between the case('dice') snippet in the same file and the case('ramses') snippet in patch/init/restart, available here as via the yet to do subroutine load_dice_restart
-
-	IMPORTANT: See /Users/tepper/codes/ramses_020217/ramses/trunk/ramses/patch/mySIMS/Nbody+HD/dice/myics/dice_restart/src/init_part.f90, DICE_RESTART snippet
-	for a guide on how to achieve this.
-
-
-Specific modifications.
-
-init_part.f90:
-- added case('ramses') and corresponding routine load_ramses
-
-read_param.f90:
-- added restart_commons
-- added restart_params
+It has been renamed to ramses_dice to distinguish it from the original.
+Relevant bits are identified by comments containing 'DICE [patch]' and 'RESTART [patch]'.
