@@ -115,6 +115,7 @@ subroutine init_part
   if(ic_mask_ptype.gt.-1)then
      allocate(maskp(npartmax))
   endif
+  ! DICE patch
   xp=0; vp=0; mp=0; levelp=0; idp=0
   typep(1:npartmax)%family=FAM_UNDEF; typep(1:npartmax)%tag=0
   if(star.or.sink)then
@@ -2137,17 +2138,20 @@ contains
           call MPI_BCAST(ii8,nvector   ,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(mm,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
-		  ! The following  is not read in but may be needed for consistency
+		  ! The following is not read in but may be needed for consistency
           call MPI_BCAST(uu,nvector           ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
-		  ! The following may be irrelevant as is not used:
+		  ! The following may be irrelevant as is not used (why not?)
           call MPI_BCAST(lev_restart,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
+
           call MPI_BCAST(phi_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
           call MPI_BCAST(fam_restart,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
+
           call MPI_BCAST(tag_restart,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
 
           call MPI_BCAST(zz_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
+
           call MPI_BCAST(tt_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
           call MPI_BCAST(jpart,1      ,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
@@ -2177,11 +2181,15 @@ contains
                     vp(ipart,1:3)  = vv(i,1:3)
                     idp(ipart)     = ii8(i)+1
                     mp(ipart)      = mm(i)
-                    up(ipart)      = uu(i) ! <- IRRELEVANT
-                    levelp(ipart)  = levelmin ! don't use lev_restart(i)
 
+                    up(ipart)      = uu(i) ! <- IRRELEVANT
+
+                    levelp(ipart)  = levelmin ! DON'T use lev_restart(i)
                     typep(ipart)%family = fam_restart(i)
                     typep(ipart)%tag = tag_restart(i)
+
+					! NOT YET TESTED
+                    ptcl_phi(ipart) = phi_restart(i)
 
                     if(star.or.sink) then
                        tp(ipart)    = tt_restart(i)
