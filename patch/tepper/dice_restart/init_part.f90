@@ -2613,6 +2613,7 @@ contains
              endif
              if(restart_vars(ivar).lt.header_amr%ndim+2) then
                 write(*,*) '[Error] ivar=',restart_vars(ivar),' is an active variable'
+				write(*,*)'Try setting restart_vars in RESTART_PARAMS to a meaningful value, e.g. restart_vars=6 or even restart_vars=6,7 if there are more passive variables.'
                 call clean_stop
              endif
           enddo
