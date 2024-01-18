@@ -3,8 +3,10 @@
 !
 ! Modified copy of hbd_11.nml
 !
-! Allows for to change number of cores at restart for a PURE N-body
-! simulation W/O galaxy formation physics (star formation, feedback)
+! Allows to:
+!  - Change number of cores at restart for an N-body/HYDRO
+! simulation WITHOUT galaxy formation physics (star formation, feedback)
+!  - Load *additional* DICE ICs at restart
 !
 ! For a normal run comment out RESTART_PARAMS and set:
 !	- nrestart = 0 in RUN_PARAMS
@@ -17,7 +19,7 @@
 ! and set:
 !	- nrestart = 0 in RUN_PARAMS
 !	- nrestart2 > 0 in RESTART_PARAMS
-!	- filetype='ramses' in INIT_PARAMS
+!	- filetype='ramses_dice' in INIT_PARAMS
 
 
 &RUN_PARAMS
@@ -27,7 +29,7 @@ cosmo=.false.
 hydro=.false.
 pic=.true.
 poisson=.true.	! requires to set units such that G=1; taken care of by units.f90
-nrestart=0
+nrestart=2
 nremap=10
 nsubcycle=7*1
 ncontrol=1
@@ -92,18 +94,18 @@ kbound_max= 0, 0,  0,  0, -1,  1
 !the longest file name reads:
 !initfile(1)output_xxxxx/part_file_descriptor.txt
 &INIT_PARAMS
-!filetype='dice'
-filetype='ramses'
+filetype='dice'
+!filetype='ramses_dice'
 !initfile(1)='/scratch/dr86/ttg562/hbd_11/ic/'
 initfile(1)='/import/photon2/tepper/hbd_11/ic/'
 /
 
 
-! The followong block must be commented out if filetype != 'ramses'
-&RESTART_PARAMS
-nrestart2=1
-restart_vars=6   	!-> this is mandatory and needs to corresponds to the actual indices of passive scalars
-/
+! The followong block must be commented out if filetype != 'ramses_dice'
+!&RESTART_PARAMS
+!nrestart2=1
+!add_dice_ic=.true.
+!/
 
 
 !MAKE SURE TO USE THE CORRECT UNITS FOR length, velocity, and mass
