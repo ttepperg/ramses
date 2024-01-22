@@ -118,7 +118,6 @@ no_inflow=.false.				  ! ...  without inflow
 !filetype='ramses_dice'
 filetype='dice'
 initfile(1)='/import/photon2/tepper/hbd_11_gd0_new/ic/'
-!initfile(1)='/import/photon2/tepper/hbd_11_gd0_new/ic_alt/'
 !initfile(1)='/scratch/dr86/ttg562/hbd_11_gd0_new/ic/'
 /
 
@@ -127,7 +126,7 @@ initfile(1)='/import/photon2/tepper/hbd_11_gd0_new/ic/'
 !&RESTART_PARAMS
 !nrestart2=1
 !add_dice_ic=.true.
-!restart_vars=6   	!-> this is mandatory and needs to corresponds to the actual indices of passive scalars
+!restart_vars=6   	!-> corresponds to actual indices of passive scalars
 !/
 
 
