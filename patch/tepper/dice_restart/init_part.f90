@@ -2088,10 +2088,6 @@ contains
                 read(ilun1,pos=tag_blck_restart+sizeof(dummy_int_int8)*(kpart_restart-1)) tag_restart(jpart)
 
 
-
-! NOT YET TESTED BELOW THE LINE
-!--------------------------------
-
 #ifdef OUTPUT_PARTICLE_POTENTIAL
 				! Read potential
                 read(ilun1,pos=phi_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) phi_restart(jpart)
@@ -2106,9 +2102,6 @@ contains
                       read(ilun1,pos=metal_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) zz_restart(jpart)
                    endif
                 endif
-
-!--------------------------------
-! NOT YET TESTED ABOVE THE LINE
 
                 ! Updating total masses (elevant for output info only)
                 !if(tt_restart(jpart)==0d0) then ! <- prone to fail
@@ -2187,8 +2180,6 @@ contains
                     levelp(ipart)  = levelmin ! DON'T use lev_restart(i)
                     typep(ipart)%family = fam_restart(i)
                     typep(ipart)%tag = tag_restart(i)
-
-					! NOT YET TESTED
                     ptcl_phi(ipart) = phi_restart(i)
 
                     if(star.or.sink) then
