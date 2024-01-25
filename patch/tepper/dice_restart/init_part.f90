@@ -1751,6 +1751,8 @@ contains
 	integer,allocatable,dimension(:,:,:,:)::hydro_var_blck
 	integer::kpart_restart,lpart_restart
 	integer::nhalo_tot_restart,nstar_tot_restart
+	integer::ntoss, ntoss_tot_restart
+	integer(i8b),dimension(1:ncpu)::ntoss_cpu,ntoss_all
 	integer::nstar_loc,nhalo_loc,ngas_loc,nsink_loc
 	real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v
 	real(dp),dimension(1:nvector)::tt_restart,zz_restart
@@ -1874,6 +1876,8 @@ contains
     mgas_tot_restart     = 0.
     nhalo_tot_restart    = 0
     nstar_tot_restart    = 0
+	ntoss                = 0
+	ntoss_tot_restart    = 0
 
     if(myid==1) then
        write(*,'(A50)') "__________________________________________________"
@@ -2229,12 +2233,15 @@ contains
 					endif
 
 				 else
-                   write(*,*) 'particle outside box!'
+                   write(*,*) '  -> particle with ID ', ii8(i), ' outside box!'
+                   write(*,*) '  -> coordinates: ',  xx(i,1:3)
+                   write(*,*) '  -> will toss'
+				   ntoss = ntoss + 1
                  endif
 #ifndef WITHOUTMPI
               endif
 #endif
-          enddo
+          enddo ! i=1,jpart
 #ifndef WITHOUTMPI
           call MPI_BARRIER(MPI_COMM_WORLD,info)
 #endif
@@ -2852,11 +2859,29 @@ contains
 #ifndef WITHOUTMPI
        call MPI_BCAST(eocpu,1      ,MPI_LOGICAL,0,MPI_COMM_WORLD,info)
        call MPI_BCAST(icpu,1       ,MPI_INTEGER,0,MPI_COMM_WORLD,info)
+
+	   ! PERHAPS NOT NEEDED (there is no equivalent for nhalo_tot_restart)
        call MPI_BCAST(nstar_tot_restart,1  ,MPI_INTEGER,0,MPI_COMM_WORLD,info)
        call MPI_BCAST(mstar_tot_restart,1  ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
+
 #endif
 
     enddo !  while(.not.eocpu)
+
+    ! Compute total number of *tossed* particles
+	! Same logic as computing the total number of particles from ipart
+	! But very different from nhalo_tot_restart or nstar_tot_restart
+    ntoss_cpu       = 0
+    ntoss_all       = 0
+    ntoss_cpu(myid) = ntoss
+#ifndef WITHOUTMPI
+    call MPI_ALLREDUCE(ntoss_cpu,ntoss_all,ncpu,MPI_INTEGER,MPI_SUM,MPI_COMM_WORLD,info)
+    ntoss_cpu(1) = ntoss_all(1)
+#endif
+    if(myid==1)then
+      ntoss_tot_restart = sum(ntoss_all)
+    endif
+
 
     if(myid==1) then
        write(*,'(A50)')"__________________________________________________"
@@ -2865,10 +2890,11 @@ contains
        write(*,*) '----> ',header_amr%ncpu,' cpus'
        write(*,*) '----> ',nhalo_tot_restart,' halo particles'
        write(*,*) '----> ',nstar_tot_restart,' star particles'
+       write(*,*) '----> ',ntoss_tot_restart,' tossed particles (outside box)'
        if(hydro) write(*,*) '----> ',lpart_restart,' leaf cells'
-       write(*,'(A,1pe12.4)') '----> m_dm [Msun]    = ', mhalo_tot_restart*(scale_m/M_sun)
+       write(*,'(A,1pe12.4)') '----> m_dm    [Msun] = ', mhalo_tot_restart*(scale_m/M_sun)
        write(*,'(A,1pe12.4)') '----> m_stars [Msun] = ', mstar_tot_restart*(scale_m/M_sun)
-       if(hydro) write(*,'(A,1pe12.4)') '----> m_gas [Msun]   = ', mgas_tot_restart*(scale_m/M_sun)
+       if(hydro) write(*,'(A,1pe12.4)') '----> m_gas   [Msun] = ', mgas_tot_restart*(scale_m/M_sun)
        write(*,'(A50)')"__________________________________________________"
     endif
 
