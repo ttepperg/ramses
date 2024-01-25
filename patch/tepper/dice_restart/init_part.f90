@@ -2859,11 +2859,6 @@ contains
 #ifndef WITHOUTMPI
        call MPI_BCAST(eocpu,1      ,MPI_LOGICAL,0,MPI_COMM_WORLD,info)
        call MPI_BCAST(icpu,1       ,MPI_INTEGER,0,MPI_COMM_WORLD,info)
-
-	   ! PERHAPS NOT NEEDED (there is no equivalent for nhalo_tot_restart)
-       call MPI_BCAST(nstar_tot_restart,1  ,MPI_INTEGER,0,MPI_COMM_WORLD,info)
-       call MPI_BCAST(mstar_tot_restart,1  ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
-
 #endif
 
     enddo !  while(.not.eocpu)
