@@ -1234,6 +1234,7 @@ contains
   end subroutine load_ascii
 
   subroutine load_dice
+    use restart_commons, only: restart_init
 !!! DICE
     dice_init=.true.
     ! Conversion factor from user units to cgs units
@@ -1241,7 +1242,11 @@ contains
     scale_m = scale_d*scale_l**3
     ! Reading header of the Gadget file
     error=.false.
-    ipart    = 0
+
+	! IMPORTANT: DO NOT reset particle count if pre-loading a ramses output
+	if(.not.restart_init)ipart = 0
+	if(restart_init.and.myid==1)write(*,*)'Will not reset ipart = ', ipart
+
     do ifile=1,ic_nfile
        write(ifile_str,*) ifile
        if(ic_nfile.eq.1) then
@@ -1714,8 +1719,17 @@ contains
        npart_cpu(icpu)=npart_cpu(icpu-1)+npart_all(icpu)
     end do
     if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
+
+	! IMPORTANT: DO NOT reset output number nor simulation time if pre-loading a ramses output
+	if(.not.restart_init)then
     ifout = ic_ifout
     t = ic_t_restart
+	endif
+	if(myid==1)then
+	   write(*,*)'Next output number (ifout): ', ifout
+	   write(*,*)'Simulation time (t): ', t
+	endif
+
     ! DICE patch
   end subroutine load_dice
 
@@ -1747,6 +1761,8 @@ contains
 	integer,allocatable,dimension(:,:,:,:)::hydro_var_blck
 	integer::kpart_restart,lpart_restart
 	integer::nhalo_tot_restart,nstar_tot_restart
+	integer::ntoss, ntoss_tot_restart
+	integer(i8b),dimension(1:ncpu)::ntoss_cpu,ntoss_all
 	integer::nstar_loc,nhalo_loc,ngas_loc,nsink_loc
 	real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v
 	real(dp),dimension(1:nvector)::tt_restart
@@ -1855,7 +1871,7 @@ contains
 
     ! Initialisation
 
-    !restart_init = .true. ! -> not used
+    restart_init = .true. ! <- VERY important if additional ICs loaded
     dice_init = .true. ! <- VERY important
 
     ! Conversion factor from user units to cgs units
@@ -1872,6 +1888,8 @@ contains
     mgas_tot_restart     = 0.
     nhalo_tot_restart    = 0
     nstar_tot_restart    = 0
+	ntoss                = 0
+	ntoss_tot_restart    = 0
 
     if(myid==1) then
        write(*,'(A50)') "__________________________________________________"
@@ -2249,12 +2267,15 @@ contains
 					endif
 
 				 else
-                   write(*,*) 'particle outside box!'
+                   write(*,*) '  -> particle with ID ', ii8(i), ' outside box!'
+                   write(*,*) '  -> coordinates: ',  xx(i,1:3)
+                   write(*,*) '  -> will toss'
+				   ntoss = ntoss + 1
                  endif
 #ifndef WITHOUTMPI
               endif
 #endif
-          enddo
+          enddo ! i=1,jpart
 #ifndef WITHOUTMPI
           call MPI_BARRIER(MPI_COMM_WORLD,info)
 #endif
@@ -2887,6 +2908,21 @@ contains
 
     enddo !  while(.not.eocpu)
 
+    ! Compute total number of *tossed* particles
+	! Same logic as computing the total number of particles from ipart
+	! But very different from nhalo_tot_restart or nstar_tot_restart
+    ntoss_cpu       = 0
+    ntoss_all       = 0
+    ntoss_cpu(myid) = ntoss
+#ifndef WITHOUTMPI
+    call MPI_ALLREDUCE(ntoss_cpu,ntoss_all,ncpu,MPI_INTEGER,MPI_SUM,MPI_COMM_WORLD,info)
+    ntoss_cpu(1) = ntoss_all(1)
+#endif
+    if(myid==1)then
+      ntoss_tot_restart = sum(ntoss_all)
+    endif
+
+
     if(myid==1) then
        write(*,'(A50)')"__________________________________________________"
        write(*,*)" RAMSES restart summary"
@@ -2894,6 +2930,7 @@ contains
        write(*,*) '----> ',header_amr%ncpu,' cpus'
        write(*,*) '----> ',nhalo_tot_restart,' halo particles'
        write(*,*) '----> ',nstar_tot_restart,' star particles'
+       write(*,*) '----> ',ntoss_tot_restart,' tossed particles (outside box)'
        if(hydro) write(*,*) '----> ',lpart_restart,' leaf cells'
        write(*,'(A,1pe12.4)') '----> m_dm [Msun]    = ', mhalo_tot_restart*(scale_m/M_sun)
        write(*,'(A,1pe12.4)') '----> m_stars [Msun] = ', mstar_tot_restart*(scale_m/M_sun)
@@ -2918,6 +2955,13 @@ contains
        npart_cpu(icpu)=npart_cpu(icpu-1)+npart_all(icpu)
     end do
     !if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
+
+
+	! load additional DICE ICs
+	if(add_dice_ic)then
+	   if(myid==1)write(*,*)'Loading additional DICE ICs...'
+	   call load_dice
+	endif
 
   end subroutine load_ramses_dice
   ! RESTART patch
