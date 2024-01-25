@@ -16,25 +16,36 @@ Created: 16 JAN 2024
 	Added capability to load *additional* DICE ICs
 	Removed unnecessary MPI_BCAST clauses
 
+TO DO:
+
+	- Remove obsolete bits such as uu for particles, etc.
+
 Notes:
 
-	- GAS MASS AND CELL NUMBER INCREASES slightly at restart, presumably because IG_rho > 0 (however small) -> TO BE FIXED
+	- When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)
+		- ASSES AND FIX
+
+	- Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
+		- ASSES AND FIX
+
+	- Particles at or beyond the box boundary will be tossed at restart
 
 About:
 
 A merge of my dice_restart patch and the oagertz/dice patch.
 
-Usage:
+USAGE:
 
-Need to set the following:
+In the NML, use:
 
 &RESTART_PARAMS
-nrestart2=2			! restart snasphto
-restart_vars=6,7   	!-> this is mandatory and needs to corresponds to the actual indices of passive scalars (excluding temperature)
+nrestart2=N			! restart at snapshot N
+add_dice_ic=.true.  ! optional; to load additional DICE ICS at restart
+restart_vars=6,7   	!-> corresponds to the actual indices of passive scalars (excluding temperature)
 /
 
 &INIT_PARAMS
-filetype='ramses'
+filetype='ramses_dice'
 /
 
 &RUN_PARAMS
