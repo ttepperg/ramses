@@ -13,6 +13,11 @@ Created: 01 JAN 2024
 	IMPORTANT: May need to increase npartmax and ngridmax (understandably)
 	Replaced 'ramses' to 'ramses_dice' where relevant to distinguish this patch from the original.
 
+	25 JAN 2024:
+	Added a counter for particle that are tossed because they are moved beyond the box in the previous time step.
+	Removed unnecessary MPI_BCAST clauses.
+	Particle tracer pointer has been added BUT NOT YET TESTED!
+
 To do:
 
 	- Remove obsolete bits such as uu for particles, etc.
