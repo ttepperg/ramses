@@ -18,19 +18,20 @@ Created: 01 JAN 2024
 	Removed unnecessary MPI_BCAST clauses.
 	Particle tracer pointer has been added BUT NOT YET TESTED!
 
-To do:
+TO DO:
 
 	- Remove obsolete bits such as uu for particles, etc.
-	- Add MC_tracer blocks (see oagertz/dice_restart)
+
 
 Notes:
 
-	- As of 18 JAN 2024, there may be a potential issue with duplicate particle ids (iord) when loading additonal DICE ICs
+	- When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)
 		- ASSES AND FIX
 
 	- Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
 		- ASSES AND FIX
 
+	- Particles at or beyond the box boundary will be tossed at restart
 
 About:
 
@@ -44,3 +45,22 @@ The first patch modification consists of an addition of a modified version of th
 
 It has been renamed to ramses_dice to distinguish it from the original.
 Relevant bits are identified by comments containing 'DICE [patch]' and 'RESTART [patch]'.
+
+
+USAGE:
+
+In the NML, use:
+
+&RESTART_PARAMS
+nrestart2=N			! restart at snapshot N
+add_dice_ic=.true.  ! optional; to load additional DICE ICS at restart
+restart_vars=6,7   	!-> corresponds to the actual indices of passive scalars (excluding temperature); mandatory when hydro = .true.
+/
+
+&INIT_PARAMS
+filetype='ramses_dice'
+/
+
+&RUN_PARAMS
+nrestart=0
+/
