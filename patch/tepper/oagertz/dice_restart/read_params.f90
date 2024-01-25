@@ -71,6 +71,7 @@ module restart_commons
   integer,dimension(1:100)::restart_vars=0
   integer::nvar_min
   logical::restart_init=.false.
+  logical::add_dice_ic=.false. ! load additional DICE ICs at restart
   real(dp)::restart_boxlen
   real(dp)::restart_unit_t
   real(dp)::restart_unit_l
@@ -177,7 +178,7 @@ subroutine read_params
        & ,ic_mask_ivar,ic_mask_min,ic_mask_max,ic_mask_ptype
   ! RESTART patch
   namelist/restart_params/IG_rho_restart,IG_T2_restart,IG_metal_restart,ic_center_restart,restart_vars&
-  & ,nrestart2
+  & ,nrestart2, add_dice_ic
 
   ! MPI initialization
 #ifndef WITHOUTMPI
@@ -305,6 +306,7 @@ subroutine read_params
   ! DICE patch
   rewind(1)
   read(1,NML=dice_params,END=106)
+  if(myid==1)write(*,*)'-> Found DICE_PARAMS block'
 106 continue
   ! RESTART patch
   rewind(1)
