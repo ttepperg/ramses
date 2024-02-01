@@ -1,4 +1,4 @@
-! COMPILE CODE WITH: Makefile_3D_GNU_(DEBUG)_OLDMPI0_DICEMULTIPATCH
+! COMPILE CODE WITH: Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
 ! NOTES: The sink parameter settings are appropriate for inserting one or more sink particles (point-masses) into a simulation at any snapshot other than the initial one. In contrast, e.g. hbd_7_*_sink_4.nml settings are appropriate for inserting sinks from the start
 &RUN_PARAMS
 verbose=.false.

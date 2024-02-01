@@ -15,6 +15,7 @@
 
 
 &RUN_PARAMS
+print_when_io=.true.
 verbose=.false.
 cosmo=.false.
 pic=.true.
