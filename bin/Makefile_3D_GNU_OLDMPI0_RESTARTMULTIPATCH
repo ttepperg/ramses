@@ -21,8 +21,7 @@ NPRE = 8
 SOLVER = hydro
 # Patch (add here as many patch patch as desired)
 # IMPORTANT: The ORDER matters! If files with the same name are present,
-# only the first found is considered! Therefore, ../patch/init/dice is
-# added last to honour my patched versions of files in there.
+# only the first found is considered.
 # Also, directories are NOT looked into recursively!
 PATCH = ../patch/tepper/restart:../patch/tepper/amr:../patch/tepper/pm:../patch/tepper/poisson
 # Use RT? 1=Yes, 0=No
