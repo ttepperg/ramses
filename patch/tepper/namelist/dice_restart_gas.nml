@@ -29,7 +29,7 @@ cosmo=.false.
 hydro=.true.
 pic=.true.
 poisson=.true.
-nrestart=2
+nrestart=0
 nremap=10
 nsubcycle=7*1
 ncontrol=1
@@ -115,19 +115,19 @@ no_inflow=.false.				  ! ...  without inflow
 
 
 &INIT_PARAMS
-!filetype='ramses_dice'
-filetype='dice'
+filetype='ramses_dice'
+!filetype='dice'
 initfile(1)='/import/photon2/tepper/hbd_11_gd0_new/ic/'
 !initfile(1)='/scratch/dr86/ttg562/hbd_11_gd0_new/ic/'
 /
 
 
 ! The followong block must be commented out if filetype != 'ramses_dice'
-!&RESTART_PARAMS
-!nrestart2=1
-!add_dice_ic=.true.
-!restart_vars=6   	!-> corresponds to actual indices of passive scalars
-!/
+&RESTART_PARAMS
+nrestart2=3
+!add_dice_ic=.true.	! optional, to load additional DICE ICs at restart
+restart_vars=6   	!-> corresponds to actual indices of passive scalars
+/
 
 
 &DICE_PARAMS
@@ -163,7 +163,7 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 
 &OUTPUT_PARAMS
 tend = 45.
-delta_tout = 0.1
+delta_tout = 2e-3 !0.1
 output_dir='/import/photon2/tepper/hbd_11_gd0_new/'
 !output_dir='/scratch/dr86/ttg562/hbd_11_gd0_new/'
 /
