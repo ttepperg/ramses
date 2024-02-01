@@ -7,6 +7,8 @@ Created: 08 FEB 2023
 	15 JAN 2024:
 	Changes to read_params.f90 in response to changes to some files one level up (see corresponding change log in ../README)
 
+	01 FEB 2024:
+	Remove init_refine.f90 because it is redundant with the same file in patch/tepper/dice.
 
 About:
 
