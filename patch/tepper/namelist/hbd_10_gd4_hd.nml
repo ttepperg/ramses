@@ -90,7 +90,7 @@ jbound_min= 0, 0, -1,  1, -1, -1
 jbound_max= 0, 0, -1,  1,  1,  1
 kbound_min= 0, 0,  0,  0, -1,  1
 kbound_max= 0, 0,  0,  0, -1,  1
-no_inflow=.false.				  ! ...  without inflow
+no_inflow=.false.				  ! ...  with inflow
 /
 
 
