@@ -1,3 +1,6 @@
+! IMPORTANT: This code is missing the BOUNDARY_PARAMS block!!!!
+! I'm not sure how this may affect the system's evolution
+!
 ! 01 MAR 2023: Changed the name of this NML to hbd_19_gd8_lr_star.nml for
 ! consistency with other NML, as names such as this one imply isothermal runs
 !

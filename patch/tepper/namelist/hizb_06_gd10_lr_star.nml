@@ -1,3 +1,6 @@
+! IMPORTANT: This code is missing the BOUNDARY_PARAMS block!!!!
+! I'm not sure how this may affect the system's evolution
+!
 ! This is a merge of hbd_19_gd8_lr_star.nml and hizb_06_gd6_lr.nml
 !
 ! Compile the code with:
