@@ -10,6 +10,11 @@ Created: 08 FEB 2023
 	01 FEB 2024:
 	Remove init_refine.f90 because it is redundant with the same file in patch/tepper/dice.
 
+	15 FEB 2024:
+	init_flow_fine.f90: Enclose 'if(metal)' statements within 'if(star.or.sink)' statement, consistent with other subroutines, to avoid segmentation fault when eps_star = 0.
+
+	SEE "IMPORTANT 1)" below
+
 About:
 
 This subdirectory contains a number of patches to files originally in /Users/tepper/codes/ramses_fork/patch/init/dice/.
@@ -44,7 +49,8 @@ IMPORTANT:
 			...
 		endif
 
-	as does my dice patch in, e.g. particle_tree.f90. TO DO!!!
+	as does my dice patch in, e.g. particle_tree.f90.
+	MUST split these to allow metal advection for gas w | w/o cooling also when there is not star formation!
 
 	2) From Tine Colman:
 	"There are SOLVERmhd blocks [in the following files] but this file is not compatible with MHD:
