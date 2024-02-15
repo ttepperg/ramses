@@ -679,10 +679,12 @@ subroutine init_uold(ilevel)
               if(ivar.eq.ndim+2)then
                  uold(active(ilevel)%igrid(i)+iskip,ivar) = IG_T2/scale_T2/(gamma-1)*max(IG_rho/scale_nH,smallr)
               endif
-              if(metal) then
-!                if(ivar.eq.imetal) uold(active(ilevel)%igrid(i)+iskip,ivar) = max(IG_rho/scale_nH,smallr)*IG_metal
-                if(ivar.eq.imetal) uold(active(ilevel)%igrid(i)+iskip,ivar) = 0.333*max(IG_rho/scale_nH,smallr)*IG_metal*ic_scale_metal
-                if(ivar.eq.imetal+1) uold(active(ilevel)%igrid(i)+iskip,ivar) = 0.333*max(IG_rho/scale_nH,smallr)*IG_metal*ic_scale_metal
+              if(star.or.sink)then
+                 if(metal) then
+!                   if(ivar.eq.imetal) uold(active(ilevel)%igrid(i)+iskip,ivar) = max(IG_rho/scale_nH,smallr)*IG_metal
+                   if(ivar.eq.imetal) uold(active(ilevel)%igrid(i)+iskip,ivar) = 0.333*max(IG_rho/scale_nH,smallr)*IG_metal*ic_scale_metal
+                   if(ivar.eq.imetal+1) uold(active(ilevel)%igrid(i)+iskip,ivar) = 0.333*max(IG_rho/scale_nH,smallr)*IG_metal*ic_scale_metal
+                 endif
               endif
            endif
         end do
@@ -1108,12 +1110,14 @@ subroutine init_gas_cic(ind_cell,ind_part,ind_grid_part,x0,ng,np,ilevel)
               uold(indp(j,ind),idim+1)=uold(indp(j,ind),idim+1)+mp(ind_part(j))*vol(j,ind)/vol_loc(j)*vp(ind_part(j),idim)
            end do
            uold(indp(j,ind),ndim+2)=uold(indp(j,ind),ndim+2)+mp(ind_part(j))*vol(j,ind)/vol_loc(j)*ethermal(j)
-           if(metal) then
-           ! TTG:
-           !uold(indp(j,ind),imetal)=uold(indp(j,ind),imetal)+mp(ind_part(j))*vol(j,ind)/vol_loc(j)*zp(ind_part(j))
-               do imet=1,nmetals
-                   uold(indp(j,ind),imetal+imet-1) = uold(indp(j,ind),imetal+imet-1) + mp(ind_part(j))*vol(j,ind)/vol_loc(j)*zp(ind_part(j),imet)
-               enddo
+           if(star.or.sink)then
+              if(metal) then
+              ! TTG:
+              !uold(indp(j,ind),imetal)=uold(indp(j,ind),imetal)+mp(ind_part(j))*vol(j,ind)/vol_loc(j)*zp(ind_part(j))
+                  do imet=1,nmetals
+                      uold(indp(j,ind),imetal+imet-1) = uold(indp(j,ind),imetal+imet-1) + mp(ind_part(j))*vol(j,ind)/vol_loc(j)*zp(ind_part(j),imet)
+                  enddo
+              endif
            endif
         endif
         ! Update passive scalar mask
@@ -1265,12 +1269,14 @@ subroutine init_gas_ngp(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
         ! Update temperature in NGP cell
         uold(indp(j),ndim+2)=uold(indp(j),ndim+2)+mp(ind_part(j))/vol_loc(j)*ethermal(j)
         ! Update passive hydro variables in NGP cell
-        if(metal) then
-        ! TTG
-        ! uold(indp(j),imetal)=uold(indp(j),imetal)+mp(ind_part(j))/vol_loc(j)*zp(ind_part(j))
-           do imet=1,nmetals
-               uold(indp(j),imetal+imet-1) = uold(indp(j),imetal+imet+1) + mp(ind_part(j))/vol_loc(j)*zp(ind_part(j),imet)
-           enddo
+        if(star.or.sink)then
+           if(metal) then
+           ! TTG
+           ! uold(indp(j),imetal)=uold(indp(j),imetal)+mp(ind_part(j))/vol_loc(j)*zp(ind_part(j))
+              do imet=1,nmetals
+                  uold(indp(j),imetal+imet-1) = uold(indp(j),imetal+imet+1) + mp(ind_part(j))/vol_loc(j)*zp(ind_part(j),imet)
+              enddo
+           endif
         endif
      endif
      ! Update passive scalar mask
@@ -1495,4 +1501,3 @@ subroutine mag_toroidal(pos,dir,A)
   end do
 end subroutine
 #endif
-
