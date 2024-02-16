@@ -17,7 +17,7 @@ Created: 01 FEB 2023
 	This in turn required some changes to the relevant files in oagertz/dice
 
 Notes:
-	- POTENTIAL BUG in star_formation.f90 related to SNunit_out and SFunit_out
+	- POSSIBLE BUG in star_formation.f90 related to SNunit_out and SFunit_out
 		- assess and fix if necessary
 
 About:
