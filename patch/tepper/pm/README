@@ -42,13 +42,13 @@ init_sink.f90:
 - added input value 'sid' to last column
 - changed slevel to levelmin in lines 258-9
 - swapped lines 261 and 262:
+     	sinkint_level=levelmin
 		103  continue
-     	 sinkint_level=levelmin
 	to:
-     	 sinkint_level=levelmin
 		103  continue
+     	sinkint_level=levelmin
 
-	as otherwise sinkint_level remains uninitialised.
+	as otherwise sinkint_level may remain uninitialised.
 - moved output sink properties to screen to end of subroutine
 - added direct force scheme information to output to screen
 - added TRIM(output_dir) to filename strings where relevant
