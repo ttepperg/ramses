@@ -2,7 +2,6 @@ subroutine init_part
   use amr_commons
   use pm_commons
   use clfind_commons
-  use pm_parameters, only: sink_restart
   ! DICE patch
   use dice_commons
   use cooling_module
@@ -216,26 +215,25 @@ subroutine init_part
      ! We don't need the potential, but read it anyway (to get the records correctly for tp/zp)
      read(ilun)
 #endif
-     if(.not. sink_restart)then ! sinks are not present in restart ramses file
-        if(star.or.sink)then
-           ! Read birth epoch
-           allocate(xdp(1:npart2))
-           read(ilun)xdp
-           tp(1:npart2)=xdp
-           if(convert_birth_times) then
-              do i = 1, npart2 ! Convert birth time to proper for RT postpr.
-                 call getProperTime(tp(i),tp(i))
-              enddo
-           endif
-           deallocate(xdp)
-        end if
-        if(metal)then
-           ! Read metallicity
-           allocate(xdp(1:npart2))
-           read(ilun)xdp
-           zp(1:npart2)=xdp
-           deallocate(xdp)
-        end if
+
+     if(star.or.sink)then
+        ! Read birth epoch
+        allocate(xdp(1:npart2))
+        read(ilun)xdp
+        tp(1:npart2)=xdp
+        if(convert_birth_times) then
+           do i = 1, npart2 ! Convert birth time to proper for RT postpr.
+              call getProperTime(tp(i),tp(i))
+           enddo
+        endif
+        deallocate(xdp)
+     end if
+     if(metal)then
+        ! Read metallicity
+        allocate(xdp(1:npart2))
+        read(ilun)xdp
+        zp(1:npart2)=xdp
+        deallocate(xdp)
      end if
 
      if (MC_tracer) then
