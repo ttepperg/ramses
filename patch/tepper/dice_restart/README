@@ -18,6 +18,9 @@ Created: 01 JAN 2024
 	Removed unnecessary MPI_BCAST clauses.
 	Particle tracer pointer has been added BUT NOT YET TESTED!
 
+	20 FEB 2024:
+	Remove the use of sink_restart from init_part.f90 as it appeared unnecessary
+
 TO DO:
 
 	- Remove obsolete bits such as uu for particles, etc.
