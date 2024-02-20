@@ -1,7 +1,13 @@
 Author: Dr. Thorsten Tepper Garcia
 
 Created: 13 MAY 2020
-Last update: 08 FEB 2021
+
+	Last modified:
+
+	08 FEB 2021:
+
+	20 FEB 2024:
+	init_sink.f90: For some strange reason, restaring with a sink without having previous sinks fails due to the absence of the sink_XXXXX.csv file (not sure why it worked before!). Made several changes to the block if(nrestart > 0) to fix (?) this issue.
 
 About:
 
@@ -27,7 +33,7 @@ in module pm_parameters
 
 
 init_sink.f90:
-- For some strange reason, restaring with a sink without having previous sinks fails due to the absence of the sink_XXXXX.csv file (not sure why it worked before!). Made several changes to the block if(nrestart > 0) to fix (?) this issue
+- added csv_sink, merged if(nrestart > 0) blocks
 - abort if file 'ic_sink' or 'ic_sink_restart' cannot found or read
 - added 'use pm_parameters, only: sink_restart'
 - added kpc2cm, km2cm conversion factors from amr/constants.f90
