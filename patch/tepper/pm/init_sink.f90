@@ -14,7 +14,7 @@ subroutine init_sink
   real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v,scale_m
   real(dp),parameter::km2cm=1.0d+5
   integer::isink, nsinkold
-  logical::eof,ic_sink=.false.,ic_sink_restart=.false.
+  logical::eof, csv_sink = .false., ic_sink=.false.,ic_sink_restart=.false.
   character(LEN=80)::filename
   character(LEN=80)::fileloc
   character(LEN=5)::nchar,ncharcpu
@@ -140,73 +140,83 @@ subroutine init_sink
      endif
 #endif
 
-     nsink=0
-     nsinkold=0
-     open(10,file=fileloc,form='formatted')
-     eof=.false.
-     ! scrolling over the comment lines
-     read(10,'(A200)')comment_line
-     read(10,'(A200)')comment_line
-     do
-    read(10,'(I10,21(A1,ES21.10),A1,I10)',end=104)sid,co, sm1,co,&
-                           sx1,co,sx2,co,sx3,co, &
-                           sv1,co,sv2,co,sv3,co, &
-                           sl1,co,sl2,co,sl3,co, &
-                           stform,co, sacc_rate,co, &
-                           sacc_mass,co, &
-                           srho_gas,co, sc2_gas,co, seps_sink,co, &
-                           svg1,co,svg2,co,svg3,co, &
-                           sm2,co,dmf,co,slevel
-        nsink=nsink+1
-        idsink(nsink)=sid
-        msink(nsink)=sm1
-        xsink(nsink,1)=sx1
-        xsink(nsink,2)=sx2
-        xsink(nsink,3)=sx3
-        vsink(nsink,1)=sv1
-        vsink(nsink,2)=sv2
-        vsink(nsink,3)=sv3
-        lsink(nsink,1)=sl1
-        lsink(nsink,2)=sl2
-        lsink(nsink,3)=sl3
-        tsink(nsink)=stform
-        dMBHoverdt(nsink)=sacc_rate
-        delta_mass(nsink)=sacc_mass
-        rho_gas(nsink)=srho_gas
-        c2sink(nsink)=sc2_gas
-        eps_sink(nsink)=seps_sink
-        vel_gas(nsink,1)=svg1
-        vel_gas(nsink,2)=svg2
-        vel_gas(nsink,3)=svg3
-        new_born(nsink)=.false. ! this is a restart
-        msmbh(nsink)=sm2
-        dmfsink(nsink)=dmf
-        vsold(nsink,1:ndim,slevel)=vsink(nsink,1:ndim)
-        vsnew(nsink,1:ndim,slevel)=vsink(nsink,1:ndim)
-     end do
-104  continue
-     sinkint_level=slevel
-     if(nsink>0)then
-        nindsink=idsink(nsink)
-     end if
-     close(10)
+     INQUIRE(FILE=fileloc, EXIST=csv_sink)
 
-     ! Send the token
+     if(csv_sink)then
+	     nsink=0
+	     nsinkold=0
+	     open(10,file=fileloc,form='formatted')
+	     eof=.false.
+	     ! scrolling over the comment lines
+	     read(10,'(A200)')comment_line
+	     read(10,'(A200)')comment_line
+	     do
+	        read(10,'(I10,21(A1,ES21.10),A1,I10)',end=104)sid,co, sm1,co,&
+	                           sx1,co,sx2,co,sx3,co, &
+	                           sv1,co,sv2,co,sv3,co, &
+	                           sl1,co,sl2,co,sl3,co, &
+	                           stform,co, sacc_rate,co, &
+	                           sacc_mass,co, &
+	                           srho_gas,co, sc2_gas,co, seps_sink,co, &
+	                           svg1,co,svg2,co,svg3,co, &
+	                           sm2,co,dmf,co,slevel
+	        nsink=nsink+1
+	        idsink(nsink)=sid
+	        msink(nsink)=sm1
+	        xsink(nsink,1)=sx1
+	        xsink(nsink,2)=sx2
+	        xsink(nsink,3)=sx3
+	        vsink(nsink,1)=sv1
+	        vsink(nsink,2)=sv2
+	        vsink(nsink,3)=sv3
+	        lsink(nsink,1)=sl1
+	        lsink(nsink,2)=sl2
+	        lsink(nsink,3)=sl3
+	        tsink(nsink)=stform
+	        dMBHoverdt(nsink)=sacc_rate
+	        delta_mass(nsink)=sacc_mass
+	        rho_gas(nsink)=srho_gas
+	        c2sink(nsink)=sc2_gas
+	        eps_sink(nsink)=seps_sink
+	        vel_gas(nsink,1)=svg1
+	        vel_gas(nsink,2)=svg2
+	        vel_gas(nsink,3)=svg3
+	        new_born(nsink)=.false. ! this is a restart
+	        msmbh(nsink)=sm2
+	        dmfsink(nsink)=dmf
+	        vsold(nsink,1:ndim,slevel)=vsink(nsink,1:ndim)
+	        vsnew(nsink,1:ndim,slevel)=vsink(nsink,1:ndim)
+	     end do
+	104  continue
+	     sinkint_level=slevel
+	     if(nsink>0)then
+	        nindsink=idsink(nsink)
+	     end if
+	     close(10)
+
+	     ! Send the token
 #ifndef WITHOUTMPI
-     if(IOGROUPSIZE>0) then
-        if(mod(myid,IOGROUPSIZE)/=0 .and.(myid.lt.ncpu))then
-           dummy_io=1
-           call MPI_SEND(dummy_io,1,MPI_INTEGER,myid-1+1,tag, &
-                & MPI_COMM_WORLD,info2)
-        end if
-     endif
+	     if(IOGROUPSIZE>0) then
+	        if(mod(myid,IOGROUPSIZE)/=0 .and.(myid.lt.ncpu))then
+	           dummy_io=1
+	           call MPI_SEND(dummy_io,1,MPI_INTEGER,myid-1+1,tag, &
+	                & MPI_COMM_WORLD,info2)
+	        end if
+	     endif
 #endif
 
-     if (myid==1)write(*,*)'sinks read from file '//fileloc
-  end if
+	     if (myid==1)write(*,*)'sinks read from file '//fileloc
 
-  ! Loading sinks from the ICs (ic_sink or ic_sink_restart)
-  if (nrestart>0)then
+     else
+
+       if (myid==1)then
+          write(*,*)'File '//TRIM(fileloc)//' does not exist'
+          write(*,*)'This implies there are no previous sinks in simulation'
+       end if
+
+     end if ! csv_sink
+
+     ! Loading sinks from the ICs (ic_sink_restart)
      if(sink_restart)then
          nsinkold=nsink
 	     if(TRIM(initfile(levelmin)).NE.' ')then
@@ -225,7 +235,10 @@ subroutine init_sink
           call clean_stop
         end if
      endif
-  else
+
+  else ! nrestart = 0
+
+     ! Loading sinks from the ICs (ic_sink)
      nsink=0
      nindsink=0
      nsinkold=0
@@ -244,7 +257,8 @@ subroutine init_sink
        write(*,*) 'ERROR: Could not find or read file ',filename
        call clean_stop
      end if
-  end if
+
+  end if ! nrestart > 0
 
   if (ic_sink .or. ic_sink_restart)then
 
