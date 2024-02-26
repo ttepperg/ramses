@@ -9,9 +9,6 @@ Created: 13 MAY 2020
 	20 FEB 2024:
 	init_sink.f90: For some strange reason, restaring with a sink without having previous sinks fails due to the absence of the sink_XXXXX.csv file (not sure why it worked before!). Made several changes to the block if(nrestart > 0) to fix (?) this issue.
 
-	26 FEB 2024:
-	Added pm_commons.f90 to start adding custom families. So far no change has been made. NOTE THAT THERE IS A PM_COMMONS.F90 IN OAGERTZ PATCH. Must modify that as well of the one here is modified with respect to the standard Ramses file.
-
 About:
 
 This subdirectory contains a number of patches
