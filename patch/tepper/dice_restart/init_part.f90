@@ -65,14 +65,15 @@ subroutine init_part
   ! DICE patch
   integer::j,type_index
   integer::dummy_int,blck_size,jump_blck,blck_cnt,stat,ifile
-  integer::head_blck,pos_blck,vel_blck,id_blck,mass_blck,u_blck,metal_blck,age_blck
-  integer::head_size,pos_size,vel_size,id_size,mass_size,u_size,metal_size,age_size
+  integer::head_blck,pos_blck,vel_blck,id_blck,mass_blck,u_blck,metal_blck,age_blck,tag_blck
+  integer::head_size,pos_size,vel_size,id_size,mass_size,u_size,metal_size,age_size,tag_size
   integer::kpart,lpart,mpart,opart,gpart,ngas,nhalo
   !integer, dimension(nvector)::ids
   real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v,scale_m
   real(dp),dimension(1:nvector)::tt,zz,uu
   real,dimension(1:nvector,1:3)::xx_sp,vv_sp
   real,dimension(1:nvector)::mm_sp,tt_sp,zz_sp,uu_sp
+  real,dimension(1:nvector)::famtag
   real(dp)::mgas_tot
   real::dummy_real,ipbar
   character(LEN=12)::ifile_str
@@ -1269,6 +1270,7 @@ contains
           mass_blck  = -1
           metal_blck = -1
           age_blck   = -1
+          tag_blck   = -1
 
           if(ic_format .eq. 'Gadget1') then
              ! Init block counter
@@ -1319,10 +1321,18 @@ contains
                    age_size   = blck_size/sizeof(dummy_real)
                    write(*,*)blck_cnt,blck_size
                 endif
+
+                ! NOT YET TESTED
+                if(blck_cnt .eq. 9) then
+                   tag_blck   = jump_blck+sizeof(blck_size)
+                   tag_size   = blck_size/sizeof(dummy_int)
+                   write(*,*)blck_cnt,blck_size
+                endif
+
                 jump_blck = jump_blck+blck_size+2*sizeof(dummy_int)
                 blck_cnt = blck_cnt+1
              enddo
-          endif
+          endif ! if(ic_format .eq. 'Gadget1')
 
           if(ic_format .eq. 'Gadget2') then
              ! Init block counter
@@ -1381,9 +1391,14 @@ contains
                    age_size   = blck_size/sizeof(dummy_real)
                    write(*,*) '-> Found ',blck_name,' block'
                 endif
+                if(blck_name .eq. ic_tag_name) then
+                   tag_blck   = jump_blck+sizeof(blck_name)+4*sizeof(dummy_int)
+                   tag_size   = blck_size/sizeof(dummy_int)
+                   write(*,*) '-> Found ',blck_name,' block'
+                endif
                 jump_blck = jump_blck+blck_size+sizeof(blck_name)+5*sizeof(dummy_int)
              enddo
-          endif
+          endif ! if(ic_format .eq. 'Gadget2')
 
           if((head_blck.eq.-1).or.(pos_blck.eq.-1).or.(vel_blck.eq.-1)) then
              write(*,*) 'Gadget file does not contain handful data'
@@ -1471,6 +1486,8 @@ contains
           tt=0.
           zz=0.
           uu=0.
+          famtag=0
+
           if(myid==1)then
              jpart=0
              do i=1,nvector
@@ -1500,6 +1517,11 @@ contains
                    read(1,POS=id_blck+sizeof(dummy_int)*(kpart-1)) ii(i)
                 else
                    ii(i) = kpart
+                endif
+                if(tag_blck.ne.-1) then
+                   read(1,POS=tag_blck+sizeof(dummy_int)*(kpart-1)) famtag(i)
+                else
+                   famtag(i) = 0
                 endif
                 if(kpart.le.header%npart(1)) then
                    if((u_blck.ne.-1).and.(u_size.eq.header%npart(1))) then
@@ -1586,6 +1608,7 @@ contains
           call MPI_BCAST(xx,nvector*3  ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(vv,nvector*3  ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(ii,nvector    ,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
+          call MPI_BCAST(famtag,nvector,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(mm,nvector    ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(zz,nvector    ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(tt,nvector    ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
@@ -1645,7 +1668,7 @@ contains
                       end if
                    else if(type_index.eq.2)then
                       typep(ipart)%family = FAM_DM
-                      typep(ipart)%tag    = 0
+                      typep(ipart)%tag    = famtag(i)
                    end if
                    up(ipart)      = uu(i)
                    if(ic_mask_ptype.gt.-1)then
