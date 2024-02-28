@@ -1,7 +1,7 @@
 ! Compile the code with:
 ! /Users/tepper/codes/ramses_fork/bin/Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH
 !
-! Similar to hbd_10_gd11_star, but intended to test a new generation of ICs where particles are assigned an explicity family tag, i.e. DM halo, stellar bulge, and stellar disk are all of family 'dm' but with different tags: 1, 3, 5, respectively.
+! Similar to hbd_10_gd11_s4_star, but intended to test a new generation of ICs where particles are assigned an explicity family tag, i.e. DM halo, stellar bulge, and stellar disk are all of family 'dm' but with different tags: 1, 3, 5, respectively.
 ! Their tag is identical to their usual component identifier, defined by:
 ! particle ID % (2*MaxCompNumb) = comp_ID
 
@@ -21,6 +21,7 @@ nstepmax=10000000
 nsubcycle=1,1,2,2,2,2,2,2,2,2,2
 ordering='hilbert'
 rt=.false.
+sink=.true.			! ADD SINK at nrestart; see SINK_PARAMS below
 /
 
 
@@ -112,6 +113,7 @@ mass_sph=5.d-2	! unit of mass is ~2.35e5 Msun
 m_refine=10*8
 interpol_type=0
 interpol_var=0
+sink_refine=.true.		! refine around sink to levelmax; default is .false.
 /
 
 
@@ -135,8 +137,37 @@ no_inflow=.false.				  ! ...  with inflow
 !check: $> echo initfile(1)/output_xxxxx/part_file_descriptor.txt | wc -c
 &INIT_PARAMS
 filetype='dice'
-initfile(1)='/import/photon2/tepper/hbd_10_gd11_star_tag/ic/'
-!initfile(1)='/g/data/aa8/ttg562/hbd_10_gd11_star_tag/ic/'
+initfile(1)='/import/photon2/tepper/hbd_10_gd11_s4_star_tag/ic/'
+!initfile(1)='/g/data/aa8/ttg562/hbd_10_gd11_s4_star_tag/ic/'
+/
+
+
+! NOTES:
+! - This block is only relevant of sink = .true.
+! - If nrestart = 0 and sink = .true. an additional ascii file 'ic_sink' must be present in initfile(1)
+! - If nrestart>0 and sink_restart=.true., an additional ascii file
+! 'ic_sink_restart' must be present in initfile(1)
+!
+! Either file contains a list of sinks with the following format (see pm/init_sink.f90):
+! mass,x,y,z,vx,vy,vz,Lx,Ly,Lz,mass_SMBH,ID,dmf
+! L is the sink's angular momentum (as in, e.g. an accreting black hole)
+! All quantities in *astro-physical* units, i.e. Msun, kpc, km/s
+&SINK_PARAMS
+!sink_restart = .false.
+sink_soft=2 				! default; in units of dx at max.ref.level
+mass_sink_direct_force=1.	! mass (Msun) above which sinks are treated with direct N-body solver
+create_sinks=.false.		! default, but just in case
+mass_sink_seed=1.			! need > 0 for code to run; default is 0
+nsinkmax=2					! default 2000; save memory
+remove_sink=.true.			! exponentially decrease sink mass...
+sink_tscale0=0.15			! starting at this time (in code units)...
+sink_tscale=0.03				! over this time scale (in code units)
+/
+
+
+!not sure if used when hydro=.false.
+&CLUMPFIND_PARAMS
+ivar_clump=0				! use DM for clump finding; default is 1 (gas)
 /
 
 
@@ -174,8 +205,8 @@ tend=2.0
 delta_tout=0.01
 walltime_hrs=48.0
 minutes_dump=1
-output_dir='/import/photon2/tepper/hbd_10_gd11_star_tag/'
-!output_dir='/g/data/aa8/ttg562/hbd_10_gd11_star_tag/'
+output_dir='/import/photon2/tepper/hbd_10_gd11_s4_star_tag/'
+!output_dir='/g/data/aa8/ttg562/hbd_10_gd11_s4_star_tag/'
 /
 
 
@@ -183,7 +214,7 @@ output_dir='/import/photon2/tepper/hbd_10_gd11_star_tag/'
 movie=.false. ! deactivated on 20 FEB 23 due to low chosen (nw_frame, nh_frame)
 imovout=10000
 imov=1
-tendmov=4.5
+tendmov=2.0
 nw_frame=512
 nh_frame=512
 levelmax_frame=12
