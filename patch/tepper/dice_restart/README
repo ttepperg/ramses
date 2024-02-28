@@ -21,6 +21,9 @@ Created: 01 JAN 2024
 	20 FEB 2024:
 	Remove the use of sink_restart from init_part.f90 as it appeared unnecessary
 
+	28 FEB 2024:
+	Added family tag, previously set to 0 by default, now set to the value specified by the ICs (if available)
+
 TO DO:
 
 	- Remove obsolete bits such as uu for particles, etc.
