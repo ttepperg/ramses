@@ -34,6 +34,7 @@ module dice_commons
   character(len=4)::ic_u_name     = 'U   '
   character(len=4)::ic_metal_name = 'Z   '
   character(len=4)::ic_age_name   = 'AGE '
+  character(len=4)::ic_tag_name   = 'TAG '
   ! Gadget units in cgs
   real(dp)::gadget_scale_l = 3.085677581282D21
   real(dp)::gadget_scale_v = 1.0D5
@@ -169,6 +170,7 @@ subroutine read_params
   namelist/dice_params/ ic_file,ic_nfile,ic_format,IG_rho,IG_T2,IG_metal &
        & ,ic_head_name,ic_pos_name,ic_vel_name,ic_id_name,ic_mass_name &
        & ,ic_u_name,ic_metal_name,ic_age_name &
+	   & ,ic_tag_name &
        & ,gadget_scale_l, gadget_scale_v, gadget_scale_m ,gadget_scale_t &
        & ,ic_scale_pos,ic_scale_vel,ic_scale_mass,ic_scale_u,ic_scale_age &
        & ,ic_scale_metal,ic_center,ic_ifout,amr_struct,ic_t_restart,ic_mag_const &
