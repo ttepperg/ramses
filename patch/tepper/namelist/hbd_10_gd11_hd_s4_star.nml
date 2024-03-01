@@ -1,0 +1,235 @@
+! Compile the code with:
+! /Users/tepper/codes/ramses_fork/bin/Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH
+!
+! This simulation is virtually identical to hbd_10_gd11_star, but adds a sink
+! at nrestart = 0
+!
+! NOTE:
+!	1 - To deactivate SF and FB set eps_star = 0
+! 	2 - It is recommended to set SFdiagnostics = SNdiagnostics = .false.
+
+&RUN_PARAMS
+print_when_io=.true.
+verbose=.false.
+cosmo=.false.
+pic=.true.
+hydro=.true.
+poisson=.true.
+tracer=.false.
+ncontrol=1
+nremap=7
+nrestart=0
+restart_remap=.true.
+nstepmax=10000000
+nsubcycle=1,1,2,2,2,2,2,2,2,2,2
+ordering='hilbert'
+rt=.false.
+sink=.true.			! ADD SINK at nrestart; see SINK_PARAMS below
+/
+
+
+! Note that these differ from my usual settings and will affect the value of the time unit, prompting changes to OUTPUT_PARAMS
+&UNITS_PARAMS
+units_density = 1.573391528d-26			! g/cm^3 = 1 H / cm^3
+units_time    = 3.00386047142391D+15 	! s; irrelevant if poisson=.true.
+units_length  = 3.0856776D+21 			! cm = 1 kpc
+/
+
+
+&FEEDBACK_PARAMS
+f_w=0.
+eta_sn=0.1
+SNenergy=1.0d51
+Tmax=5.0d8				! could be anything between 1e7 - 1e9
+radpressure=.true.		! DO
+eta_rap=2.0d0			! NOT
+tau_IR=-1.				! CHANGE
+vmaxFB=4000.00
+maxadvfb=4000.0
+smallT=1.e0
+fbsafety=.true.			! avoid runaway mom.injection
+Nrcool=6.0				! cells; could 3 - 6
+supernovae=.true.
+winds=.true.
+momentum=.true.
+energy=.true.
+metalscaling=.true.
+SNIamodel=1      		!DTD, t^-1.12
+Ia_rate=2.6d-13  		!Field DTD
+SNdiagnostics=.true.
+/
+
+
+&SF_PARAMS
+mstarparticle=1.0d3		! Msun, initial mass
+eps_star= 0.1			! set to 0 to deactivate *both* SF and FB
+n_star=10.0
+temp_star=100.0			! irrelevant parameter
+T2_star=0.1d0			! temperature floor (K)
+g_star=2.0
+SFdiagnostics=.true.
+/
+
+
+&COOLING_PARAMS
+cooling=.true.
+neq_chem=.false.
+haardt_madau=.true.
+z_reion=8.5
+metal=.true.
+self_shielding=.true.
+T2max=5.0d8
+/
+
+
+&HYDRO_PARAMS
+pressure_fix=.true.
+gamma=1.666666667
+courant_factor=0.9
+slope_type=1
+riemann='hllc'
+beta_fix=0.5
+/
+
+
+! Added on 20 FEB 2023, but commented out for backwards compatibility
+!&POISSON_PARAMS
+!gravity_type=0
+!epsilon=5.0e-4
+!/
+
+! Memory management PER CORE (N-body+HD runs)
+! ~ 0.8*[ 2*(ngridmax/10^6) + (npartmax/10^7) ] GB
+! Note that the more cores, the smaller ngridmax and npartmax can be
+&AMR_PARAMS
+boxlen=6.0d2
+levelmin=7
+levelmax=14 !13
+!ngridmax=200000
+!npartmax=3000000
+ngridmax=500000   ! on 240 cpus @ ~170GB;
+npartmax=11000000 ! on 240 cpus @ ~185GB;
+nexpand=1
+/
+
+
+&REFINE_PARAMS
+mass_sph=5.d-2	! unit of mass is ~2.35e5 Msun
+m_refine=10*8
+interpol_type=0
+interpol_var=0
+sink_refine=.true.		! refine around sink to levelmax; default is .false.
+/
+
+
+&BOUNDARY_PARAMS
+nboundary=6
+bound_type= 2, 2,  2,  2,  2,  2 ! zero-gradient BCs ...
+ibound_min=-1, 1, -1, -1, -1, -1
+ibound_max=-1, 1,  1,  1,  1,  1
+jbound_min= 0, 0, -1,  1, -1, -1
+jbound_max= 0, 0, -1,  1,  1,  1
+kbound_min= 0, 0,  0,  0, -1,  1
+kbound_max= 0, 0,  0,  0, -1,  1
+no_inflow=.false.				  ! ...  with inflow
+/
+
+
+!initfile must be such that expanded by the IC file names
+!collectively has len < 80 characters
+!the longest file name reads:
+!initfile(1)output_xxxxx/part_file_descriptor.txt
+!check: $> echo initfile(1)/output_xxxxx/part_file_descriptor.txt | wc -c
+&INIT_PARAMS
+filetype='dice'
+!initfile(1)='/import/photon2/tepper/hbd_10_gd11_hd_s4_star/ic/'
+initfile(1)='/g/data/aa8/ttg562/hbd_10_gd11_hd_s4_star/ic/'
+/
+
+
+! NOTES:
+! - This block is only relevant of sink = .true.
+! - If nrestart = 0 and sink = .true. an additional ascii file 'ic_sink' must be present in initfile(1)
+! - If nrestart>0 and sink_restart=.true., an additional ascii file
+! 'ic_sink_restart' must be present in initfile(1)
+!
+! Either file contains a list of sinks with the following format (see pm/init_sink.f90):
+! mass,x,y,z,vx,vy,vz,Lx,Ly,Lz,mass_SMBH,ID,dmf
+! L is the sink's angular momentum (as in, e.g. an accreting black hole)
+! All quantities in *astro-physical* units, i.e. Msun, kpc, km/s
+&SINK_PARAMS
+!sink_restart = .false.
+sink_soft=2 				! default; in units of dx at max.ref.level
+mass_sink_direct_force=1.	! mass (Msun) above which sinks are treated with direct N-body solver
+create_sinks=.false.		! default, but just in case
+mass_sink_seed=1.			! need > 0 for code to run; default is 0
+nsinkmax=2					! default 2000; save memory
+remove_sink=.true.			! exponentially decrease sink mass...
+sink_tscale0=0.15			! starting at this time (in code units)...
+sink_tscale=0.03				! over this time scale (in code units)
+/
+
+
+!not sure if used when hydro=.false.
+&CLUMPFIND_PARAMS
+ivar_clump=0				! use DM for clump finding; default is 1 (gas)
+/
+
+
+!MAKE SURE TO USE THE CORRECT UNITS FOR length, velocity, and mass
+!For more parameter see:
+!https://bitbucket.org/vperret/dice/wiki/RAMSES%20simulation
+&DICE_PARAMS
+ic_file='hbd_10_gd11_hd_proc.g2'           ! Name of the initial conditions file
+ic_nfile=4                    ! If greater than one, look for files with name matching ic_file//'.n'
+ic_format='Gadget2'           ! Format of the initial conditions. 'Gadget1' or 'Gadget2'
+ic_scale_metal=0.02           ! Scaling factor for the metallicity (DICE adopts solar units, RAMSES expects actual metal mass frac.)
+ic_head_name='HEAD'           ! Name of the Header datablock (Gadget2 format only)
+ic_pos_name='POS '            ! Name of the position vector datablock (Gadget2 format only)
+ic_vel_name='VEL '            ! Name of the velocity vector datablock (Gadget2 format only)
+ic_mass_name='MASS'           ! Name of the mass datablock (Gadget2 format only)
+ic_id_name='ID  '             ! Name of the particle identifier datablock (Gadget2 format only)
+ic_u_name='U   '              ! Name of the internal energy datablock (Gadget2 format only)
+ic_metal_name='ZMET'          ! Name of the metallicity datablock (Gadget2 format only)
+ic_age_name='AGE '            ! Name of the particle age datablock (Gadget2 format only)
+IG_rho=1.0D-20                ! IGM gas density (default 1.0d-5)
+IG_T2=1.0D6                   ! IGM gas temperature (default: 1.0d7)
+IG_metal=0.3                  ! IGM metallicity (default: 1.0d-2)
+gadget_scale_l=3.085677581282D+21	! AGAMA file length unit   -> 1 kpc
+gadget_scale_v=1.0D+5 				! AGAMA file velocity unit -> 1 km/s
+gadget_scale_m=1.9891D+33			! AGAMA file mass unit     -> 1 solar mass
+gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this is NOT the simulation time unit)
+/
+
+
+!output_dir name must have len < 40 characters to accomodate
+!the longest Ramses output file names
+!check: $> echo output_dir | wc -c
+&OUTPUT_PARAMS
+tend=2.0
+delta_tout=0.01
+walltime_hrs=48.0
+minutes_dump=1
+!output_dir='/import/photon2/tepper/hbd_10_gd11_hd_s4_star/'
+output_dir='/g/data/aa8/ttg562/hbd_10_gd11_hd_s4_star/'
+/
+
+
+&MOVIE_PARAMS
+movie=.false. ! deactivated on 20 FEB 23 due to low chosen (nw_frame, nh_frame)
+imovout=10000
+imov=1
+tendmov=2.0
+nw_frame=512
+nh_frame=512
+levelmax_frame=12
+ivar_frame=1
+xcentre_frame=300.0,0.0,0.0,0.0,300.0,0.0,0.0,0.0
+ycentre_frame=300.0,0.0,0.0,0.0,300.0,0.0,0.0,0.0
+zcentre_frame=300.0,0.0,0.0,0.0,300.0,0.0,0.0,0.0
+deltax_frame=20.0,0.0,20.0,0.0
+deltay_frame=20.0,0.0,20.0,0.0
+deltaz_frame=20.0,0.0,20.0,0.0
+movie_vars_txt='dens','temp','var6','var7','stars','lum'
+proj_axis='zx'
+/
