@@ -33,4 +33,4 @@ The current strategy to achieve a seamless integration of changes to the new rep
 3. diff relevant files (see 2. above) between main ramses code and *UNCHANGED* main ramses_fork (~/codes/ramses_fork/)
 4. synchronyse ramses_fork via Bitbucket
 5. git pull ramses_fork
-6. Using FileMerge, copy the new changes in the relevant files (see 2. above) for each of their corresponding copy in patch/tepper/
+6. Using FileMerge, copy the new changes of the relevant files (see 2. above) into their corresponding copy in patch/tepper/
