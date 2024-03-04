@@ -22,3 +22,15 @@ which are however not sent for pull requests from the main repo.
 After each update of the main branch I update my fork using
 FileMerge to compare and update my patched files.
 
+***************************************************
+ABOUT UPDATING IN LINE WITH THE MAIN RAMSES REPO
+***************************************************
+
+The current strategy to achieve a seamless integration of changes to the new repo into my patches is the following:
+1. git pull the main ramses code (~/codes/ramses/)
+2. from the list of file changes, find matches in patch/tepper via:
+	$> find . filename
+3. diff files between main ramses code and *UNCHANGED* main ramses_fork (~/codes/ramses_fork/)
+4. synchronyse ramses_fork via Bitbucket
+5. git pull ramses_fork
+6. Using FileMerge, copy the new changes in the relevant files (see 2. above) for each of their corresponding copy in patch/tepper/
