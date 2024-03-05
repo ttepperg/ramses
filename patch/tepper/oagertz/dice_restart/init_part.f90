@@ -1666,8 +1666,9 @@ contains
 	               if(metal) then
 !                         zp(ipart)  = zz(i)
 ! TTG: The following modification is relevant for gas particles only and is adapted from /Users/tepper/codes/ramses_agertz/ramses/patch/disc/condinit.f90; it assumes nmetals = 2 (note that zz is already scaled by ic_scale_metal):
-                         zp(ipart,1)  = 0.333*zz(i) !Iron
-                         zp(ipart,2)  = 0.333*zz(i) !Oxygen, (Z ~ 2O+1Fe, Madau)
+                         ! Z ~ 2O+1Fe, Madau
+                         zp(ipart,1)  = ic_scale_metalFe * zz(i) !Iron
+                         zp(ipart,2)  = ic_scale_metalO  * zz(i) !Oxygen
                       endif
 	               endif
                    if(type_index.gt.2)then

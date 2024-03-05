@@ -112,12 +112,12 @@ subroutine init_part
 #ifdef OUTPUT_PARTICLE_POTENTIAL
   allocate(ptcl_phi(npartmax))
 #endif
-  ! DICE patch 
+  ! DICE patch
   allocate(up(npartmax))
   if(ic_mask_ptype.gt.-1)then
      allocate(maskp(npartmax))
   endif
-  ! DICE patch 
+  ! DICE patch
   xp=0; vp=0; mp=0; levelp=0; idp=0
   typep(1:npartmax)%family=FAM_UNDEF; typep(1:npartmax)%tag=0
   if(star.or.sink)then
@@ -774,7 +774,7 @@ contains
        deallocate(emission_part(1)%f)
        deallocate(emission_part(1)%f8)
     end if
- 
+
     ! Count particles
     offset=0
     sendbuf_cum=0
@@ -788,7 +788,7 @@ contains
           offset=offset+ncache
        end if
     end do
- 
+
     ! Allocate communicator structures (emission)
     if(emission_part(1)%nactive>0)then
        allocate(emission_part(1)%cpuid(emission_part(1)%nactive))
@@ -804,7 +804,7 @@ contains
             idx=idx+1
          end if
        end do
- 
+
        ! Fill communicator structures with particle data
        jpart=0
        sendbuf=0
@@ -1270,7 +1270,7 @@ contains
           metal_blck = -1
           age_blck   = -1
           tag_blck   = -1
-          
+
           if(ic_format .eq. 'Gadget1') then
              ! Init block counter
              jump_blck = 1
@@ -1407,7 +1407,7 @@ contains
              write(*,*) 'Gadget header is not 256 bytes'
              error=.true.
           endif
-          
+
           ! Byte swapping doesn't appear to work if you just do READ(1)header
           READ(1,POS=head_blck) header%npart,header%mass,header%time,header%redshift, &
                header%flag_sfr,header%flag_feedback,header%nparttotal, &
@@ -1416,13 +1416,13 @@ contains
                header%flag_stellarage,header%flag_metals,header%totalhighword, &
                header%flag_entropy_instead_u, header%flag_doubleprecision, &
                header%flag_ic_info, header%lpt_scalingfactor
-          
+
           nstar_tot = sum(header%npart(3:5))
           npart     = sum(header%npart)
           ngas      = header%npart(1)
           nhalo     = header%npart(2)
           if(cosmo) T2_start = 1.356d-2/aexp**2
-          
+
           write(*,'(A50)')"__________________________________________________"
           write(*,*)"Found ",npart," particles"
           skip=.false.
@@ -1559,7 +1559,7 @@ contains
                    if(xx(i,3)<  0.0d0  )xx(i,3)=xx(i,3)+dble(nz)
                    if(xx(i,3)>=dble(nz))xx(i,3)=xx(i,3)-dble(nz)
                 endif
-                
+
                 if(metal) then
                    if(metal_blck.ne.-1) then
                       zz(i) = zz_sp(i)*ic_scale_metal
@@ -1585,7 +1585,7 @@ contains
                       ! Temperature stored in units of K/mu
                       uu(i) = uu_sp(i)*mu_mol*(gadget_scale_v/scale_v)**2*ic_scale_u
                    endif
-                   
+
                 endif
                 if(kpart.le.header%npart(1)) mgas_tot = mgas_tot+mm(i)
                 ! Check the End Of Block
@@ -1659,8 +1659,9 @@ contains
                       if(metal) then
 !                         zp(ipart)  = zz(i)
 ! TTG: The following modification is relevant for gas particles only and is adapted from /Users/tepper/codes/ramses_agertz/ramses/patch/disc/condinit.f90; it assumes nmetals = 2 (note tha zz is already scaled by ic_scale_metal):
-                         zp(ipart,1)  = 0.333*zz(i) !Iron
-                         zp(ipart,2)  = 0.333*zz(i) !Oxygen, (Z ~ 2O+1Fe, Madau)
+                         ! Z ~ 2O+1Fe, Madau
+                         zp(ipart,1)  = ic_scale_metalFe * zz(i) !Iron
+                         zp(ipart,2)  = ic_scale_metalO  * zz(i) !Oxygen
                       endif
                    endif
                    if(type_index.gt.2)then
