@@ -681,9 +681,14 @@ subroutine init_uold(ilevel)
               endif
               if(star.or.sink)then
                  if(metal) then
-!                   if(ivar.eq.imetal) uold(active(ilevel)%igrid(i)+iskip,ivar) = max(IG_rho/scale_nH,smallr)*IG_metal
-                   if(ivar.eq.imetal) uold(active(ilevel)%igrid(i)+iskip,ivar) = 0.333*max(IG_rho/scale_nH,smallr)*IG_metal*ic_scale_metal
-                   if(ivar.eq.imetal+1) uold(active(ilevel)%igrid(i)+iskip,ivar) = 0.333*max(IG_rho/scale_nH,smallr)*IG_metal*ic_scale_metal
+                   ! Iron
+                   if(ivar.eq.imetal) &
+                   & uold(active(ilevel)%igrid(i)+iskip,ivar) = &
+                   & ic_scale_metalFe * max(IG_rho/scale_nH,smallr) * IG_metal * ic_scale_metal
+                   ! Oxygen
+                   if(ivar.eq.imetal+1) &
+                   & uold(active(ilevel)%igrid(i)+iskip,ivar) = &
+                   & ic_scale_metalO * max(IG_rho/scale_nH,smallr) * IG_metal * ic_scale_metal
                  endif
               endif
            endif
