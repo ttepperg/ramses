@@ -20,7 +20,7 @@ Created: 16 JAN 2024
 	Added family tag, previously set to 0 by default, now set to the value specified by the ICs (if available)
 
 	06 MAR 2024:
-	Introduced to new DICE input parameters, ic_scale_metalO/Fe, to weigh the O/Fe initial abundance ratios (previously hard-coded to a value of 0.333)
+	Introduced two new DICE input parameters, ic_scale_metalO/Fe, to weigh the O/Fe initial abundance ratios (previously hard-coded to a value of 0.333)
 
 TO DO:
 
