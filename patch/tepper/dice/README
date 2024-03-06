@@ -37,7 +37,8 @@ The files are either files with custom modifications to improve DICE (for my nee
 Note that the above determines the way the patches should be included in a Makefile that wishes to compile the DICE patch namely 1) my dice patch; 2) the original dice patch, 3) my other patches [amr/hydro/pm/poisson], although 2 and 3 are interchangeable.
 
 Notes:
-	- The bck_21DEC023 folder is temporary until I've made sure that the most recent update (22 DEC 2023) is working
+	- The bck_21DEC023 folder is temporary until I've made sure that the most recent update (22 DEC 2023) is working.
+	DELETED ON 06 MAR 2024 (a were all the other temporary backup folders in other subdirectories)
 
 
 Modified files
