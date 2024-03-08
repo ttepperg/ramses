@@ -3,18 +3,18 @@ Author: Dr. Thorsten Tepper Garcia
 Created: 07 MAR 2024
 
 About:
-	This directory contains a modified version of oagertz/feedback.90. The idea is to test different SNII O and Fe yields, specifically the yields as given by EDGE (default) vs. Wosley and Hager (2007).
+	This directory contains a modified version of oagertz/feedback.90. The idea is to test different SNII O and Fe yields, specifically the yields as given by EDGE (default) vs. Woosley and Heger (2007).
 
 	The modification consists in swapping the following lines (commented vs uncommented), i.e. changing this:
 
-        !mlossmetals(j,1)=mlossmetals(j,1)+numII*0.375d0*exp(-17.94d0/meanmassM)*scale_m/vol_loc(j)  !1=Fe  ------ Wosley & Heger (2007)
-        !mlossmetals(j,2)=mlossmetals(j,2)+numII*27.66d0*exp(-51.81d0/meanmassM)*scale_m/vol_loc(j)  !2=O ------ Wosley & Heger (2007)
+        !mlossmetals(j,1)=mlossmetals(j,1)+numII*0.375d0*exp(-17.94d0/meanmassM)*scale_m/vol_loc(j)  !1=Fe  ------ Woosley & Heger (2007)
+        !mlossmetals(j,2)=mlossmetals(j,2)+numII*27.66d0*exp(-51.81d0/meanmassM)*scale_m/vol_loc(j)  !2=O ------ Woosley & Heger (2007)
         mlossmetals(j,1)=mlossmetals(j,1)+numII*SNII_Fe_yield(meanmassM,mettM)*scale_m/vol_loc(j) !1=Fe EDGE2
         mlossmetals(j,2)=mlossmetals(j,2)+numII*SNII_O_yield(meanmassM,mettM)*scale_m/vol_loc(j)  !2=O  EDGE2
 
 	to this:
 
-        mlossmetals(j,1)=mlossmetals(j,1)+numII*0.375d0*exp(-17.94d0/meanmassM)*scale_m/vol_loc(j)  !1=Fe  ------ Wosley & Heger (2007)
-        mlossmetals(j,2)=mlossmetals(j,2)+numII*27.66d0*exp(-51.81d0/meanmassM)*scale_m/vol_loc(j)  !2=O ------ Wosley & Heger (2007)
+        mlossmetals(j,1)=mlossmetals(j,1)+numII*0.375d0*exp(-17.94d0/meanmassM)*scale_m/vol_loc(j)  !1=Fe  ------ Woosley & Heger (2007)
+        mlossmetals(j,2)=mlossmetals(j,2)+numII*27.66d0*exp(-51.81d0/meanmassM)*scale_m/vol_loc(j)  !2=O ------ Woosley & Heger (2007)
         !mlossmetals(j,1)=mlossmetals(j,1)+numII*SNII_Fe_yield(meanmassM,mettM)*scale_m/vol_loc(j) !1=Fe EDGE2
         !mlossmetals(j,2)=mlossmetals(j,2)+numII*SNII_O_yield(meanmassM,mettM)*scale_m/vol_loc(j)  !2=O  EDGE2

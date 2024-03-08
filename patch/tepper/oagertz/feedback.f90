@@ -562,8 +562,8 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
                  ! --- Metals
                  if(metal)then
                     meanmassM=min(meanmass,SNyieldmcap)                      !------ yields from very massive stars assumed to be same as
-                    !mlossmetals(j,1)=mlossmetals(j,1)+numII*0.375d0*exp(-17.94d0/meanmassM)*scale_m/vol_loc(j)  !1=Fe  ------ Wosley & Heger (2007)
-                    !mlossmetals(j,2)=mlossmetals(j,2)+numII*27.66d0*exp(-51.81d0/meanmassM)*scale_m/vol_loc(j)  !2=O ------ Wosley & Heger (2007)
+                    !mlossmetals(j,1)=mlossmetals(j,1)+numII*0.375d0*exp(-17.94d0/meanmassM)*scale_m/vol_loc(j)  !1=Fe  ------ Woosley & Heger (2007)
+                    !mlossmetals(j,2)=mlossmetals(j,2)+numII*27.66d0*exp(-51.81d0/meanmassM)*scale_m/vol_loc(j)  !2=O ------ Woosley & Heger (2007)
                     mlossmetals(j,1)=mlossmetals(j,1)+numII*SNII_Fe_yield(meanmassM,mettM)*scale_m/vol_loc(j) !1=Fe EDGE2
                     mlossmetals(j,2)=mlossmetals(j,2)+numII*SNII_O_yield(meanmassM,mettM)*scale_m/vol_loc(j)  !2=O  EDGE2
                     mlossmetals(j,3)=mlossmetals(j,3)+numII*SNII_N_yield(meanmassM,mettM)*scale_m/vol_loc(j)  !3=N  EDGE2
