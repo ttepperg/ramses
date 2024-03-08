@@ -112,7 +112,8 @@ boxlen=600.0
 filetype='dice'
 !initfile(1)='/g/data/aa8/ttg562/h_00_gh0_lr_ofe_wh/ic/'
 !initfile(1)='/import/photon2/tepper/h_00_gh0_lr_ofe_wh/ic/'
-initfile(1)='/project/GalSims/h_00_gh0_lr_ofe_wh/ic/'
+!initfile(1)='/project/GalSims/h_00_gh0_lr_ofe_wh/ic/'
+initfile(1)='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh/ic/'
 d_region=1.0d-6
 p_region=1.0d6
 /
@@ -127,7 +128,8 @@ walltime_hrs=24.0
 minutes_dump=1
 !output_dir='/g/data/aa8/ttg562/h_00_gh0_lr_ofe_wh/'
 !output_dir='/import/photon2/tepper/h_00_gh0_lr_ofe_wh/'
-output_dir='/project/GalSims/h_00_gh0_lr_ofe_wh/'
+!output_dir='/project/GalSims/h_00_gh0_lr_ofe_wh/'
+output_dir='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh/'
 /
 
 &REFINE_PARAMS
