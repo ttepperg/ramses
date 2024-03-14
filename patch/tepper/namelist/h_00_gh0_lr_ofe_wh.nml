@@ -78,8 +78,6 @@ self_shielding=.true.
 T2max=5.0d8
 /
 
-!-------- the above block is the difference between the setup w/o star formation, etc. and this one
-
 
 &HYDRO_PARAMS
 pressure_fix=.true.
@@ -114,8 +112,8 @@ filetype='dice'
 !initfile(1)='/import/photon2/tepper/h_00_gh0_lr_ofe_wh/ic/'
 !initfile(1)='/project/GalSims/h_00_gh0_lr_ofe_wh/ic/'
 initfile(1)='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh/ic/'
-d_region=1.0d-6
-p_region=1.0d6
+d_region=1.0d-6	! perhaps unnecessary
+p_region=1.0d6	! perhaps unnecessary
 /
 
 !output_dir name must have len < 40 characters to accomodate
@@ -132,6 +130,7 @@ minutes_dump=1
 output_dir='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh/'
 /
 
+!xyz_refine perhaps unnecessary
 &REFINE_PARAMS
 interpol_var=0
 interpol_type=0
