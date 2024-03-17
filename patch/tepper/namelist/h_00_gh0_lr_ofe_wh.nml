@@ -122,7 +122,7 @@ p_region=1.0d6	! perhaps unnecessary
 &OUTPUT_PARAMS
 tend=2.0
 delta_tout=0.01
-walltime_hrs=96.0
+walltime_hrs=72.0
 minutes_dump=1
 !output_dir='/g/data/aa8/ttg562/h_00_gh0_lr_ofe_wh/'
 !output_dir='/import/photon2/tepper/h_00_gh0_lr_ofe_wh/'
