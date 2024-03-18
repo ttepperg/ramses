@@ -21,6 +21,10 @@
 !	- nrestart = 0 in RUN_PARAMS
 !	- nrestart2 > 0 in RESTART_PARAMS
 !	- filetype='ramses_dice' in INIT_PARAMS
+!
+! NOTE:
+!	1 - To deactivate SF and FB set eps_star = 0
+! 	2 - It is recommended to set SFdiagnostics = SNdiagnostics = .false.
 
 
 &RUN_PARAMS
@@ -79,6 +83,7 @@ n_star=10.0
 temp_star=100.0			! irrelevant parameter
 T2_star=0.1d0			! temperature floor (K)
 g_star=2.0
+SFdiagnostics=.false.
 /
 
 &COOLING_PARAMS
