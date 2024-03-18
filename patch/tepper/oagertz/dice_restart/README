@@ -2,6 +2,13 @@ Author: Dr. Thorsten Tepper Garcia
 
 Created: 16 JAN 2024
 
+
+	*IMPORTANT*:
+		THIS PATCH (and its partent patch/tepper/dice_restart STILL HAS A NUMBER OF BUGS!
+		For instance, Main step starts at 1 instead of at the actual last value; the same is true for nstep_coarse.
+		Restarting a simulation (h_00_gh0_lr_ofe_wh_rs) leads to the mass of evolved, newborn stellar particles drop below their allowed minimum value.
+
+
 	Last modified:
 
 	17 JAN 2024:
