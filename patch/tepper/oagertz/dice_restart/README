@@ -22,6 +22,9 @@ Created: 16 JAN 2024
 	06 MAR 2024:
 	Introduced two new DICE input parameters, ic_scale_metalO/Fe, to weigh the O/Fe initial abundance ratios (previously hard-coded to a value of 0.333)
 
+	18 MAR 2024
+	Added two DICE input parameters, ic_scale_metalO/Fe, missing from read_params.f90 (on 06 MAR 2024 added to init_part.f90 by mistake only)
+
 TO DO:
 
 	- Remove obsolete bits such as uu for particles, etc.
