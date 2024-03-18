@@ -15,6 +15,9 @@ module dice_commons
   real(dp)::ic_scale_u     = 1.0
   real(dp)::ic_scale_age   = 1.0
   real(dp)::ic_scale_metal = 1.0
+  ! Oxygen and Iron weights (formerly hard-coded as ~0.333; see init_part.f90 and init_flow_fine.f90); set to 0.333 for backwards compatibility
+  real(dp)::ic_scale_metalO = 0.333
+  real(dp)::ic_scale_metalFe = 0.333
   real(dp)::ic_t_restart   = 0.0D0
   integer::ic_mask_ivar    = 0
   real(dp)::ic_mask_min    = 1d40
@@ -174,6 +177,7 @@ subroutine read_params
        & ,gadget_scale_l, gadget_scale_v, gadget_scale_m ,gadget_scale_t &
        & ,ic_scale_pos,ic_scale_vel,ic_scale_mass,ic_scale_u,ic_scale_age &
        & ,ic_scale_metal,ic_center,ic_ifout,amr_struct,ic_t_restart,ic_mag_const &
+	   & ,ic_scale_metalO,ic_scale_metalFe &
        & ,ic_mag_center_x,ic_mag_center_y,ic_mag_center_z &
        & ,ic_mag_axis_x,ic_mag_axis_y,ic_mag_axis_z &
        & ,ic_mag_scale_R,ic_mag_scale_H,ic_mag_scale_B,cosmo_add_gas_index,ic_skip_type &
