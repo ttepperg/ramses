@@ -198,7 +198,7 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   integer,dimension(:),allocatable::ind
   integer ,dimension(1:nvector)::indrad
 
-  
+
   ! MC tracer
   real(dp) :: star_original_mass
 
@@ -225,7 +225,7 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   ! Type Ia supernova parameters
   Mremnant=1.4d0*scale_m   !Chandrasekhar mass, nothing remains
   pIa=Mremnant*8451d5/scale_v !0.5*Mremnant*v_ej^2 gives v_ej=8451 km/s for 1.4 Msun. Ejecta momentum p = Mremnant*v_ej
-  
+
   ! Scale Ia yields to code units
   SNIaFe=SNIaFe*scale_m
   SNIaO=SNIaO*scale_m
@@ -262,7 +262,7 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   Tmaxfb=Tmax
   maxadv=maxadvfb*1d5/scale_v !into internal units
   minmass=0.1*scale_m  !minimum allowed particle mass
-  
+
   ! Yield parameters.
   SNyieldmcap=30.0 !Yields unknown above 30 Msun
   yieldZmin=0.0001 ! Yields unknown below Z=0.0001
@@ -274,24 +274,24 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   MEuNSNS=MEuNSNS*scale_m
 
   ! Radiation pressure
-  eta1=2.0d0 !See paper  
+  eta1=2.0d0 !See paper
   eta2=eta_rap
-  alpha2=0.0d0   
-  alpha1=0.4d0  
+  alpha2=0.0d0
+  alpha1=0.4d0
   beta=1.7d0  !spectrum slope
-  mumax=1.0d0  
-  eps_cl=0.2d0 !Cluster formation efficiency, observed  
-  tcl=6.0d6 !assumed clump lifetime in years 
-  tcut=3.0d6 !3.0d6 !From constant Lumonisity to powerlaw                 
-  mtrans=3.0d4*scale_m  
+  mumax=1.0d0
+  eps_cl=0.2d0 !Cluster formation efficiency, observed
+  tcl=6.0d6 !assumed clump lifetime in years
+  tcut=3.0d6 !3.0d6 !From constant Lumonisity to powerlaw
+  mtrans=3.0d4*scale_m
   Cr2=2.5d0*3.08568d18/scale_l !2.5 parsec in internal units
-  Cr1=Cr2/(mtrans)**0.4 
+  Cr1=Cr2/(mtrans)**0.4
   imfboost=0.3143d0/0.224468d0 !Kroupa to Chabrier
   KappaIR_0=5.0d0*scale_d*scale_l !g-1 cm2 into internal units. Depending on dust mix, it can be as high as 30 in IR
   Mclmin=100.0*scale_m  !100 Msol, internal units
   ! Radiation pressure, bolometric
   L1=imfboost*scale_t*1.9d-7/scale_v !3.0  !Specific Lbol/c: Lbol/1d6 Msun/c in CGS converted into internal. Units are cm/s^2
-  
+
 !-------------------------------------------------------------------------------------
 
   ! Lower left corner of 3x3x3 grid-cube
@@ -374,8 +374,8 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
         vol_loc(j)=vol_loc(j)*2**ndim !ilevel-1 cell volume
         dx_loc2(j)=dx_loc2(j)*2.0
      end if
-     ! max address 
-     indpmax=max(indpmax,indp(j)) 
+     ! max address
+     indpmax=max(indpmax,indp(j))
   end do
 
   ! Loop over cells
@@ -396,7 +396,7 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   allocate(ind(1:indpmax)) !for Prad
   ind=0.0
   indrad=0.0
-  
+
   ! Compute individual time steps
   do j=1,np
      dteff(j)=dtnew(levelp(ind_part(j)))
@@ -428,7 +428,7 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
           & t_frw(i-1)*(aexp-aexp_frw(i))/(aexp_frw(i-1)-aexp_frw(i))
   endif
 
-  
+
 ! --------- Prad binning---------
    irad=0
    mcl=0.0
@@ -486,7 +486,7 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
         Zgas=(2.09d0*unew(indp(j),imetal+1)+1.06d0*unew(indp(j),imetal))/ &
              & max(unew(indp(j),1),smallr)/0.02d0              !---- Average, solar mix in gas (Asplund)
         Zgas=max(Zgas,0.0)
-                    
+
         mettM=min(mett,yieldZmax)                         !------ yields assumed to be the same as limits
         mettM=max(mett,yieldZmin)                         !------ if outside Z range.
 
@@ -595,7 +595,7 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
 !---------------------------
            call SNIa(t1,t2,NumSNIa)                    !----- call SNIa model
            NumSNIa=NumSNIa*mpb(ind_part(j))/scale_m    !----- normalise using particle mass
-           
+
            ! Save for NSNS rate determined later. New sampling below to avoid identical but scaled rates.
            NumNSNS=fNSNS_Ia*NumSNIa
 
@@ -625,7 +625,7 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
               else
                  ptot(j)=ptot(j)+pIa*NumSNIa                       !------- initial pIa blastwave momentum
               endif
-                 
+
             masslossIa=NumSNIa*Mremnant
             mloss(j)=mloss(j)+masslossIa/vol_loc(j)
             ethermal(j)=ethermal(j)+NumSNIa*ESNIa/vol_loc(j)
@@ -648,7 +648,7 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
                mp(ind_part(j))=minmass
             endif
             ! --- Diagnostics
-            if(SNdiagnostics)then 
+            if(SNdiagnostics)then
                write(SNunit_out,'(i7,a,I10,I3,f3.0,3e14.5,L3,7e14.5)') nstep,' SNIa',ind_part(j),ilevel,NumSNIa, &
                   & t*scale_t/Myr2sec,aexp,t1/1d6,momST,n0,meanmass,Zgas,mp(ind_part(j))/scale_m, &
                   & xp(ind_part(j),:)*scale_l/kpc2cm
@@ -667,17 +667,17 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
                   NumNSNS=NumNSNS+1
                endif
             endif
-            
+
             if(NumNSNS>0.0)then
                mlossmetals(j,7)=mlossmetals(j,7)+NumNSNS*MEuNSNS/vol_loc(j)   !7=Eu EDGE2
-            
+
                ! --- Diagnostics
-               if(SNdiagnostics)then 
+               if(SNdiagnostics)then
                   write(SNunit_out,'(i7,a,I10,I3,f3.0,7e14.5)') nstep,' NSNS',ind_part(j),ilevel,NumNSNS, &
                      & t*scale_t/Myr2sec,aexp,t1/1d6,mp(ind_part(j))/scale_m, &
                      & xp(ind_part(j),:)*scale_l/kpc2cm
                endif
-            endif 
+            endif
          endif
       endif !--------- End supernova
 
@@ -751,23 +751,23 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
      if(radpressure) then
         if(t2.gt.0.0.and.t1.lt.tcl) then                      ! -- Bin young star particles get "cluster mass" in cell. Use tcl~1-10Myr
            if(t2<=tcut) then                                  ! -- t2 is current age
-              Lum=L1*mpb(ind_part(j))       
-           else        
-              Lum=(L1*(t2/tcut)**(-1.25d0))*mpb(ind_part(j)) 
+              Lum=L1*mpb(ind_part(j))
+           else
+              Lum=(L1*(t2/tcut)**(-1.25d0))*mpb(ind_part(j))
            endif
            if(t2>40.0d6) then !No more
               Lum=0.0
            endif
            if(ind(indp(j)).gt.0) then                           ! -- Already a particle at location
-              icenter=ind(indp(j)) 
+              icenter=ind(indp(j))
               mcl(icenter)=mcl(icenter)+mpb(ind_part(j))
               agecl(icenter)=agecl(icenter)+t2*mpb(ind_part(j)) ! -- get average age of stars in cluster
-              Lumcl(icenter)=Lumcl(icenter)+Lum*(t2-t1)*365.*24.*3600./scale_t 
+              Lumcl(icenter)=Lumcl(icenter)+Lum*(t2-t1)*365.*24.*3600./scale_t
            else
               irad=irad+1
               ind(indp(j))=irad !Associate entry (cell index) to Prad entry
               mcl(irad)=mcl(irad)+mpb(ind_part(j))
-              agecl(irad)=agecl(irad)+t2*mpb(ind_part(j)) !to get average age of stars in cluster                               
+              agecl(irad)=agecl(irad)+t2*mpb(ind_part(j)) !to get average age of stars in cluster
               Lumcl(irad)=Lumcl(irad)+Lum*(t2-t1)*365.*24.*3600./scale_t
               indrad(irad)=j !We need book-keeping to get back to indcube.
            endif
@@ -790,22 +790,22 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
            if(Lumcl(i).gt.0.0) then          ! -- only do for cells with actual young stars in them
               agecl(i)=agecl(i)/mcl(i)       ! -- Normalize cluster age
               iicell=indp(indrad(i))         ! -- get particle "j"
-              
+
               if(metalscaling) then          ! -- for dust opacity
                  Zgas=(2.09d0*unew(iicell,imetal+1)+1.06d0*unew(iicell,imetal))/&
                       & max(unew(iicell,1),smallr)/0.02d0 !Average, solar mix in gas (Asplund)
-                 Zgas=max(Zgas,0.01) 
+                 Zgas=max(Zgas,0.01)
               else
                  Zgas=1.0
               endif
-              Mclmax=mumax*mcl(i)  
+              Mclmax=mumax*mcl(i)
               KappaIR=KappaIR_0*Zgas !Scaled by Z/Z_sun to get dust-to-gas ratio dependency. Current SN ejecta is included
-              if(mcl(i)<=mtrans) then 
-                 Cr=Cr1        
-                 alpha=alpha1     
-              else        
-                 Cr=Cr2    
-                 alpha=alpha2     
+              if(mcl(i)<=mtrans) then
+                 Cr=Cr1
+                 alpha=alpha1
+              else
+                 Cr=Cr2
+                 alpha=alpha2
               endif
               if(tau_IR.ge.0) then
                  tauIR=tau_IR !set in paramter file
@@ -815,7 +815,7 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
                  tauIR=tauIR/(1.-(Mclmin/Mclmax)**(2.-beta))
                  tauIR=tauIR*mcl(i)**(1.-2.*alpha)   !Correct, as we multiply by mp below
               endif
-              
+
               tauIR=min(tauIR,100.0d0)  !Prad limiter. Shells can't be RT-stable for much large value
 
               if(agecl(i).lt.tcl)then !If clump is still intact
@@ -956,51 +956,51 @@ enddo
 
 !-------------------------- Radiation pressure ------------------
  if(radpressure) then !Put this with the rest later
-    if(iradmax.gt.0) then 
-       do i=1,iradmax                   
+    if(iradmax.gt.0) then
+       do i=1,iradmax
           if(Prad(i)>0) then
-          !We now the number of entries in Prad array, not particles    
-          icenter=indrad(i)                          ! -- Particle index   
+          !We now the number of entries in Prad array, not particles
+          icenter=indrad(i)                          ! -- Particle index
           if(ok(icenter)) then                       ! -- Only do for particles on local oct
              do ii=1,2  !j is now picked
                 do jj=1,2
                    do kk=1,2
-                      iicell=indcube2(icenter,ii,jj,kk) 
-                      
+                      iicell=indcube2(icenter,ii,jj,kk)
+
                       ! -- Kicks are applied assuming constant etherm
-                      tt=unew(iicell,ndim+2)  !Tot E                                                                           
+                      tt=unew(iicell,ndim+2)  !Tot E
                       tekin=0.0d0
                       do idim=1,ndim
                          tekin=tekin+0.5*unew(iicell,idim+1)**2/max(unew(iicell,1),smallr)  !Kin E
                       end do
-                      tt=tt-tekin  !Etherm     
-                      
+                      tt=tt-tekin  !Etherm
+
                       !------- Geomtrical factors and cell index ---------------------------------------------
                       xcont=-1.0+2.0*(ii-1)
                       ycont=-1.0+2.0*(jj-1)
                       zcont=-1.0+2.0*(kk-1)
                       contr=8.0*(xcont**2+ycont**2+zcont**2)**0.5  !Each cell get 1/8th of momentum
-                                            
+
                       vkick=scale_v*Prad(i)/8.d0/1.d5/max(unew(iicell,1),smallr)/vol_loc(icenter)
-                      
+
                       if(vkick.gt.vmax) then  !Limit momentum
                          momx=xcont*8.*unew(iicell,1)*vmax*1.d5/scale_v/contr  !mom density, factor of 8 is to cancel contr
-                         momy=ycont*8.*unew(iicell,1)*vmax*1.d5/scale_v/contr  !mom density                       
-                         momz=zcont*8.*unew(iicell,1)*vmax*1.d5/scale_v/contr  !mom density                   
+                         momy=ycont*8.*unew(iicell,1)*vmax*1.d5/scale_v/contr  !mom density
+                         momz=zcont*8.*unew(iicell,1)*vmax*1.d5/scale_v/contr  !mom density
                       else
                          momx=xcont*Prad(i)/contr/vol_loc(icenter)
                          momy=ycont*Prad(i)/contr/vol_loc(icenter)
                          momz=zcont*Prad(i)/contr/vol_loc(icenter)
                       endif
-                      unew(iicell,2)=unew(iicell,2)+momx 
-                      unew(iicell,3)=unew(iicell,3)+momy 
-                      unew(iicell,4)=unew(iicell,4)+momz 
-                      
+                      unew(iicell,2)=unew(iicell,2)+momx
+                      unew(iicell,3)=unew(iicell,3)+momy
+                      unew(iicell,4)=unew(iicell,4)+momz
+
                       if(fbsafety) then
                          vxnew=unew(iicell,2)/max(unew(iicell,1),smallr)
                          vynew=unew(iicell,3)/max(unew(iicell,1),smallr)
                          vznew=unew(iicell,4)/max(unew(iicell,1),smallr)
-                         
+
                          if(abs(vxnew).gt.maxadv) then
                             unew(iicell,2)=sign(maxadv,vxnew)*unew(iicell,1)
                          endif
@@ -1014,7 +1014,7 @@ enddo
                       ! ----- All momentum is now added, calculate new Ekin and update Etot
                       tekin=0.0d0
                       do idim=1,ndim
-                         tekin=tekin+0.5*unew(iicell,idim+1)**2/max(unew(iicell,1),smallr)  !Kin E     
+                         tekin=tekin+0.5*unew(iicell,idim+1)**2/max(unew(iicell,1),smallr)  !Kin E
                       enddo
                       unew(iicell,ndim+2)=tt+tekin
                       !--------------------------------- Oscar: add pnonthemal for missing momentum
@@ -1027,8 +1027,10 @@ enddo
  endif
 endif
 
-deallocate(ind) 
-flush(SNunit_out)   ! Ensure SN log is written to disk
+deallocate(ind)
+if(SNdiagnostics)then
+   flush(SNunit_out)   ! Ensure SN log is written to disk
+endif
 
 end subroutine feedbk
 #endif

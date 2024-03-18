@@ -1028,7 +1028,9 @@ enddo
 endif
 
 deallocate(ind)
-flush(SNunit_out)   ! Ensure SN log is written to disk
+if(SNdiagnostics)then
+   flush(SNunit_out)   ! Ensure SN log is written to disk
+endif
 
 end subroutine feedbk
 #endif

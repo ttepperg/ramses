@@ -813,8 +813,9 @@ subroutine star_formation(ilevel)
 
         end do
         ! End loop over new star particles
-        flush(SFunit_out) ! Ensure writing to disk of the SF log after all stars particle have been created
-
+        if(SFdiagnostics)then
+           flush(SFunit_out) ! Ensure writing to disk of the SF log after all stars particle have been created
+        endif
         ! Modify gas density according to mass depletion
         do i=1,nnew
            n=flag2(ind_cell_new(i))
