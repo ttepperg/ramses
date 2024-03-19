@@ -32,7 +32,7 @@ USE_TURB=0
 MPI = 1
 MPIF90 = mpif90
 # Root name of executable
-EXEC = ramses_oadice_restart
+EXEC = ramses_oadice_restart_wh
 # Number of additional energies
 NENER = 0
 # Use Grackle cooling? 1=Yes, 0=No
