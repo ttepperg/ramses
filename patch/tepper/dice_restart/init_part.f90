@@ -1733,15 +1733,15 @@ contains
     end do
     if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
 
-	! IMPORTANT: DO NOT reset output number nor simulation time if pre-loading a ramses output
-	if(.not.restart_init)then
-	   ifout = ic_ifout
-	   t     = ic_t_restart
-	endif
-	if(myid==1)then
-	   write(*,*)'Next output number (ifout): ', ifout
-	   write(*,*)'Simulation time (t): ', t
-	endif
+    ! IMPORTANT: DO NOT reset output number nor simulation time if pre-loading a ramses output
+    if(.not.restart_init)then
+      ifout = ic_ifout
+      t     = ic_t_restart
+    endif
+    if(myid==1)then
+       write(*,*)'Next output number (ifout): ', ifout
+       write(*,*)'Simulation time (t): ', t
+    endif
 
     ! DICE patch
   end subroutine load_dice
@@ -2656,11 +2656,11 @@ contains
           ifout          = header_amr%ifout
           t              = header_amr%t
           ! Number of passive scalars to load (excludes temperature)
-		  nvar_min = 0
-		  if(hydro) then
-             nvar_min       = min(header_hydro%nvar-header_hydro%ndim-1,nvar-ndim-1) - 1
-			 if(myid==1) write(*,*) 'Found ', nvar_min, 'passive hydro variable(s) (EXCLUDING gas temperature)'
-		  endif
+          nvar_min = 0
+          if(hydro) then
+               nvar_min       = min(header_hydro%nvar-header_hydro%ndim-1,nvar-ndim-1) - 1
+            if(myid==1) write(*,*) 'Found ', nvar_min, 'passive hydro variable(s) (EXCLUDING gas temperature)'
+          endif
           !restart_boxlen = header_amr%boxlen -> not used yet
           if(cosmo) then
              omega_m = header_amr%omega_m
