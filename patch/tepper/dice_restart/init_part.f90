@@ -2236,7 +2236,8 @@ contains
 
                     up(ipart)      = uu(i) ! <- IRRELEVANT
 
-                    levelp(ipart)  = levelmin ! DON'T use lev_restart(i)
+                    !levelp(ipart)  = levelmin ! NOT YET TESTED, the following
+                    levelp(ipart)  = lev_restart(i) ! seems correct
                     typep(ipart)%family = fam_restart(i)
                     typep(ipart)%tag = tag_restart(i)
                     ptcl_phi(ipart) = phi_restart(i)
