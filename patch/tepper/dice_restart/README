@@ -31,6 +31,9 @@ Created: 01 JAN 2024
 	28 FEB 2024:
 	Added family tag, previously set to 0 by default, now set to the value specified by the ICs (if available)
 
+	20 MAR 2024
+	Assign particles actual level 'lev_restart' read from particle file instead of 'levelmin'; particularly relevant for star particles, which are placed at maximum refinement level
+
 TO DO:
 
 	- Remove obsolete bits such as uu for particles, etc.
