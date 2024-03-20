@@ -32,6 +32,10 @@ Created: 16 JAN 2024
 	18 MAR 2024
 	Added two DICE input parameters, ic_scale_metalO/Fe, missing from read_params.f90 (on 06 MAR 2024 added to init_part.f90 by mistake only)
 
+	20 MAR 2024
+	Assign particles actual level 'lev_restart' read from particle file instead of 'levelmin'; particularly relevant for star particles, which are placed at maximum refinement level
+
+
 TO DO:
 
 	- Remove obsolete bits such as uu for particles, etc.
