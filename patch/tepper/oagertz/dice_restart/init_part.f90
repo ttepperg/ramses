@@ -1965,6 +1965,9 @@ contains
           read(ilun1,pos=mypos)header_part%npart
           mypos=mypos+sizeof(dummy_int_restart)+size_blck
 
+          ! IN DEVELOPMENT: must add an
+          !   if (MC_tracer) then
+          ! condition; see output_part.f90
           read(ilun1,pos=mypos) size_blck
           mypos=mypos+sizeof(dummy_int_restart)
           read(ilun1,pos=mypos)header_part%localseed
@@ -1989,6 +1992,11 @@ contains
           mypos=mypos+sizeof(dummy_int_restart)
           read(ilun1,pos=mypos)header_part%nsink
           mypos=mypos+sizeof(dummy_int_restart)+size_blck
+
+          ! Save stellar statistics (required by star_formation.f90)
+          nstar_tot  = header_part%nstar_tot ! identical across files
+          mstar_tot  = mstar_tot + header_part%mstar_tot ! file-by-file
+          mstar_lost = mstar_lost + header_part%mstar_lost ! file-by-file
 
           ! Init block address
 
@@ -2692,6 +2700,11 @@ contains
           ! Setting simulation time
           ifout          = header_amr%ifout
           t              = header_amr%t
+
+          ! IN DEVELOPMENT
+		  ! NOT resetting the time messes up the output frequency (via tout_next) and leads to issues for newborn stars (stars not forming, mass going below minmass), BUT resetting it affects stellar ages and thus their subsquent evolution (see feedback.f90); DILEMMA
+          t              = 0
+
           ! Number of passive scalars to load (excludes temperature)
           nvar_min = 0
           if(hydro) then
@@ -2942,6 +2955,29 @@ contains
       ntoss_tot_restart = sum(ntoss_all)
     endif
 
+    ! VERY important for consistency with the previous evolution
+    ! The following are cumulative variables
+    ! nstar_tot sets the new star index; important to avoid duplicated star indices (idp); see star_formation.f90
+    ! DO NOT forget to broadcast to ALL slaves
+#ifndef WITHOUTMPI
+    call MPI_BCAST(nstar_tot,1,MPI_INTEGER,0,MPI_COMM_WORLD,info)
+    call MPI_BCAST(mstar_tot,1,MPI_INTEGER,0,MPI_COMM_WORLD,info)
+    call MPI_BCAST(mstar_lost,1,MPI_INTEGER,0,MPI_COMM_WORLD,info)
+    call MPI_BARRIER(MPI_COMM_WORLD,info)
+#endif
+
+    ! Sanity checks
+    ! N.B.: Not possible to check mstar_loss against a control value
+    if(myid==1)then
+        if(nstar_tot.ne.nstar_tot_restart)then
+           write(*,*)'ERROR: Inconsistent nstar_tot: ', nstar_tot, nstar_tot_restart
+           call clean_stop
+        endif
+        ! These are never consistent with one another (bug?)
+        if(mstar_tot.ne.mstar_tot_restart)then
+           write(*,*)'WARNING: Inconsistent mstar_tot: ', mstar_tot, mstar_tot_restart
+        endif
+    endif
 
     if(myid==1) then
        write(*,'(A50)')"__________________________________________________"
