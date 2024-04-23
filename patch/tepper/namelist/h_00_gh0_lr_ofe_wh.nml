@@ -18,7 +18,7 @@ poisson=.true.
 !tracer=.false.
 ncontrol=1
 nremap=7
-nrestart=0
+nrestart=201
 restart_remap=.true.
 nstepmax=10000000
 nsubcycle=1,1,2,2,2,2,2,2,2,2,2
@@ -109,9 +109,9 @@ boxlen=600.0
 &INIT_PARAMS
 filetype='dice'
 !initfile(1)='/g/data/aa8/ttg562/h_00_gh0_lr_ofe_wh/ic/'
-!initfile(1)='/import/photon2/tepper/h_00_gh0_lr_ofe_wh/ic/'
+initfile(1)='/import/photon2/tepper/h_00_gh0_lr_ofe_wh/ic/'
 !initfile(1)='/project/GalSims/h_00_gh0_lr_ofe_wh/ic/'
-initfile(1)='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh/ic/'
+!initfile(1)='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh/ic/'
 d_region=1.0d-6	! perhaps unnecessary
 p_region=1.0d6	! perhaps unnecessary
 /
@@ -120,14 +120,14 @@ p_region=1.0d6	! perhaps unnecessary
 !the longest Ramses output file names
 !check: $> echo output_dir | wc -c
 &OUTPUT_PARAMS
-tend=2.0
-delta_tout=0.01
+tend=4.0 !2.0
+delta_tout=0.05 !0.01
 walltime_hrs=72.0
 minutes_dump=1
 !output_dir='/g/data/aa8/ttg562/h_00_gh0_lr_ofe_wh/'
-!output_dir='/import/photon2/tepper/h_00_gh0_lr_ofe_wh/'
+output_dir='/import/photon2/tepper/h_00_gh0_lr_ofe_wh/'
 !output_dir='/project/GalSims/h_00_gh0_lr_ofe_wh/'
-output_dir='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh/'
+!output_dir='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh/'
 /
 
 !xyz_refine perhaps unnecessary

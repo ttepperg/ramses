@@ -117,8 +117,8 @@ no_inflow=.false.				  ! ...  with inflow
 &INIT_PARAMS
 filetype='ramses_dice'
 !filetype='dice'
-initfile(1)='/import/photon2/tepper/hbd_11_gd0_new/ic/'
-!initfile(1)='/scratch/dr86/ttg562/hbd_11_gd0_new/ic/'
+initfile(1)='/import/photon2/tepper/dice_restart_gas/ic/'
+!initfile(1)='/scratch/dr86/ttg562/dice_restart_gas/ic/'
 /
 
 
@@ -164,6 +164,6 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 &OUTPUT_PARAMS
 tend = 45.
 delta_tout = 2e-3 !0.1
-output_dir='/import/photon2/tepper/hbd_11_gd0_new/'
-!output_dir='/scratch/dr86/ttg562/hbd_11_gd0_new/'
+output_dir='/import/photon2/tepper/dice_restart_gas/'
+!output_dir='/scratch/dr86/ttg562/dice_restart_gas/'
 /
