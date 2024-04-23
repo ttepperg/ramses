@@ -6,6 +6,8 @@
 !
 ! Modfied copy of hizb_07_lr_fgas20_star.nml
 !
+! The TEST OUTPUT is also from hizb_07_lr_fgas20_star!
+!
 ! Allows for to change number of cores at restart for an N-body/HYDRO
 ! simulation WITH galaxy formation physics (star formation, feedback)
 !
@@ -37,7 +39,7 @@ poisson=.true.
 !tracer=.false. -> not available in this patch
 ncontrol=1
 nremap=7
-nrestart=0
+nrestart=204
 restart_remap=.true.
 nstepmax=10000000
 nsubcycle=1,1,2,2,2,2,2,2,2,2,2
@@ -122,11 +124,11 @@ boxlen=100.0 ! was 600 before
 !initfile(1)output_xxxxx/part_file_descriptor.txt
 !check: $> echo initfile(1)/ic_file | wc -c
 &INIT_PARAMS
-filetype='dice'
-!filetype='ramses_dice'
-!initfile(1)='/g/data/aa8/ttg562/hizb_07_lr_fgas20_star/ic/'
-initfile(1)='/import/photon2/tepper/hizb_07_lr_fgas20_star/ic/'
-!initfile(1)='/project/GalSims/hizb_07_lr_fgas20_star/ic/'
+!filetype='dice'
+filetype='ramses_dice'
+!initfile(1)='/g/data/aa8/ttg562/dice_restart_gas_star/ic/'
+initfile(1)='/import/photon2/tepper/dice_restart_gas_star/ic/'
+!initfile(1)='/project/GalSims/dice_restart_gas_star/ic/'
 d_region=1.0d-6
 p_region=1.0d6
 /
@@ -135,13 +137,13 @@ p_region=1.0d6
 !the longest Ramses output file names
 !check: $> echo output_dir/output_xxxxx/part_file_descriptor.txt | wc -c
 &OUTPUT_PARAMS
-tend=2.0
-delta_tout=5e-3 !0.01 ! was 0.005
-walltime_hrs=48 !24.0 ! was 1.0
-minutes_dump=5
-!output_dir='/g/data/aa8/ttg562/hizb_07_lr_fgas20_star/'
-output_dir='/import/photon2/tepper/hizb_07_lr_fgas20_star/'
-!output_dir='/project/GalSims/hizb_07_lr_fgas20_star/'
+tend=4.0
+delta_tout=2.e-1
+walltime_hrs=72.0
+minutes_dump=1
+!output_dir='/g/data/aa8/ttg562/dice_restart_gas_star/'
+output_dir='/import/photon2/tepper/dice_restart_gas_star/'
+!output_dir='/project/GalSims/dice_restart_gas_star/'
 /
 
 ! All of xyz_refine were 300 before
@@ -164,11 +166,11 @@ epsilon=5.0e-4
 /
 
 ! The followong block must be commented out if filetype != 'ramses_dice'
-!&RESTART_PARAMS
-!nrestart2=2
-!add_dice_ic=.true.	! optional, to load additional DICE ICs at restart
-!restart_vars=6,7   	!-> corresponds to actual indices of passive scalars (excluding temperature)
-!/
+&RESTART_PARAMS
+nrestart2=204
+!!add_dice_ic=.true.	! optional, to load additional DICE ICs at restart
+restart_vars=6,7   	!-> actual indices of passive scalars (excl. temp)
+/
 
 !MAKE SURE TO USE THE CORRECT UNITS FOR length, velocity, and mass
 !For more parameter see:
@@ -197,21 +199,22 @@ gadget_scale_m=1.9891D+33			! AGAMA file mass unit     -> 1 solar mass
 gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this is NOT the simulation time unit)
 /
 
-&MOVIE_PARAMS
-imovout=10000
-imov=1
-tendmov=2.0
-movie=.true.
-nw_frame=512
-nh_frame=512
-levelmax_frame=12
-ivar_frame=1
-xcentre_frame=50.0,0.0,0.0,0.0,50.0,0.0,0.0,0.0
-ycentre_frame=50.0,0.0,0.0,0.0,50.0,0.0,0.0,0.0
-zcentre_frame=50.0,0.0,0.0,0.0,50.0,0.0,0.0,0.0
-deltax_frame=12.5,0.0,12.5,0.0
-deltay_frame=12.5,0.0,12.5,0.0
-deltaz_frame=12.5,0.0,12.5,0.0
-movie_vars_txt='dens','temp','var6','var7','stars','lum'
-proj_axis='zx'
-/
+! COMMENTED OUT FOR SPEED
+!&MOVIE_PARAMS
+!imovout=10000
+!imov=1
+!tendmov=4.0
+!movie=.true.
+!nw_frame=512
+!nh_frame=512
+!levelmax_frame=12
+!ivar_frame=1
+!xcentre_frame=50.0,0.0,0.0,0.0,50.0,0.0,0.0,0.0
+!ycentre_frame=50.0,0.0,0.0,0.0,50.0,0.0,0.0,0.0
+!zcentre_frame=50.0,0.0,0.0,0.0,50.0,0.0,0.0,0.0
+!deltax_frame=12.5,0.0,12.5,0.0
+!deltay_frame=12.5,0.0,12.5,0.0
+!deltaz_frame=12.5,0.0,12.5,0.0
+!movie_vars_txt='dens','temp','var6','var7','stars','lum'
+!proj_axis='zx'
+!/
