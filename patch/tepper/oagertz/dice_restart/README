@@ -3,10 +3,12 @@ Author: Dr. Thorsten Tepper Garcia
 Created: 16 JAN 2024
 
 
-	*IMPORTANT*:
-		THIS PATCH (and its partent patch/tepper/dice_restart STILL HAS A NUMBER OF BUGS!
-		For instance, Main step starts at 1 instead of at the actual last value; the same is true for nstep_coarse.
-		Restarting a simulation (h_00_gh0_lr_ofe_wh_rs) leads to the mass of evolved, newborn stellar particles drop below their allowed minimum value.
+*IMPORTANT*:
+	THIS PATCH (and its parent patch/tepper/dice_restart STILL HAS A NUMBER OF BUGS!
+	For instance, Main step starts at 1 instead of at the actual last value; the same is true for nstep_coarse.
+
+	RESTARTING A SIMULATION (h_00_gh0_lr_ofe_wh_rs) LEADS TO THE MASS OF EVOLVED, NEWBORN STELLAR PARTICLES DROP BELOW THEIR ALLOWED MINIMUM VALUE.
+	See /Users/tepper/codes/ramses_fork/patch/tepper/namelist/h_00_gh0_lr_ofe_wh_rs.nml
 
 
 	Last modified:
@@ -35,6 +37,8 @@ Created: 16 JAN 2024
 	20 MAR 2024
 	Assign particles actual level 'lev_restart' read from particle file instead of 'levelmin'; particularly relevant for star particles, which are placed at maximum refinement level
 
+	23 APR 2024:
+	Calculate birth mass (to be checked against mstar_tot)
 
 TO DO:
 
