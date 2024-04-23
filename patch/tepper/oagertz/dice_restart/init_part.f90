@@ -1810,7 +1810,9 @@ contains
 	real(kind=8),dimension(1:3)::xxg
 	real(dp)::dummy_real_restart
 	real(dp)::vol_loc
-	real(dp)::mgas_tot_restart,mhalo_tot_restart,mstar_tot_restart
+	real(dp)::mgas_tot_restart,mhalo_tot_restart,mstar_tot_restart,&
+    &mbstar_tot_restart
+
 	logical::eob_restart
 	logical::eocpu,read_center,dummy_logical
 	logical,dimension(1:nvector)::nn
@@ -1909,6 +1911,7 @@ contains
     ipart        = 0
     mhalo_tot_restart    = 0.
     mstar_tot_restart    = 0.
+    mbstar_tot_restart   = 0.
     mgas_tot_restart     = 0.
     nhalo_tot_restart    = 0
     nstar_tot_restart    = 0
@@ -2189,6 +2192,9 @@ contains
 
                 ! Read initial mass
                 read(ilun1,pos=mpb_blck_restart+sizeof(dummy_real_restart)*(kpart_restart-1)) mpb_restart(jpart)
+
+                ! Birth mass (to be checked against mstar_tot)
+                mbstar_tot_restart = mbstar_tot_restart + mpb_restart(jpart)
 
 				! NOT YET TESTED
 				! Particle pointer mass (for tracer particles only)
@@ -2697,13 +2703,16 @@ contains
           endif
           call MPI_BARRIER(MPI_COMM_WORLD,info)
 #endif
-          ! Setting simulation time
-          ifout          = header_amr%ifout
-          t              = header_amr%t
-
           ! IN DEVELOPMENT
-		  ! NOT resetting the time messes up the output frequency (via tout_next) and leads to issues for newborn stars (stars not forming, mass going below minmass), BUT resetting it affects stellar ages and thus their subsquent evolution (see feedback.f90); DILEMMA
-          t              = 0
+          ! Setting simulation time
+          ifout          = header_amr%ifout ! to not overwrite restart snapshot
+          !t              = header_amr%t ! SEE NOTES (*)
+          t              = 0. ! SEE NOTES (**)
+
+          ! NOTES:
+          !(*) -> messes up the output frequency (via tout_next) and leads to issues for newborn stars (stars not forming, mass going below minmass)
+          !(**) -> affects stellar ages and thus their subsequent evolution (see feedback.f90)
+          ! How to fix this???
 
           ! Number of passive scalars to load (excludes temperature)
           nvar_min = 0
@@ -2973,9 +2982,10 @@ contains
            write(*,*)'ERROR: Inconsistent nstar_tot: ', nstar_tot, nstar_tot_restart
            call clean_stop
         endif
-        ! These are never consistent with one another (bug?)
-        if(mstar_tot.ne.mstar_tot_restart)then
-           write(*,*)'WARNING: Inconsistent mstar_tot: ', mstar_tot, mstar_tot_restart
+        ! These won't be exactly equal (precission loss?)
+        if(abs(mstar_tot-mbstar_tot_restart)/mstar_tot.gt.1.0D-2)then
+           write(*,*)'ERROR: Inconsistent mstar_tot: ', mstar_tot, mbstar_tot_restart
+           call clean_stop
         endif
     endif
 
@@ -2990,6 +3000,7 @@ contains
        if(hydro) write(*,*) '----> ',lpart_restart,' leaf cells'
        write(*,'(A,1pe12.4)') '----> m_dm [Msun]    = ', mhalo_tot_restart*(scale_m/M_sun)
        write(*,'(A,1pe12.4)') '----> m_stars [Msun] = ', mstar_tot_restart*(scale_m/M_sun)
+       write(*,'(A,1pe12.4)') '----> mb_stars [Msun]= ', mbstar_tot_restart*(scale_m/M_sun)
        if(hydro) write(*,'(A,1pe12.4)') '----> m_gas [Msun]   = ', mgas_tot_restart*(scale_m/M_sun)
        write(*,'(A50)')"__________________________________________________"
     endif
