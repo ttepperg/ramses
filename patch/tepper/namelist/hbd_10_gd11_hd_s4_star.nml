@@ -1,8 +1,7 @@
 ! Compile the code with:
 ! /Users/tepper/codes/ramses_fork/bin/Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH
 !
-! This simulation is virtually identical to hbd_10_gd11_star, but adds a sink
-! at nrestart = 0
+! This simulation is virtually identical to hbd_10_gd11_star, but at a much higher particle resolutionn, and also adds a sink at nrestart = 0
 !
 ! NOTE:
 !	1 - To deactivate SF and FB set eps_star = 0
@@ -148,7 +147,7 @@ initfile(1)='/g/data/aa8/ttg562/hbd_10_gd11_hd_s4_star/ic/'
 
 
 ! NOTES:
-! - This block is only relevant of sink = .true.
+! - The following two blocks are only relevant of sink = .true.
 ! - If nrestart = 0 and sink = .true. an additional ascii file 'ic_sink' must be present in initfile(1)
 ! - If nrestart>0 and sink_restart=.true., an additional ascii file
 ! 'ic_sink_restart' must be present in initfile(1)
@@ -168,8 +167,6 @@ remove_sink=.true.			! exponentially decrease sink mass...
 sink_tscale0=0.15			! starting at this time (in code units)...
 sink_tscale=0.03				! over this time scale (in code units)
 /
-
-
 !not sure if used when hydro=.false.
 &CLUMPFIND_PARAMS
 ivar_clump=0				! use DM for clump finding; default is 1 (gas)

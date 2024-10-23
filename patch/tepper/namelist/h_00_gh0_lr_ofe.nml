@@ -6,7 +6,7 @@
 !
 ! MAKE SURE to set the correct path to the ICs (initfile)
 !
-! This setup is similar to h_00_gh0_lr_ofe.nml but adopting a more appropriate oxygen and iron scaling, provided by two new DICE parameters.
+! This setup is similar to h_00_gh0_lr.nml but adopting a more appropriate oxygen and iron scaling, provided by two new DICE parameters.
 !
 
 &RUN_PARAMS

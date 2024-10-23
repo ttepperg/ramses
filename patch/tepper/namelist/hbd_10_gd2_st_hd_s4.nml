@@ -1,5 +1,7 @@
 ! COMPILE CODE WITH: Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
+!
 ! NOTES: The sink parameter settings are appropriate for inserting sinks from the start. In contrast, e.g. hbd_9_hyrdisc_rs_s*.nml settings are appropriate for inserting one or more sink particles (point-masses) into a simulation at any snapshot other than the initial one.
+
 &RUN_PARAMS
 print_when_io=.true.
 verbose=.false.
@@ -42,6 +44,7 @@ beta_fix=0.5d0
 /
 
 !IMPORTANT: DO NOT forget to run hbd_10_gd2_st_hd_s4/ic/precompile.bash !!!
+! This setting is wrong! But it does not affect as case(-1) is not present in rho_ana.f90
 &POISSON_PARAMS
 gravity_type=-1			! requires rho_ana.f90
 /
@@ -94,7 +97,9 @@ initfile(1)='/scratch/dr86/ttg562/hbd_10_gd2_st_hd_s4/ic/'
 /
 
 
-! NOTE: An additional ascii file 'ic_sink' must be present in initfile(1)
+! NOTES
+! - The following two blocks are only relevant of sink = .true.
+! - An additional ascii file 'ic_sink' must be present in initfile(1)
 ! This file contains a list of sinks with the following format
 ! (see pm/init_sink.f90)
 ! mass,x,y,z,vx,vy,vz,Lx,Ly,Lz,mass_SMBH,ID
@@ -109,8 +114,6 @@ remove_sink=.true.			! exponentially decrease sink mass...
 sink_tscale0=1.5			! starting at this time (in code units)...
 sink_tscale=0.3				! over this time scale (in code units)
 /
-
-
 !not sure if used when hydro=.false.
 &CLUMPFIND_PARAMS
 ivar_clump=0				! use DM for clump finding; default is 1 (gas)
