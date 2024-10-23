@@ -27,7 +27,6 @@ nsubcycle=7*1
 ncontrol=1
 /
 
-! Note that these differ from my usual settings and will affect the value of the time unit, prompting changes to OUTPUT_PARAMS
 &UNITS_PARAMS
 units_density = 1.6727d-24 ! 1 H / cm^3
 units_time    = 0.470430312423675E+15 ! G=1 -> 14.9 Myr

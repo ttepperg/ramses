@@ -73,7 +73,8 @@ kbound_max= 0, 0,  0,  0, -1,  1
 &INIT_PARAMS
 filetype='dice'
 !initfile(1)='/scratch/dr86/ttg562/hbd_10/ic/'
-initfile(1)='/import/photon2/tepper/hbd_10/ic/'
+!initfile(1)='/import/photon2/tepper/hbd_10/ic/'
+initfile(1)='/project/RDS-FSC-GalSims-RW/hbd_10/ic/'
 /
 
 
@@ -98,5 +99,6 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 tend = 0.01
 delta_tout = 0.001
 !output_dir='/scratch/dr86/ttg562/hbd_10/'
-output_dir='/import/photon2/tepper/hbd_10/'
+!output_dir='/import/photon2/tepper/hbd_10/'
+output_dir='/project/RDS-FSC-GalSims-RW/hbd_10/'
 /

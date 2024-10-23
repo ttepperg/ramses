@@ -1,5 +1,6 @@
 ! COMPILE CODE WITH: Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
 ! NOTES: The sink parameter settings are appropriate for inserting sinks from the start. In contrast, e.g. hbd_9_hyrdisc_rs_s*.nml settings are appropriate for inserting one or more sink particles (point-masses) into a simulation at any snapshot other than the initial one.
+
 &RUN_PARAMS
 verbose=.false.
 print_when_io=.true.
@@ -97,7 +98,9 @@ initfile(1)='/scratch/dr86/ttg562/hbd_10_gd4_hd_s4/ic/'
 /
 
 
-! NOTE: An additional ascii file 'ic_sink' must be present in initfile(1)
+! NOTES:
+! - The following two blocks are only relevant of sink = .true.
+! = An additional ascii file 'ic_sink' must be present in initfile(1)
 ! This file contains a list of sinks with the following format
 ! (see pm/init_sink.f90)
 ! mass,x,y,z,vx,vy,vz,Lx,Ly,Lz,mass_SMBH,ID
