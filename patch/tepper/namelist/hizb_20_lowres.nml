@@ -69,7 +69,7 @@ kbound_max= 0, 0,  0,  0, -1,  1
 !initfile must be such that expanded by the IC file names
 !collectively has len < 80 characters
 !the longest file name reads:
-!initfile(1)output_xxxxx/part_file_descriptor.txt
+!initfile(1)output_xxxxx/hydro_file_descriptor.txt
 &INIT_PARAMS
 filetype='dice'
 !initfile(1)='/scratch/dr86/ttg562/hizb_20_lowres/ic/'
