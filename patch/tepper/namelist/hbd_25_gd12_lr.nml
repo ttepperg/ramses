@@ -63,8 +63,8 @@ boxlen=600.0
 !initfile must be such that expanded by the IC file names
 !collectively has len < 80 characters
 !the longest file name reads:
-!initfile(1)output_xxxxx/part_file_descriptor.txt
-!check: $> echo initfile(1)/output_xxxxx/part_file_descriptor.txt | wc -c
+!initfile(1)output_xxxxx/hydro_file_descriptor.txt
+!check: $> echo initfile(1)/output_xxxxx/hydro_file_descriptor.txt | wc -c
 &INIT_PARAMS
 filetype='dice'
 initfile(1)='/g/data/aa8/ttg562/hbd_25_gd12_lr/ic/'
