@@ -6,7 +6,7 @@
 !
 ! MAKE SURE to set the correct path to the ICs (initfile)
 !
-! This setup and ICs are all identical to h_00_gh0_lr_ofe_wh_q, but with a shorter quiet phase
+! This setup and ICs are all identical to h_00_gh0_lr_ofe_wh_q, but with a longer quiet phase
 !
 
 &RUN_PARAMS
@@ -18,7 +18,7 @@ poisson=.true.
 !tracer=.false.
 ncontrol=1
 nremap=7
-nrestart=26 ! switch to this after initial quiet phase
+nrestart=101 ! switch to this after initial quiet phase
 !nrestart=0 ! use this during quiet initial phase
 restart_remap=.true.
 nstepmax=10000000
@@ -109,10 +109,10 @@ boxlen=600.0
 !check: $> echo initfile(1)/output_xxxxx/hydro_file_descriptor.txt | wc -c
 &INIT_PARAMS
 filetype='dice'
-initfile(1)='/g/data/aa8/ttg562/h_00_gh0_lr_ofe_wh_q1/ic/'
-!initfile(1)='/import/photon2/tepper/h_00_gh0_lr_ofe_wh_q1/ic/'
-!initfile(1)='/project/GalSims/h_00_gh0_lr_ofe_wh_q1/ic/'
-!initfile(1)='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh_q1/ic/'
+initfile(1)='/g/data/aa8/ttg562/h_00_gh0_lr_ofe_wh_q2/ic/'
+!initfile(1)='/import/photon2/tepper/h_00_gh0_lr_ofe_wh_q2/ic/'
+!initfile(1)='/project/GalSims/h_00_gh0_lr_ofe_wh_q2/ic/'
+!initfile(1)='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh_q2/ic/'
 d_region=1.0d-6	! perhaps unnecessary
 p_region=1.0d6	! perhaps unnecessary
 /
@@ -122,14 +122,14 @@ p_region=1.0d6	! perhaps unnecessary
 !check: $> echo output_dir | wc -c
 &OUTPUT_PARAMS
 tend=4.0 ! switch to this after initial quiet phase
-!tend=0.25 ! use this during quiet initial phase
+!tend=1.0 ! use this during quiet initial phase
 delta_tout=0.01
 walltime_hrs=72.0
 minutes_dump=1
-output_dir='/g/data/aa8/ttg562/h_00_gh0_lr_ofe_wh_q1/'
-!output_dir='/import/photon2/tepper/h_00_gh0_lr_ofe_wh_q1/'
-!output_dir='/project/GalSims/h_00_gh0_lr_ofe_wh_q1/'
-!output_dir='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh_q1/'
+output_dir='/g/data/aa8/ttg562/h_00_gh0_lr_ofe_wh_q2/'
+!output_dir='/import/photon2/tepper/h_00_gh0_lr_ofe_wh_q2/'
+!output_dir='/project/GalSims/h_00_gh0_lr_ofe_wh_q2/'
+!output_dir='/headnode1/tepper/output/h_00_gh0_lr_ofe_wh_q2/'
 /
 
 !xyz_refine perhaps unnecessary
