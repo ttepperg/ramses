@@ -774,7 +774,7 @@ subroutine accrete_sink(ind_grid,ind_part,ind_grid_part,ng,np,ilevel,on_creation
   ! Conversion factor from user units to cgs units
   call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
   scale_m=scale_d*scale_l**ndim
-  
+
   period(1)=(nx==1)
   period(2)=(ny==1)
   period(3)=(nz==1)
@@ -899,7 +899,7 @@ subroutine accrete_sink(ind_grid,ind_part,ind_grid_part,ng,np,ilevel,on_creation
                  m_acc      = m_acc * (d/density)
                  m_acc_smbh = m_acc_smbh * (d/density)
               endif
-               
+
               if(agn.and.msink(isink).gt.0)then
                  if(mass_smbh_seed>0.0)then
                     acc_ratio=dMsmbh_overdt(isink)/(4d0*pi*factG_in_cgs*msmbh(isink)*mH/(0.1d0*sigma_T*c_cgs)*scale_t)
@@ -927,7 +927,7 @@ subroutine accrete_sink(ind_grid,ind_part,ind_grid_part,ng,np,ilevel,on_creation
                  endif
               end if
            end if
-           
+
            m_acc     =max(m_acc,0.0_dp)
            m_acc_smbh=max(m_acc_smbh,0.0_dp)
 
@@ -1298,7 +1298,7 @@ subroutine make_sink_from_clump(ilevel)
   use hydro_commons
   use poisson_commons
   use clfind_commons
-  use constants, only: 
+  use constants, only:
   use mpi_mod
   implicit none
 
@@ -1765,7 +1765,7 @@ subroutine update_sink(ilevel)
   real(dp),dimension(1:ndim)::xcom,vcom,lcom,r_rel
   logical,dimension(1:ndim)::period
   real(dp),dimension(1:nsink,1:ndim)::xsinkold, fsinkold
-  
+
 #if NDIM==3
 
   if(verbose)write(*,*)'Entering update_sink for level ',ilevel
@@ -1902,7 +1902,7 @@ subroutine update_sink(ilevel)
         xsinkold(isink,1:ndim)=xsink(isink,1:ndim)
      endif
   enddo
-  
+
   ! Updating sink positions
 
   fsink=0
@@ -1972,7 +1972,7 @@ subroutine update_sink(ilevel)
               endif
            endif
         endif
-        
+
         new_born(isink)=.false.
      end if
   end do

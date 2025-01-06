@@ -157,8 +157,6 @@ subroutine rt_init_flow_fine(ilevel)
            ! Reading the existing file
            if(myid==1)write(*,*)'Reading file '//TRIM(filename)
            if(multiple)then
-              ilun=ncpu+myid+103
-
               ! Wait for the token
 #ifndef WITHOUTMPI
               if(IOGROUPSIZE>0) then
@@ -169,16 +167,17 @@ subroutine rt_init_flow_fine(ilevel)
               endif
 #endif
 
+              ilun=ncpu+myid+103
               open(ilun,file=filename,form='unformatted')
               rewind ilun
               read(ilun) ! skip first line
               do i3=1,n3(ilevel)
                  read(ilun) ((init_plane(i1,i2),i1=1,n1(ilevel)),i2=1,n2(ilevel))
                  if(ncache>0)then
-                    if(i3.ge.i3_min.and.i3.le.i3_max)then
-                       init_array(i1_min:i1_max,i2_min:i2_max,i3) = &
-                            & init_plane(i1_min:i1_max,i2_min:i2_max)
-                    end if
+                     if(i3.ge.i3_min.and.i3.le.i3_max)then
+                        init_array(i1_min:i1_max,i2_min:i2_max,i3) = &
+                             & init_plane(i1_min:i1_max,i2_min:i2_max)
+                     end if
                  endif
               end do
               close(ilun)
@@ -192,6 +191,7 @@ subroutine rt_init_flow_fine(ilevel)
                  end if
               endif
 #endif
+
            else
               if(myid==1)then
                  open(10,file=filename,form='unformatted')
@@ -223,7 +223,7 @@ subroutine rt_init_flow_fine(ilevel)
            if(myid==1)write(*,*)'File '//TRIM(filename)//' not found'
            if(myid==1)write(*,*)'Initialize corresponding variable to default value'
            if(ncache>0)then
-              init_array=0d0
+               init_array=0d0
            endif
         endif
 
@@ -252,7 +252,6 @@ subroutine rt_init_flow_fine(ilevel)
            end do
         end do
         ! End loop over cells
-
         endif
      end do
      ! End loop over input variables
