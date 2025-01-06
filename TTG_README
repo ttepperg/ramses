@@ -1,3 +1,53 @@
+Note added on 06 JAN 2025:
+
+The Ramses code was moved from Bitbucket to GitHub.
+In response, I move this clone following the steps listed in:
+
+https://ramses.cnrs.fr/ramses-moves-to-github/
+
+Note that there were some conflicts to be resoloved affecting:
+
+README.md
+rt/rt_init_flow_fine.f90
+
+These were resolved with the following steps:
+
+$> git mergetool
+
+opens FileMerge and allows to make the required edits, and save the
+file with the appropriate name (i.e. overwrite the relevant [not the open] file)
+and quit. Each file needing merging will open in turn.
+
+I then needed to commit the changes via:
+
+$> git commit -m "Resolved conflicts in Bitbucket-GitHub migration"
+
+and finally,
+
+$> git pull --no-rebase
+
+Then, check that everything is as it should via:
+
+$> git remote update ;  git status
+
+The local repo will be ahead with respect to the remote by a number of commits,
+so I need to push these. To allow for a passwordless process, first I needed
+to change the repo's URL via (did not need to do this for Bitbucket...):
+
+$> git remote set-url origin git+ssh://git@github.com/ttepperg/ramses.git
+
+Then
+
+$> git push
+
+
+
+
+-----------------
+PRE 06 JAN 2025:
+
+
+
 This is a fork of the Ramses code on my Bitbucket account,
 obtained on 12/May/2020 via:
 
