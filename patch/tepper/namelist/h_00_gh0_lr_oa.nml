@@ -4,7 +4,7 @@
 !
 ! MAKE SURE to set the correct path to the ICs (initfile)
 !
-! The difference between this NML file and h_00_gh0_lr.nml is that the latter corresponds to my setup, while this corresponds to O.Agerzt (e.g. fgas10_agama_rf) setup without galaxy formation sub-grid physics (i.e. star formation, etc.). See also h_00_gh0_lr_star.
+! The difference between this NML file and h_00_gh0_lr.nml is that the latter corresponds to my setup, while this corresponds to O.Agerzt (e.g. fgas10_agama_rf) setup *without* galaxy formation sub-grid physics (i.e. star formation, etc.). See also h_00_gh0_lr_star.
 
 &RUN_PARAMS
 verbose=.false.
