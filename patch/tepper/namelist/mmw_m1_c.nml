@@ -1,0 +1,170 @@
+!
+! Compile the code with:
+! /Users/tepper/codes/ramses_fork/bin/Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH_WH07
+!
+! ICs created with my AGAMA + gas framework
+!
+! An attempt to reproduce a Mo, Ma, and White (1998) model
+!
+! MAKE SURE to set the correct path to the ICs (initfile)
+!
+! This setup is similar to mmw_m1_b.nml but the ICS have lower spin
+!
+
+&RUN_PARAMS
+verbose=.false.
+cosmo=.false.
+pic=.true.
+hydro=.true.
+poisson=.true.
+!tracer=.false.
+ncontrol=1
+nremap=7
+!nrestart=0
+nrestart=10000 ! set to a huge value to restart at the last available snapshot
+restart_remap=.true.
+nstepmax=10000000
+nsubcycle=1,1,2,2,2,2,2,2,2,2,2
+ordering='hilbert'
+rt=.false.
+/
+
+! Note that these differ from my usual settings and will affect the value of the time unit, prompting changes to OUTPUT_PARAMS
+&UNITS_PARAMS
+units_density = 1.573391528d-26			! g/cm^3 = 1 H / cm^3
+units_time    = 3.00386047142391D+15 	! s; irrelevant if poisson=.true.
+units_length  = 3.0856776D+21 			! cm = 1 kpc
+/
+
+
+!------- the following block is the difference between the setup w/o star formation, etc. and this one
+
+&FEEDBACK_PARAMS
+f_w=0.
+eta_sn=0.1
+SNenergy=1.0d51
+Tmax=5.0d8				! could be anything between 1e7 - 1e9
+radpressure=.true.		! DO
+eta_rap=2.0d0			! NOT
+tau_IR=-1.				! CHANGE
+vmaxFB=4000.00
+maxadvfb=4000.0
+smallT=1.e0
+fbsafety=.true.			! avoid runaway mom.injection
+Nrcool=6.0				! cells; could 3 - 6
+supernovae=.true.
+winds=.true.
+momentum=.true.
+energy=.true.
+metalscaling=.true.
+SNIamodel=1      		!DTD, t^-1.12
+Ia_rate=2.6d-13  		!Field DTD
+SNdiagnostics=.true.
+/
+
+&SF_PARAMS
+mstarparticle=1.0d3		! Msun, initial mass
+eps_star=0.1
+n_star=100.0			! was 10.
+temp_star=100.0			! irrelevant parameter?
+T2_star=0.1d0			! temperature floor (K)
+g_star=2.0
+SFdiagnostics=.true.
+/
+
+&COOLING_PARAMS
+cooling=.true.
+neq_chem=.false.
+haardt_madau=.true.
+z_reion=8.5
+metal=.true.
+self_shielding=.true.
+T2max=5.0d8
+/
+
+
+&HYDRO_PARAMS
+pressure_fix=.true.
+gamma=1.666666667
+courant_factor=0.9
+slope_type=1
+riemann='hllc'
+beta_fix=0.5
+/
+
+! Memory management PER CORE (pure N-body runs)
+! ~ 0.8 * [ (ngridmax/10^6) + (npartmax/10^7) ] GB
+! Note that the more cores, the smaller ngridmax and npartmax can be
+&AMR_PARAMS
+levelmin=7
+levelmax=13
+!ngridmax=3000000
+!npartmax=4000000
+ngridmax=800000 ! ~ 0.64 GB/core
+npartmax=1500000 ! ~ 0.15 GB/core
+boxlen=300.0
+/
+
+!initfile must be such that expanded by the IC file names
+!collectively has len < 80 characters
+!the longest file name reads:
+!initfile(1)output_xxxxx/hydro_file_descriptor.txt
+!check: $> echo initfile(1)/output_xxxxx/hydro_file_descriptor.txt | wc -c
+&INIT_PARAMS
+filetype='dice'
+initfile(1)='/g/data/aa8/ttg562/mmw_m1_c/ic/'
+!initfile(1)='/import/photon2/tepper/mmw_m1_c/ic/'
+!initfile(1)='/project/GalSims/mmw_m1_c/ic/'
+!initfile(1)='/headnode1/tepper/output/mmw_m1_c/ic/'
+!d_region=1.0d-6	! perhaps unnecessary
+!p_region=1.0d6	! perhaps unnecessary
+/
+
+!output_dir name must have len < 40 characters to accomodate
+!the longest Ramses output file names
+!check: $> echo output_dir | wc -c
+&OUTPUT_PARAMS
+tend=10.0        ! change to 10.0 after 2.0
+delta_tout=0.025 ! change to 0.025 (from 0.01) after 2.0
+walltime_hrs=48.0
+minutes_dump=2
+output_dir='/g/data/aa8/ttg562/mmw_m1_c/'
+!output_dir='/import/photon2/tepper/mmw_m1_c/'
+!output_dir='/project/GalSims/mmw_m1_c/'
+!output_dir='/headnode1/tepper/output/mmw_m1_c/'
+/
+
+!xyz_refine perhaps unnecessary
+&REFINE_PARAMS
+interpol_var=0
+interpol_type=0
+mass_sph=5.d-2 !2.d-4 !2.d-4 !refine when mass_sph is 8 times mass_sph. Remember unit of mass is ~2.35e5 Msun
+m_refine=10*8
+!x_refine=300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0
+!y_refine=300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0
+!z_refine=300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0,300.0
+!r_refine=80.0,80.0,80.0,80.0,80.0,80.0,80.0,80.0,80.0,80.0,80.0
+/
+
+&POISSON_PARAMS
+gravity_type=0
+epsilon=5.0e-4
+/
+
+&DICE_PARAMS
+ic_file='mmw_m1_c_proc.g2' ! initial conditions file
+ic_nfile=2                    ! If >1, look for files with name ic_file//'.n'
+ic_ifout=1                    ! Change ramses output index for restarts
+ic_format='Gadget2'           ! Format of the initial conditions
+ic_scale_metal=0.02           ! Metallicity scaling (solar value)
+ic_scale_metalO=0.465		  ! NEW: oxygen scaling (default: 0.333)
+ic_scale_metalFe=0.027		  ! NEW: iron scaling (default: 0.333)
+ic_metal_name='ZMET'          ! metallicity datablock (Gadget2, *custom*)
+IG_rho=4.D-7                  ! Intergalactic gas density; ~rho at halo's edge
+IG_T2=2.D4                    ! Intergalactic gas temperature; ~T at halo's edge
+IG_metal=5.D-2                ! Intergalactic gas metallicity (solar units)
+gadget_scale_l=3.085677581282D+21	! AGAMA file length unit   -> 1 kpc
+gadget_scale_v=1.0D+5 				! AGAMA file velocity unit -> 1 km/s
+gadget_scale_m=1.9891D+33			! AGAMA file mass unit     -> 1 solar mass
+gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (NOT the simulation time unit)
+/
