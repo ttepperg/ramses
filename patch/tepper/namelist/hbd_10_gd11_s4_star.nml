@@ -18,13 +18,14 @@ poisson=.true.
 tracer=.false.
 ncontrol=1
 nremap=7
-nrestart=0
+!nrestart=0
+nrestart=10000 ! set to a huge value to restart at the last available snapshot
 restart_remap=.true.
 nstepmax=10000000
 nsubcycle=1,1,2,2,2,2,2,2,2,2,2
 ordering='hilbert'
 rt=.false.
-sink=.true.			! ADD SINK at nrestart; see SINK_PARAMS below
+sink=.false.			! ADD SINK at nrestart; see SINK_PARAMS below
 /
 
 
@@ -202,7 +203,7 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 !the longest Ramses output file names
 !check: $> echo output_dir | wc -c
 &OUTPUT_PARAMS
-tend=2.0
+tend=10.0
 delta_tout=0.01
 walltime_hrs=48.0
 minutes_dump=1
