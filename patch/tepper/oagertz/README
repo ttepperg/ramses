@@ -19,6 +19,7 @@ Created: 01 FEB 2023
 Notes:
 	- POSSIBLE BUG in star_formation.f90 related to SNunit_out and SFunit_out
 		- assess and fix if necessary
+    - eta_sn is an *obsolete* parameter; but can be used to de-activate feedback if set to =< 0 in NML file
 
 About:
 
