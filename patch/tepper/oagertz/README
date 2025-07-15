@@ -27,13 +27,14 @@ This directory contains a number of source files modified to duplicate Oscar Age
 
 /Users/tepper/codes/ramses_agertz/ramses
 
-The idea is to merge his changes with the most updated Ramses version and keep it that way as Ramses evolves.
+The idea is to merge his changes with the most updated Ramses version and keep it that way as Ramses evolves. See (*) below.
 
 Note that the sub-folder 'dice' contains its own README and is thus omitted here.
 
 The file filesf90_list.txt (created with ls *f90) contains a list of the files in here less sub-directories and their content, created for convenience in case they need to be recopied from the main branch or O.Agertz's patch.
 
-NOTE:
+(*) NOTE
+
 	Instructions from Oscar Agertz himself to include his changes:
 
 	"
