@@ -67,12 +67,12 @@ IMPORTANT:
 
 	- feedback.f90 has been copied directly, as it seemed OK to do so
 
-	- condinit.f90 has been copied direclty
+	- condinit.f90 has been copied directly
 
 	- metal_yields.f90 does not exist in the current Ramses version and has been copied directly; note that this requires an appropriate Makefile:
 
 	/Users/tepper/codes/ramses_fork/bin/Makefile_3D_GNU_OLDMPI0_OAgertz
 
-	which also contains other modifications wrt my standar Makefiles, e.g. NMETALS = 2, etc.
+	which also contains other modifications wrt my standard Makefiles, e.g. NMETALS = 2, etc.
 
-	Note that metal_yields.f90 may in fact not be needed (ask Oscar)
+	Note that metal_yields.f90 may in fact not be needed (ask Oscar!)
