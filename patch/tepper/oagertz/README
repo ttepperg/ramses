@@ -34,8 +34,8 @@ Note that the sub-folder 'dice' contains its own README and is thus omitted here
 The file filesf90_list.txt contains a list of the files in here, e.g. for convenience in case they need to be recopied from the main branch or O.Agertz's patch.
 
 NOTE:
-	filesf90_list.txt does not exist anymore but can be easily generated!
-	Indeed, following the instructions from Oscar Agertz himself:
+	Instructions from Oscar Agertz himself to include his changes:
+
 	"
 		the only thing we want which is different from the master branch is:
 
