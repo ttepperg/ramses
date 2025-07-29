@@ -8,7 +8,7 @@
 !
 ! MAKE SURE to set the correct path to the ICs (initfile)
 !
-! This setup is similar to mmw_m1_a.nml but with a lower SF density threshold 10 (rather than 100; see Agertz & Kravtsov 2015a)
+! This setup is similar to mmw_m1_a.nml but with a very high SF efficiency (1.0 rather than 0.1). Note that 0.1 is the appropriate value (see Agertz & Kravtsov 2015a)
 !
 
 &RUN_PARAMS
@@ -64,8 +64,8 @@ SNdiagnostics=.true.
 
 &SF_PARAMS
 mstarparticle=1.0d3		! Msun, initial mass
-eps_star=0.1
-n_star=10.0
+eps_star=1.0
+n_star=100.0			! was 10.
 temp_star=100.0			! irrelevant parameter?
 T2_star=0.1d0			! temperature floor (K)
 g_star=2.0
@@ -112,10 +112,10 @@ boxlen=300.0
 !check: $> echo initfile(1)/output_xxxxx/hydro_file_descriptor.txt | wc -c
 &INIT_PARAMS
 filetype='dice'
-initfile(1)='/g/data/aa8/ttg562/mmw_m1_a_ln/ic/'
-!initfile(1)='/import/photon2/tepper/mmw_m1_a_ln/ic/'
-!initfile(1)='/project/GalSims/mmw_m1_a_ln/ic/'
-!initfile(1)='/headnode1/tepper/output/mmw_m1_a_ln/ic/'
+initfile(1)='/g/data/aa8/ttg562/mmw_m1_a_hsf/ic/'
+!initfile(1)='/import/photon2/tepper/mmw_m1_a_hsf/ic/'
+!initfile(1)='/project/GalSims/mmw_m1_a_hsf/ic/'
+!initfile(1)='/headnode1/tepper/output/mmw_m1_a_hsf/ic/'
 !d_region=1.0d-6	! perhaps unnecessary
 !p_region=1.0d6	! perhaps unnecessary
 /
@@ -124,14 +124,14 @@ initfile(1)='/g/data/aa8/ttg562/mmw_m1_a_ln/ic/'
 !the longest Ramses output file names
 !check: $> echo output_dir | wc -c
 &OUTPUT_PARAMS
-tend=10.0        ! change to 10.0 after 2.0
-delta_tout=0.025 ! change to 0.025 (from 0.01) after 2.0
+tend=2.0        ! change to 10.0 after 2.0
+delta_tout=0.01! change to 0.025 (from 0.01) after 2.0
 walltime_hrs=48.0
 minutes_dump=2
-output_dir='/g/data/aa8/ttg562/mmw_m1_a_ln/'
-!output_dir='/import/photon2/tepper/mmw_m1_a_ln/'
-!output_dir='/project/GalSims/mmw_m1_a_ln/'
-!output_dir='/headnode1/tepper/output/mmw_m1_a_ln/'
+output_dir='/g/data/aa8/ttg562/mmw_m1_a_hsf/'
+!output_dir='/import/photon2/tepper/mmw_m1_a_hsf/'
+!output_dir='/project/GalSims/mmw_m1_a_hsf/'
+!output_dir='/headnode1/tepper/output/mmw_m1_a_hsf/'
 /
 
 !xyz_refine perhaps unnecessary
