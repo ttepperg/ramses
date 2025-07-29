@@ -4,13 +4,19 @@ Created: 08 FEB 2021
 
 	Last modified:
 
-	01 FEB 2024:
+	28 FEB 2024:
+	Added family tag, previously set to 0 by default, now set to the value specified by the ICs (if available)
+
+    20 FEB 2024:
+	Remove the use of sink_restart from init_part.f90 as it appeared unnecessary
+
+    01 FEB 2024:
 	Copied over the missing files from patch/init/dice, which are however not (yet) patched:
 		gadgetreadfile.f90
 		init_refine.f90
 		init_time.f90
 		rho_fine.f90
-	The idea is to have the DICE patch all in one place to faciliate maintenance, i.e. modify the matching files when these are modified in the main Ramses distribution.
+	The idea is to have the DICE patch all in one place to facilitate maintenance, i.e. modify the matching files when these are modified in the main Ramses distribution.
 	IMPORTANT 1: This allowed to remove the now redundant patch/tepper/oagertz/dice/init_refine.f90
 	IMPORTANT 2: Required adjusting the relevant bin/Makefile*s:
 		Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
@@ -20,12 +26,6 @@ Created: 08 FEB 2021
 		Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH
 		Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICE_RESTARTPATCH
 	by either removing from PATCH 'patch/init/dice' or replacing it by 'patch/tepper/dice'
-
-	20 FEB 2024:
-	Remove the use of sink_restart from init_part.f90 as it appeared unnecessary
-
-	28 FEB 2024:
-	Added family tag, previously set to 0 by default, now set to the value specified by the ICs (if available)
 
 
 About:
@@ -45,6 +45,7 @@ Modified files
 
 init_flow_fine.f90:
 - multiply IG_metal by ic_scale_metal to have freedom in the adopted units
+
 
 init_part.f90:
 - added 'use pm_parameters, only: sink_restart'
