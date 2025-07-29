@@ -124,8 +124,8 @@ initfile(1)='/g/data/aa8/ttg562/mmw_m1_b/ic/'
 !the longest Ramses output file names
 !check: $> echo output_dir | wc -c
 &OUTPUT_PARAMS
-tend=2.0        ! change to 10.0 after 2.0
-delta_tout=0.01 ! change to 0.025 (from 0.01) after 2.0
+tend=10.0        ! change to 10.0 after 2.0
+delta_tout=0.025 ! change to 0.025 (from 0.01) after 2.0
 walltime_hrs=48.0
 minutes_dump=2
 output_dir='/g/data/aa8/ttg562/mmw_m1_b/'
