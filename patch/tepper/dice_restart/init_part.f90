@@ -120,11 +120,11 @@ subroutine init_part
   typep(1:npartmax)%family=FAM_UNDEF; typep(1:npartmax)%tag=0
   if(star.or.sink)then
      allocate(tp(npartmax))
-     tp=0.0
+     tp=0
   end if
   if(metal)then
      allocate(zp(npartmax))
-     zp=0.0
+     zp=0
   end if
 
   !--------------------
@@ -216,7 +216,6 @@ subroutine init_part
      ! We don't need the potential, but read it anyway (to get the records correctly for tp/zp)
      read(ilun)
 #endif
-
      if(star.or.sink)then
         ! Read birth epoch
         allocate(xdp(1:npart2))
@@ -317,7 +316,7 @@ subroutine init_part
      end select
 
      ! Initialize tracer particles
-     if(MC_tracer) call init_tracer
+     if(tracer) call init_tracer
 
   end if
 
@@ -1079,7 +1078,7 @@ contains
        end if
     end do
 
-    write(*,*)'npart=',ipart,'/',npartmax,' for PE=',myid
+    if(debug)write(*,*)'npart=',ipart,'/',npartmax,' for PE=',myid
 #endif
 
     ! Compute particle initial level
@@ -1229,7 +1228,7 @@ contains
   end subroutine load_ascii
 
   subroutine load_dice
-    use restart_commons, only: restart_init
+    use dice_restart_commons, only: dice_restart_init
 !!! DICE
     dice_init=.true.
     ! Conversion factor from user units to cgs units
@@ -1239,8 +1238,8 @@ contains
     error=.false.
 
 	! IMPORTANT: DO NOT reset particle count if pre-loading a ramses output
-	if(.not.restart_init)ipart = 0
-	if(restart_init.and.myid==1)write(*,*)'Will not reset ipart = ', ipart
+	if(.not.dice_restart_init)ipart = 0
+	if(dice_restart_init.and.myid==1)write(*,*)'Will not reset ipart = ', ipart
 
     do ifile=1,ic_nfile
        write(ifile_str,*) ifile
@@ -1657,10 +1656,10 @@ contains
                    if(star) then
                       tp(ipart)    = tt(i)
                    endif
-	               ! Particle metallicity
-	               if(metal) then
-	                  zp(ipart)  = zz(i)
-	               endif
+                   ! Particle metallicity
+                   if(metal) then
+                      zp(ipart)  = zz(i)
+                   endif
                    if(type_index.gt.2)then
                       if(star)then
                          typep(ipart)%family = FAM_STAR
@@ -1734,9 +1733,9 @@ contains
     if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
 
     ! IMPORTANT: DO NOT reset output number nor simulation time if pre-loading a ramses output
-    if(.not.restart_init)then
-      ifout = ic_ifout
-      t     = ic_t_restart
+    if(.not.dice_restart_init)then
+       ifout = ic_ifout
+       t = ic_t_restart
     endif
     if(myid==1)then
        write(*,*)'Next output number (ifout): ', ifout
@@ -1746,9 +1745,9 @@ contains
     ! DICE patch
   end subroutine load_dice
 
-  ! RESTART patch
+  ! DICE_RESTART patch
   subroutine load_ramses_dice
-    use restart_commons
+    use dice_restart_commons
     use iso_fortran_env, only: int8 ! <- VERY important
     use constants, only: M_sun
 	integer::nx_loc
@@ -1880,7 +1879,7 @@ contains
 
     ! Initialisation
 
-    restart_init = .true. ! <- VERY important if additional ICs loaded
+    dice_restart_init = .true. ! <- VERY important if additional ICs loaded
     dice_init    = .true. ! <- VERY important
 
     ! Conversion factor from user units to cgs units
@@ -2681,7 +2680,7 @@ contains
              endif
              if(restart_vars(ivar).lt.header_amr%ndim+2) then
                 write(*,*) '[Error] ivar=',restart_vars(ivar),' is an active variable'
-                write(*,*)'Try setting restart_vars in RESTART_PARAMS to a meaningful value, e.g. restart_vars=6 or even restart_vars=6,7 if there are more passive variables.'
+                write(*,*)'Try setting restart_vars in DICE_RESTART_PARAMS to a meaningful value, e.g. restart_vars=6 or even restart_vars=6,7 if there are more passive variables.'
                 call clean_stop
              endif
           enddo
@@ -2941,7 +2940,7 @@ contains
 	endif
 
   end subroutine load_ramses_dice
-  ! RESTART patch
+  ! DICE_RESTART patch
 
 end subroutine init_part
 
