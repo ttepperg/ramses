@@ -1,11 +1,26 @@
-Author: Dr. Thorsten Tepper Garcia
+AUTHOR: Dr. Thorsten Tepper Garcia
 
-Created: 09 DEC 2020
+CREATED: 30 JUL 2025
 
-About:
+    This file is a log intended to keep track and guide me through the process of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
 
-This subdirectory contains a number of patches
-to files originally in hydro, unless stated otherwise.
+    This file replaces bck_29JUL2025/README. See the latter for more information.
 
-init_hydro.f90:
-- added TRIM(output_dir) to filename strings where relevant
+    STEPS COMPLETED
+    - Backed up old patch files in bck_29JUL2025 (back dated for consistency with earlier modifications)
+    - Copied relevant files from ramses_fork/hydro
+    - Modify the relevant files as outlined in bck_29JUL2025/README
+
+
+    Last Modified 30 JUL 2025:
+        SO FAR NOTHING ELSE TO DO APPARENTLY
+        STILL TESTING THOUGH
+        - Tested with model hbd_10_gd0, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
+
+
+-----------------------------------------
+MODIFIED FILES
+
+
+    init_hydro.f90:
+    - added TRIM(output_dir) to fileloc string
