@@ -240,7 +240,7 @@ subroutine create_cloud_from_sink
                     end if
                     xp(indp,1:ndim)       = xtest(1,1:ndim)
                     vp(indp,1:ndim)       = vsink(isink,1:ndim)
-                    tp(indp)           = tsink(isink)     ! Birth epoch
+                    tp(indp)              = tsink(isink)     ! Birth epoch
                  end if
               end do
            end if
@@ -887,8 +887,8 @@ subroutine accrete_sink(ind_grid,ind_part,ind_grid_part,ng,np,ilevel,on_creation
               end if
            else
               if (bondi_accretion)then
-              m_acc      = dMsink_overdt(isink)*dtnew(ilevel)*weight/volume
-              m_acc_smbh = dMsmbh_overdt(isink)*dtnew(ilevel)*weight/volume
+                 m_acc      = dMsink_overdt(isink)*dtnew(ilevel)*weight/volume
+                 m_acc_smbh = dMsmbh_overdt(isink)*dtnew(ilevel)*weight/volume
               end if
 
               if (threshold_accretion.and.d_sink>0.0)then
@@ -922,7 +922,7 @@ subroutine accrete_sink(ind_grid,ind_part,ind_grid_part,ng,np,ilevel,on_creation
                     fbk_ener_AGN=AGN_fbk_frac_ener*min(delta_mass(isink)*T2_AGN/scale_T2*weight/volume*d/density,T2_max/scale_T2*weight*d)
                     fbk_mom_AGN=AGN_fbk_frac_mom*min(kin_mass_loading*delta_mass(isink)*v_AGN/scale_v*weight/volume*d/density/(1d0-cos(pi/180*cone_opening/2)),v_max*1d5/scale_v*weight*d)
                  else if (agn_inj_method=='volume') then
-                    fbk_ener_AGN=AGN_fbk_frac_ener*min(delta_mass(isink)*T2_AGN/scale_T2*weight/volume, T2_max/scale_T2*weight*d)
+                    fbk_ener_AGN=AGN_fbk_frac_ener*min(delta_mass(isink)*T2_AGN/scale_T2*weight/volume,T2_max/scale_T2*weight*d)
                     fbk_mom_AGN=AGN_fbk_frac_mom*min(kin_mass_loading*delta_mass(isink)*v_AGN/scale_v*weight/volume/(1d0-cos(pi/180*cone_opening/2)),v_max*1d5/scale_v*weight*d)
                  endif
               end if
@@ -957,7 +957,7 @@ subroutine accrete_sink(ind_grid,ind_part,ind_grid_part,ng,np,ilevel,on_creation
            ! Accrete mass, momentum and gas total energy
            unew(indp(j,ind),1)=unew(indp(j,ind),1)-m_acc/vol_loc
            unew(indp(j,ind),2:ndim+1)=unew(indp(j,ind),2:ndim+1)-m_acc*vv(1:ndim)/vol_loc
-           unew(indp(j,ind),ndim+2)=unew(indp(j,ind),ndim+2)-m_acc*e/vol_loc
+           unew(indp(j,ind),neul)=unew(indp(j,ind),neul)-m_acc*e/vol_loc
            ! Note that we do not accrete magnetic fields and non-thermal energies.
 
            ! Accrete passive scalars
@@ -972,7 +972,7 @@ subroutine accrete_sink(ind_grid,ind_part,ind_grid_part,ng,np,ilevel,on_creation
               if(agn)then
                  if(ok_blast_agn(isink).and.delta_mass(isink)>0.0)then
                     if(AGN_fbk_frac_ener.gt.0.0)then ! thermal AGN feedback
-                       unew(indp(j,ind),ndim+2)=unew(indp(j,ind),ndim+2)+fbk_ener_AGN/vol_loc
+                       unew(indp(j,ind),neul)=unew(indp(j,ind),neul)+fbk_ener_AGN/vol_loc
                     end if
 
                     if(AGN_fbk_frac_mom.gt.0.0)then ! momentum AGN feedback
@@ -982,7 +982,7 @@ subroutine accrete_sink(ind_grid,ind_part,ind_grid_part,ng,np,ilevel,on_creation
                        orth_dist=sqrt(sum((r_rel(1:ndim)-cone_dist*cone_dir(1:ndim))**2))
                        if (orth_dist.le.abs(cone_dist)*tan_theta)then
                           unew(indp(j,ind),2:ndim+1)=unew(indp(j,ind),2:ndim+1)+fbk_mom_AGN*r_rel(1:ndim)/(r_len)/vol_loc
-                          unew(indp(j,ind),ndim+2)=unew(indp(j,ind),ndim+2)+sum(fbk_mom_AGN*r_rel(1:ndim)/(r_len)*vv(1:ndim))/vol_loc
+                          unew(indp(j,ind),neul)=unew(indp(j,ind),neul)+sum(fbk_mom_AGN*r_rel(1:ndim)/(r_len)*vv(1:ndim))/vol_loc
                        end if
                     end if
                  end if
@@ -1098,7 +1098,7 @@ subroutine compute_accretion_rate(write_sinks)
 
      ! Compute final sink accretion rate
      if(bondi_accretion)dMsink_overdt(isink)=dMBHoverdt(isink)
-     if(eddington_limit)dMsink_overdt(isink)=min(dMBHoverdt(isink),dMEDoverdt(isink))
+     if(eddington_limit)dMsink_overdt(isink)=min(dMBHoverdt(isink),eddington_cap*dMEDoverdt(isink))
 
      if(smbh.and.mass_smbh_seed>0.0)then
         r2_smbh=(factG*msmbh(isink)/v_bondi**2)**2
@@ -1223,7 +1223,7 @@ subroutine print_sink_properties(dMEDoverdt,dMEDoverdt_smbh,rho_inf,r2)
         write(*,*)'Number of sink = ',nsink
         write(*,'(" ============================================================================================")')
         if(mass_smbh_seed>0)then
-        write(*,'(" Id     Mass(Msol) Bondi(Msol/yr)   Edd(Msol/yr)  BH: Mass(Msol)  Bondi(Msol/yr)  Edd(Msol/yr)    x              y              z      DeltaM(Msol)")')
+           write(*,'(" Id  Mass(Msol)     Bondi(Msol/yr) Edd(Msol/yr)  BH: Mass(Msol)  Bondi(Msol/yr)  Edd(Msol/yr)    x              y              z      DeltaM(Msol)")')
         else
            write(*,'(" Id  Mass(Msol)     Bondi(Msol/yr) Edd(Msol/yr)   x              y              z              DeltaM(Msol)")')
         endif
@@ -1231,7 +1231,7 @@ subroutine print_sink_properties(dMEDoverdt,dMEDoverdt_smbh,rho_inf,r2)
         do i=nsink,max(nsink-30,1),-1
            isink=idsink_sort(i)
            if(mass_smbh_seed>0)then
-           write(*,'(I3,12(1X,1PE14.7))')idsink(isink) &
+              write(*,'(I3,12(1X,1PE14.7))')idsink(isink) &
                 & ,msink(isink)*scale_m/M_sun &
                 & ,dMBHoverdt(isink)*scale_m/scale_t/(M_sun/yr2sec) &
                 & ,dMEDoverdt(isink)*scale_m/scale_t/(M_sun/yr2sec) &
@@ -1250,14 +1250,14 @@ subroutine print_sink_properties(dMEDoverdt,dMEDoverdt_smbh,rho_inf,r2)
         write(*,'(" ============================================================================================")')
         if(verbose_AGN)then
            write(*,'(" Id  rho(H/cc)      rho_inf(H/cc)  Mgas(Msol)     cs(km/s)       rBondi(pc)     vgasx(km/s)    vgasy(km/s)    vgasz(km/s)    vsinkx(km/s)   vsinky(km/s)   vsinkz(km/s) ")')
-          write(*,'(" ============================================================================================")')
-          do i=nsink,max(nsink-30,1),-1
-            isink=idsink_sort(i)
+           write(*,'(" ============================================================================================")')
+           do i=nsink,max(nsink-30,1),-1
+              isink=idsink_sort(i)
               write(*,'(I3,12(1X,1PE14.7))')idsink(isink),rho_gas(isink)*scale_nH,rho_inf(isink)*scale_nH &
-                & ,rho_gas(isink)*volume_gas(isink)*scale_m/M_sun,sqrt(c2sink(isink))*scale_v/1e5 &
+                   & ,rho_gas(isink)*volume_gas(isink)*scale_m/M_sun,sqrt(c2sink(isink))*scale_v/1e5 &
                    & ,sqrt(r2(isink))*scale_l/pc2cm,vel_gas(isink,1:ndim)*scale_v/1e5,vsink(isink,1:ndim)*scale_v/1e5
-          end do
-          write(*,'(" ============================================================================================")')
+           end do
+           write(*,'(" ============================================================================================")')
         end if
      endif
   end if
@@ -1867,7 +1867,7 @@ subroutine update_sink(ilevel)
                  delta_mass(isink)   = delta_mass(isink)+delta_mass(jsink)
                  xsink(isink,1:ndim) = xcom(1:ndim)
                  vsink(isink,1:ndim) = vcom(1:3)
-                 lsink(isink,1:ndim)  = lcom(1:ndim)+lsink(isink,1:ndim)+lsink(jsink,1:ndim)
+                 lsink(isink,1:ndim) = lcom(1:ndim)+lsink(isink,1:ndim)+lsink(jsink,1:ndim)
                  tsink(isink)        = min(tsink(isink),tsink(jsink))
                  idsink(isink)       = min(idsink(isink),idsink(jsink))
 
@@ -1963,24 +1963,24 @@ subroutine update_sink(ilevel)
                  gamma_grad_descent = gamma_grad_descent + (xsink(isink,idim)-xsinkold(isink,idim))*(fsink(isink,idim)-fsinkold(isink,idim))
               enddo
               if(gamma_grad_descent>0.0)then
-              gamma_grad_descent = fudge_graddescent*dtnew(ilevel)*SQRT(ABS(gamma_grad_descent)/(NORM2(fsink(isink,1:ndim)-fsinkold(isink,1:ndim)))**2)
-              ! Require thatthe sink cannot move more than half a grid
-              if(gamma_grad_descent*fsink_norm>dx_min/2.0) then
-                 xsink_graddescent(isink,1:ndim) = fsink(isink,1:ndim) * dx_min/2.0/fsink_norm
-              else
-                 xsink_graddescent(isink,1:ndim) = fsink(isink,1:ndim) * gamma_grad_descent
+                 gamma_grad_descent = fudge_graddescent*dtnew(ilevel)*SQRT(ABS(gamma_grad_descent)/(NORM2(fsink(isink,1:ndim)-fsinkold(isink,1:ndim)))**2)
+                 ! Require thatthe sink cannot move more than half a grid
+                 if(gamma_grad_descent*fsink_norm>dx_min/2.0) then
+                    xsink_graddescent(isink,1:ndim) = fsink(isink,1:ndim) * dx_min/2.0/fsink_norm
+                 else
+                    xsink_graddescent(isink,1:ndim) = fsink(isink,1:ndim) * gamma_grad_descent
+                 endif
+                 ! Uopdate the sink position
+                 xsink(isink,1:ndim)=xsink(isink,1:ndim)+ xsink_graddescent(isink,1:ndim)
+                 ! Store the descent velocity for the time-stepping
+                 graddescent_over_dt(isink) = NORM2(xsink_graddescent(isink,1:ndim))/dtnew(ilevel)
               endif
-              ! Uopdate the sink position
-              xsink(isink,1:ndim)=xsink(isink,1:ndim)+ xsink_graddescent(isink,1:ndim)
-              ! Store the descent velocity for the time-stepping
-              graddescent_over_dt(isink) = NORM2(xsink_graddescent(isink,1:ndim))/dtnew(ilevel)
            endif
-        endif
         endif
 
         new_born(isink)=.false.
 
-        ! Dampen sink mass (this is NOT compatible with other sink settings)
+        ! Patch: Dampen sink mass (BEWARE this may NOT be compatible with other sink settings)
         if (first_call)then
            allocate(msink_save(1:nsinkmax))
            msink_save(:) = 0.
@@ -2043,8 +2043,8 @@ subroutine update_cloud(ilevel)
   ig=0
   ip=0
   ! Loop over grids
-  igrid=headl(myid,ilevel)
-  do jgrid=1,numbl(myid,ilevel)
+  do jgrid=1,active(ilevel)%ngrid
+     igrid=active(ilevel)%igrid(jgrid)
      npart1=numbp(igrid)  ! Number of particles in the grid
      if(npart1>0)then
         ig=ig+1
@@ -2070,7 +2070,6 @@ subroutine update_cloud(ilevel)
         end do
         ! End loop over particles
      end if
-     igrid=next(igrid)   ! Go to next grid
   end do
   ! End loop over grids
   if(ip>0)call upd_cloud(ind_part,ip)
@@ -2525,7 +2524,7 @@ subroutine read_sink_params()
   namelist/sink_params/n_sink,rho_sink,d_sink,accretion_scheme,merging_timescale,&
        ir_cloud_massive,sink_soft,mass_sink_direct_force,ir_cloud,nsinkmax,create_sinks,&
        check_energies,mass_sink_seed,mass_smbh_seed,c_acc,nlevelmax_sink,&
-       eddington_limit,acc_sink_boost,mass_merger_vel_check,&
+       eddington_limit,eddington_cap,acc_sink_boost,mass_merger_vel_check,&
        clump_core,verbose_AGN,T2_AGN,T2_min,cone_opening,mass_halo_AGN,mass_clump_AGN,mass_star_AGN,&
        AGN_fbk_frac_ener,AGN_fbk_frac_mom,T2_max,v_max,boost_threshold_density,&
        epsilon_kin,AGN_fbk_mode_switch_threshold,kin_mass_loading,bondi_use_vrel,smbh,agn,max_mass_nsc,&
@@ -2663,7 +2662,6 @@ subroutine cic_get_cells(indp,xx,vol,ok,ind_grid,xpart,ind_grid_part,ng,np,ileve
   ! Grid-based arrays
   integer ,dimension(1:nvector)::ind_cell
   integer ,dimension(1:nvector,1:threetondim),save::nbors_father_cells
-  integer ,dimension(1:nvector,1:twotondim),save::nbors_father_grids
   ! Particle-based arrays
   real(dp),dimension(1:nvector,1:ndim),save::x,dd,dg
   integer ,dimension(1:nvector,1:ndim),save::ig,id,igg,igd,icg,icd
@@ -2704,7 +2702,7 @@ subroutine cic_get_cells(indp,xx,vol,ok,ind_grid,xpart,ind_grid_part,ng,np,ileve
   end do
 
   ! Gather neighboring father cells (should be present anytime!)
-  call get3cubefather(ind_cell,nbors_father_cells,nbors_father_grids,ng,ilevel)
+  call get3cubefather(ind_cell,nbors_father_cells,ng,ilevel)
 
   ! Rescale particle position at level ilevel
   do idim=1,ndim
@@ -2844,7 +2842,7 @@ subroutine cic_get_vals(fluid_var,ind_grid,xpart,ind_grid_part,ng,np,ilevel,ilev
   use amr_commons
   use pm_commons
   use poisson_commons
-  use hydro_commons, ONLY: nvar,uold
+  use hydro_commons, ONLY: nvar,nvar_all,uold
   implicit none
 
   !----------------------------------------------------------------------------
@@ -2855,11 +2853,7 @@ subroutine cic_get_vals(fluid_var,ind_grid,xpart,ind_grid_part,ng,np,ilevel,ilev
   logical::ilevel_only
 
   integer ,dimension(1:nvector)::ind_grid,ind_grid_part
-#ifdef SOLVERmhd
-  real(dp) ,dimension(1:nvector,1:nvar+3)::fluid_var
-#else
-  real(dp) ,dimension(1:nvector,1:nvar)::fluid_var
-#endif
+  real(dp) ,dimension(1:nvector,1:nvar_all)::fluid_var
   real(dp) ,dimension(1:nvector,1:ndim)::xpart
 
   ! Particle-based arrays
@@ -2930,11 +2924,7 @@ subroutine set_unew_sink(ilevel)
   ! Set unew to uold for myid cells
   do ind=1,twotondim
      iskip=ncoarse+(ind-1)*ngridmax
-#ifdef SOLVERmhd
-     do ivar=1,nvar+3
-#else
-     do ivar=1,nvar
-#endif
+  do ivar=1,nvar_all
         do i=1,active(ilevel)%ngrid
            unew(active(ilevel)%igrid(i)+iskip,ivar) = uold(active(ilevel)%igrid(i)+iskip,ivar)
         end do
@@ -2945,11 +2935,7 @@ subroutine set_unew_sink(ilevel)
   do icpu=1,ncpu
   do ind=1,twotondim
      iskip=ncoarse+(ind-1)*ngridmax
-#ifdef SOLVERmhd
-     do ivar=1,nvar+3
-#else
-     do ivar=1,nvar
-#endif
+     do ivar=1,nvar_all
         do i=1,reception(icpu,ilevel)%ngrid
 #ifdef LIGHT_MPI_COMM
            unew(reception(icpu,ilevel)%pcomm%igrid(i)+iskip,ivar)=0
@@ -2984,26 +2970,14 @@ subroutine set_uold_sink(ilevel)
   if(verbose)write(*,111)ilevel
 
   ! Reverse update boundaries
-#ifdef SOLVERmhd
-  do ivar=1,nvar+3
-#else
-  do ivar=1,nvar
-#endif
+  do ivar=1,nvar_all
      call make_virtual_reverse_dp(unew(1,ivar),ilevel)
-#ifdef SOLVERmhd
   end do
-#else
-  end do
-#endif
 
   ! Set uold to unew for myid cells
   do ind=1,twotondim
      iskip=ncoarse+(ind-1)*ngridmax
-#ifdef SOLVERmhd
-     do ivar=1,nvar+3
-#else
-     do ivar=1,nvar
-#endif
+     do ivar=1,nvar_all
         do i=1,active(ilevel)%ngrid
            uold(active(ilevel)%igrid(i)+iskip,ivar) = unew(active(ilevel)%igrid(i)+iskip,ivar)
         end do

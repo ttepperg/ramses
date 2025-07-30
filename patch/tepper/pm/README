@@ -1,71 +1,82 @@
-Author: Dr. Thorsten Tepper Garcia
+AUTHOR: Dr. Thorsten Tepper Garcia
 
-Created: 13 MAY 2020
+CREATED: 29 JUL 2025
 
-	Last modified:
+    This file is a log intended to keep track and guide me through the process of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
 
-	08 FEB 2021:
+    This file replaces bck_29JUL2025/README. See the latter for more information.
 
-	20 FEB 2024:
-	init_sink.f90: For some strange reason, restaring with a sink without having previous sinks fails due to the absence of the sink_XXXXX.csv file (not sure why it worked before!). Made several changes to the block if(nrestart > 0) to fix (?) this issue.
-
-About:
-
-This subdirectory contains a number of patches
-to files originally in pm, unless stated otherwise.
-
-sink_particle.f90:
-- added parameters
-	remove_sink
-	sink_tscale
-	sink_tscale0
-	sink_restart
-to sink_params block; the first three are used in routine update_sink, the last one in routines init_sink and init_part. The first three allow to exponentially decrase the mass of a sink with time (see routine update_sink). The last one, sink_restart, if set .true., allows to include sinks at restart
-via an initfile(1)/ic_sink_restart text file for a simulation that previously did not include sinks. If the simulation did include sinks, then additional sinks may be added via initfile(1)/ic_sink_restart without the need to set sink_restart
-
-pm_parameters.f90:
-- set default values for parameters
-	remove_sink=.false.
-	sink_tscale=1.D10
-	sink_tscale0=1.D10
-	sink_restart=.false.
-in module pm_parameters
+    STEPS COMPLETED
+    - Backed up old patch files in bck_29JUL2025
+    - Copied relevant files from ramses_fork/pm
+    - Modify the relevant files as outlined in bck_29JUL2025/README
 
 
-init_sink.f90:
-- added csv_sink, merged if(nrestart > 0) blocks
-- abort if file 'ic_sink' or 'ic_sink_restart' cannot found or read
-- added 'use pm_parameters, only: sink_restart'
-- added kpc2cm, km2cm conversion factors from amr/constants.f90
-- added scale_m (type real(db))
-- scaled ic_sink input values to code units
-- added input value 'sid' to last column
-- changed slevel to levelmin in lines 258-9
-- swapped lines 261 and 262:
-     	sinkint_level=levelmin
-		103  continue
-	to:
-		103  continue
-     	sinkint_level=levelmin
-
-	as otherwise sinkint_level may remain uninitialised.
-- moved output sink properties to screen to end of subroutine
-- added direct force scheme information to output to screen
-- added TRIM(output_dir) to filename strings where relevant
+    Last Modified 29 JUL 2025:
+        SO FAR NOTHING ELSE TO DO APPARENTLY
+        STILL TESTING THOUGH
 
 
-output_sink.f90:
-- changed (again) output file header string 'msink' to 'mass' for
-	convenience when analysing sims with Pynbody
+-----------------------------------------
+MODIFIED FILES
 
 
-output_part.f90:
-- split all if-clauses of the form:
-  if(star.or.sink)then
-	if(metal)then
-	endif
-  endif
-into
-  if(star.or.sink)then
-  endif
-  if(metal)then
+    output_sink.f90:
+    - changed (again) output file header string 'msink' to 'mass' for
+     convenience when analysing sims with Pynbody
+
+
+    output_part.f90:
+    - split all if-clauses of the form:
+          if(star.or.sink)then
+        	if(metal)then
+        	endif
+          endif
+     into
+          if(star.or.sink)then
+          endif
+          if(metal)then
+          endif
+
+    NOTE: There is only one such clause, write beneath '!Write birth epoch'
+    IMPORTANT: beware of the allocate/deallocate statements.
+
+
+    pm_parameters.f90:
+    - added and set default values in module pm_parameters for parameters
+        logical::remove_sink=.false.  ! Exponentially dampen sink mass over ...
+        real(dp)::sink_tscale=1.D10   ! ... this time scale (in code units) ...
+        real(dp)::sink_tscale0=1.D10  ! ... from this time on (in code units)
+        logical::sink_restart=.false. ! allow to include sinks at restart
+
+
+    init_sink.f90:
+    - added csv_sink, merged if(nrestart > 0) blocks
+    - abort if file 'ic_sink' or 'ic_sink_restart' cannot found or read
+    - added 'use pm_parameters, only: sink_restart'
+    - added kpc2cm, km2cm conversion factors from amr/constants.f90
+    - added scale_m (type real(db))
+    - scaled ic_sink input values to code units
+    - added input value 'sid' to last column
+    - changed slevel to levelmin in lines 258-9
+    - swapped lines 261 and 262:
+         	sinkint_level=levelmin
+    		103  continue
+    	to:
+    		103  continue
+         	sinkint_level=levelmin
+
+    	as otherwise sinkint_level may remain uninitialised.
+    - moved output sink properties to screen to end of subroutine
+    - added direct force scheme information to output to screen
+    - added TRIM(output_dir) to filename strings where relevant
+
+
+    sink_particle.f90:
+    - added parameters
+    	remove_sink
+    	sink_tscale
+    	sink_tscale0
+    	sink_restart
+     to sink_params block; the first three are used in routine update_sink, the last one in routines init_sink and init_part. The first three allow to exponentially decrase the mass of a sink with time (see routine update_sink). The last one, sink_restart, if set .true., allows to include sinks at restart
+     via an initfile(1)/ic_sink_restart text file for a simulation that previously did not include sinks. If the simulation did include sinks, then additional sinks may be added via initfile(1)/ic_sink_restart without the need to set sink_restart
