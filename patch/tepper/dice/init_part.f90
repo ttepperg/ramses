@@ -120,11 +120,11 @@ subroutine init_part
   typep(1:npartmax)%family=FAM_UNDEF; typep(1:npartmax)%tag=0
   if(star.or.sink)then
      allocate(tp(npartmax))
-     tp=0.0
+     tp=0
   end if
   if(metal)then
      allocate(zp(npartmax))
-     zp=0.0
+     zp=0
   end if
 
   !--------------------
@@ -216,7 +216,6 @@ subroutine init_part
      ! We don't need the potential, but read it anyway (to get the records correctly for tp/zp)
      read(ilun)
 #endif
-
      if(star.or.sink)then
         ! Read birth epoch
         allocate(xdp(1:npart2))
@@ -315,7 +314,7 @@ subroutine init_part
      end select
 
      ! Initialize tracer particles
-     if(MC_tracer) call init_tracer
+     if(tracer) call init_tracer
 
   end if
 
@@ -1077,7 +1076,7 @@ contains
        end if
     end do
 
-    write(*,*)'npart=',ipart,'/',npartmax,' for PE=',myid
+    if(debug)write(*,*)'npart=',ipart,'/',npartmax,' for PE=',myid
 #endif
 
     ! Compute particle initial level
@@ -1649,11 +1648,11 @@ contains
                    levelp(ipart)  = levelmin
                    if(star) then
                       tp(ipart)    = tt(i)
-                    endif
-                      ! Particle metallicity
-                      if(metal) then
-                         zp(ipart)  = zz(i)
-                      endif
+                   endif
+                   ! Particle metallicity
+                   if(metal) then
+                      zp(ipart)  = zz(i)
+                   endif
                    if(type_index.gt.2)then
                       if(star)then
                          typep(ipart)%family = FAM_STAR

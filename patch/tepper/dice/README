@@ -1,94 +1,85 @@
-Author: Dr. Thorsten Tepper Garcia
+AUTHOR: Dr. Thorsten Tepper Garcia
 
-Created: 08 FEB 2021
+CREATED: 29 JUL 2025
 
-	Last modified:
+    This file is a log intended to keep track and guide me through the process of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
 
-	28 FEB 2024:
-	Added family tag, previously set to 0 by default, now set to the value specified by the ICs (if available)
+    This file replaces bck_29JUL2025/README.  See the latter for more information.
 
-    20 FEB 2024:
-	Remove the use of sink_restart from init_part.f90 as it appeared unnecessary
-
-    01 FEB 2024:
-	Copied over the missing files from patch/init/dice, which are however not (yet) patched:
-		gadgetreadfile.f90
-		init_refine.f90
-		init_time.f90
-		rho_fine.f90
-	The idea is to have the DICE patch all in one place to facilitate maintenance, i.e. modify the matching files when these are modified in the main Ramses distribution.
-	IMPORTANT 1: This allowed to remove the now redundant patch/tepper/oagertz/dice/init_refine.f90
-	IMPORTANT 2: Required adjusting the relevant bin/Makefile*s:
-		Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
-		Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
-		Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH
-		Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH_GAS
-		Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH
-		Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICE_RESTARTPATCH
-	by either removing from PATCH 'patch/init/dice' or replacing it by 'patch/tepper/dice'
+    STEPS COMPLETED
+    - Backed up old patch files in bck_29JUL2025
+    - Copied relevant files from ramses_fork/pm
+    - Modify the relevant files as outlined in bck_29JUL2025/README
 
 
-About:
-
-This subdirectory contains a number of patches
-to files originally in patch/init/dice, unless stated otherwise.
-The files are either files with custom modifications to improve DICE (for my needs), or those files originally in patch/init/dice that overlap with my patched files in patch/tepper/[amr/hydro/pm/poisson].
-
-Note that the above determines the way the patches should be included in a Makefile that wishes to compile the DICE patch namely 1) my dice patch; 2) the original dice patch, 3) my other patches [amr/hydro/pm/poisson], although 2 and 3 are interchangeable.
-
-Notes:
-	- The bck_21DEC023 folder is temporary until I've made sure that the most recent update (22 DEC 2023) is working.
-	DELETED ON 06 MAR 2024 (a were all the other temporary backup folders in other subdirectories)
+    Last Modified 30 JUL 2025:
+        SO FAR NOTHING ELSE TO DO APPARENTLY
+        STILL TESTING THOUGH
 
 
-Modified files
-
-init_flow_fine.f90:
-- multiply IG_metal by ic_scale_metal to have freedom in the adopted units
+-----------------------------------------
+MODIFIED FILES
 
 
-init_part.f90:
-- added 'use pm_parameters, only: sink_restart'
-- reverted the latter
-- added TRIM(output_dir) to filename strings where relevant
-- split all if-clauses of the form:
-  if(star.or.sink)then
-	if(metal)then
-	endif
-  endif
-into
-  if(star.or.sink)then
-  endif
-  if(metal)then
-  endif
+    read_params.f90:
+    - added variable 'output_dir' to namelist block 'output_params'
+    - added TRIM(output_dir) to info_file strings where appropriate
+    - added variable 'print_when_io' to namelist block 'run_params'
+    - added variable 'ic_tag_name' to namelist block 'dice_params'
+
+    NOTE: These new variables must be declared before the corresponding namelist block
 
 
-particle_tree.f90:
-- split all if-clauses of the form:
-  if(star.or.sink)then
-	if(metal)then
-	endif
-  endif
-into
-  if(star.or.sink)then
-  endif
-  if(metal)then
-  endif
+    init_flow_fine.f90:
+    - multiply IG_metal by ic_scale_metal to have freedom in the adopted units
 
 
-add_list.f90:
-- split all if-clauses of the form:
-  if(star.or.sink)then
-	if(metal)then
-	endif
-  endif
-into
-  if(star.or.sink)then
-  endif
-  if(metal)then
+    init_part.f90:
+    - added TRIM(output_dir) to fileloc strings
+    - split all if-clauses of the form:
+          if(star.or.sink)then [ or if(star)then ]
+        	if(metal)then
+        	endif
+          endif
+     into
+          if(star.or.sink)then  [ or if(star)then ]
+          endif
+          if(metal)then
+          endif
+
+    NOTE: There were three [one] such clauses
+    IMPORTANT: beware of the allocate/deallocate statements and loops
+
+    - added family tag, previously set to 0 by default, now set to the value specified by the ICs (if available); requires changes to read_params.f90 (see above).
 
 
-read_params.f90:
-- added variable 'output_dir' to namelist block 'output_params'
-- added TRIM(output_dir) to filename strings where relevant
-- added variable 'print_when_io' to namelist block 'run_params'
+    particle_tree.f90:
+    - split all if-clauses of the form:
+          if(star.or.sink)then
+        	if(metal)then
+        	endif
+          endif
+     into
+          if(star.or.sink)then
+          endif
+          if(metal)then
+          endif
+
+    NOTE: There were three such clauses
+    IMPORTANT: beware of loops, #ifdef directives, and logic flow
+
+
+    add_list.f90:
+    - split all if-clauses of the form:
+          if(star.or.sink)then
+        	if(metal)then
+        	endif
+          endif
+     into
+          if(star.or.sink)then
+          endif
+          if(metal)then
+          endif
+
+    NOTE: There were two such clauses
+    IMPORTANT: beware of loops
