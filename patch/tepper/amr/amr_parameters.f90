@@ -112,13 +112,14 @@ module amr_parameters
   logical::output_now=.false.    ! write output next step
   real(dp)::walltime_hrs=-1      ! Wallclock time for submitted job
   real(dp)::minutes_dump=1       ! Dump an output minutes before walltime ends
-  logical(dp)::finish_run=.false.! trigger cleanup after walltime end dump
+  logical::finish_run=.false.! trigger cleanup after walltime end dump
   real(dp)::delta_tout=HUGE(1.0D0)         ! time difference between outputs
   real(dp)::delta_aout=HUGE(1.0D0)         ! expansion factor difference between outputs
   real(dp),dimension(1:MAXOUT)::aout=HUGE(1.0D0)      ! Output expansion factors
   real(dp),dimension(1:MAXOUT)::tout=HUGE(1.0D0)      ! Output times
   real(dp)::tout_next=HUGE(1.0D0)     ! next output time using delta_tout
   real(dp)::aout_next=HUGE(1.0D0)     ! next output expansion factor using delta_aout
+  logical::output_to_log=.true.  ! write output to log for 1D runs
   character(len=80)::output_dir='./'  ! Data output directory
 
   ! Lightcone parameters
@@ -214,7 +215,7 @@ module amr_parameters
   logical ::sf_imf=.false.              ! Activate IMF sampling for SN feedback when resolution allows it
   logical ::sf_compressive=.false.      ! Advect compressive and solenoidal turbulence terms separately
   logical ::cooling_ism = .false.      ! Use cooling module from Audit & Hennebelle 2005 (non-RT)
-                                        ! instead of ramses classical cooling 
+                                        ! instead of ramses classical cooling
 
   ! EOS parameters
   character(len=20)::barotropic_eos_form='legacy'  !Type of barotropic EOS: choose from:
@@ -293,6 +294,9 @@ module amr_parameters
   real(dp)::mass_cut_refine=-1                   ! Mass threshold for particle-based refinement
   integer::ivar_refine=-1                        ! Variable index for refinement
   logical::sink_refine=.false.                   ! Fully refine on sink particles
+
+  ! Initial condition selection parameter
+  character(LEN=60)::condinit_kind ='region'
 
   ! Initial condition files for each level
   logical::multiple=.false.

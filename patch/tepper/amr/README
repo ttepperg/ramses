@@ -1,33 +1,60 @@
-Author: Dr. Thorsten Tepper Garcia
+AUTHOR: Dr. Thorsten Tepper Garcia
 
-Created: 12 MAY 2020
+CREATED: 29 JUL 2025
 
-About:
+    This file is a log intended to keep track and guide me through the process of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
 
-This subdirectory contains a number of patches
-to files originally in amr, unless stated otherwise.
+    This file replaces bck_29JUL2025/README. See the latter for more information.
 
-units.f90:
-- added km2cm conversion factor from amr/constants.f90
-- added scale_m (type real(db))
-- automatically set scale_t when poisson=.true. to
-	ensure that G=1 in user units for all gravity runs
-- provide information to stdout about relevant units
+    STEPS COMPLETED
+    - Backed up old patch files in bck_29JUL2025
+    - Copied relevant files from ramses_fork/amr
+    - Modify the relevant files as outlined in bck_29JUL2025/README
 
-amr_parameters.f90:
-- added output parameter 'output_dir' (type character(len=80))
-	which allows to redirect the output to any location
 
-output_amr.f90:
-- added TRIM(output_dir) to filename strings where relevant; this should
-	propagate through all the output routines via the 'filename'
-	variable
-- added output sink***csv
+    Last Modified 29 JUL 2025:
+        SO FAR NOTHING ELSE TO DO APPARENTLY
+        STILL TESTING THOUGH
 
-init_amr.f90:
-- added TRIM(output_dir) to filename strings where relevant
 
-movie.f90:
-- added TRIM(output_dir) to filename strings where relevant; this should
-	propagate through all the output routines via the 'filename'
-	variable
+-----------------------------------------
+MODIFIED FILES
+
+
+    amr_parameters.f90:
+    - added output parameter 'output_dir' (type character(len=80))
+     which allows to redirect the output to any location
+
+
+    init_amr.f90:
+    - added TRIM(output_dir) to strings fileloc;
+     look for 'output_'//TRIM(nchar)
+
+
+    movie.f90:
+    - added TRIM(output_dir) to string moviedir
+     look for 'output_'//TRIM(nchar)
+
+
+    output_amr.f90:
+    - added TRIM(output_dir) to filedir
+     look for 'output_'//TRIM(nchar)
+    - added afer line 'call backup_part(filename, filename_desc)' the following:
+        if(sink)then
+           filename=TRIM(filedir)//'sink_'//TRIM(nchar)//'.csv'
+           call output_sink_csv(filename)
+        end if
+
+
+    units.f90:
+    - added factG_in_cgs, M_sun, Myr2sec, kpc2cm from amr/constants.f90
+    - added hydro, mass_sph from hydr/hydro_parameters.f90
+    - added new variables:
+        real(dp)::scale_m
+        real(dp),parameter::km2cm=1.0d+5
+        logical,save::first_call=.true.
+    - automatically set scale_t when poisson=.true. to ensure that G=1 in user units for all gravity runs
+    - added:
+        ! mass conversion factor
+        scale_m = scale_d * scale_l**3
+    - added an output block with relevant scaling information
