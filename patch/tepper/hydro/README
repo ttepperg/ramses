@@ -7,7 +7,7 @@ CREATED: 30 JUL 2025
     This file replaces bck_29JUL2025/README. See the latter for more information.
 
     STEPS COMPLETED
-    - Backed up old patch files in bck_29JUL2025 (back dated for consistency with earlier modifications)
+    - Backed up old patch files in bck_29JUL2025 (back dated for consistency with modifications to other of my patches)
     - Copied relevant files from ramses_fork/hydro
     - Modify the relevant files as outlined in bck_29JUL2025/README
 
