@@ -57,6 +57,15 @@ CREATED: 30 JUL 2025
     	- Remove obsolete bits such as uu for particles [what else?]
 
 
+    Last Modified 31 JUL 2025:
+
+        - Tested with model dice_restart_gas, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH_GAS
+            - tested normal run
+            - tested normal restart run
+            - tested dice_restart run
+                - changing number of cpus
+                - adding ICs at restart
+
     Last Modified 30 JUL 2025:
 
         - SO FAR NOTHING ELSE TO DO APPARENTLY; STILL TESTING THOUGH
@@ -66,6 +75,7 @@ CREATED: 30 JUL 2025
             - tested dice_restart run
                 - changing number of cpus
                 - adding ICs at restart
+
 
 -----------------------------------------
 MODIFIED FILES
