@@ -1,25 +1,31 @@
 ! COMPILE CODE WITH:
 ! make -f Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH
 !
-! Modified copy of hbd_11.nml
+! An example of how to use my dice_restart patch. See also dice_restart_gas.nml
+!
+! Modified copy of hbd_11.nml. Uses same ICs.
 !
 ! Allows to:
-!  - Change number of cores at restart for an N-body/HYDRO
-! simulation WITHOUT galaxy formation physics (star formation, feedback)
+!  - Change number of cores at restart for an N-body
 !  - Load *additional* DICE ICs at restart
 !
-! For a normal run comment out RESTART_PARAMS and set:
+! For a normal run *comment out* DICE_RESTART_PARAMS and set:
 !	- nrestart = 0 in RUN_PARAMS
 !	- filetype='dice' in INIT_PARAMS
 !
-! For a normal restart comment out RESTART_PARAMS and set:
+! For a normal restart *comment out* DICE_RESTART_PARAMS and set:
 !	- nrestart = 0 in RUN_PARAMS
 !
-! For a restart to change number of cores uncomment RESTART_PARAMS
-! and set:
+! For a restart to change number of cores *uncomment* the DICE_RESTART_PARAMS
+! block and set:
 !	- nrestart = 0 in RUN_PARAMS
-!	- nrestart2 > 0 in RESTART_PARAMS
+!	- nrestart2 > 0 in DICE_RESTART_PARAMS
 !	- filetype='ramses_dice' in INIT_PARAMS
+!
+! To load additional DICE ICs files at restart do as above and set (*)
+!   - add_dice_ic = .true.
+!
+! (*) These are loaded like any other DICE ICs, so need to set DICE_PARAMS accordingly (e.g. ic_file), as well as initfile in INIT_PARAMS
 
 
 &RUN_PARAMS
@@ -29,7 +35,7 @@ cosmo=.false.
 hydro=.false.
 pic=.true.
 poisson=.true.	! requires to set units such that G=1; taken care of by units.f90
-nrestart=2
+nrestart=0
 nremap=10
 nsubcycle=7*1
 ncontrol=1
@@ -94,26 +100,28 @@ kbound_max= 0, 0,  0,  0, -1,  1
 !the longest file name reads:
 !initfile(1)output_xxxxx/hydro_file_descriptor.txt
 &INIT_PARAMS
-filetype='dice'
-!filetype='ramses_dice'
-!initfile(1)='/scratch/dr86/ttg562/hbd_11/ic/'
-initfile(1)='/import/photon2/tepper/hbd_11/ic/'
+!filetype='dice'
+filetype='ramses_dice'
+!initfile(1)='/scratch/dr86/ttg562/dice_restart/ic/'
+initfile(1)='/import/photon2/tepper/dice_restart/ic/'
 /
 
 
 ! The followong block must be commented out if filetype != 'ramses_dice'
-!&RESTART_PARAMS
-!nrestart2=1
-!add_dice_ic=.true.	! optional, to load additional DICE ICs at restart
-!/
+&DICE_RESTART_PARAMS
+nrestart2=2
+add_dice_ic=.true.	! optional, to load additional DICE ICs at restart
+/
 
 
 !MAKE SURE TO USE THE CORRECT UNITS FOR length, velocity, and mass
 !For more information see:
 !https://bitbucket.org/vperret/dice/wiki/RAMSES%20simulation
 &DICE_PARAMS
-ic_file='hbd_11_proc.g2'			! Name of the initial conditions file
-ic_nfile=3							! If greater than one, look for files with name matching ic_file//'.n'
+!ic_file='hbd_11_proc.g2'			! Name of the initial conditions file
+!ic_nfile=3							 If greater than one, look for files with name matching ic_file//'.n'
+ic_file='hbd_10_proc.g2.3'			! use this when add_dice_ic=.true.
+ic_nfile=1							! use this when add_dice_ic=.true.
 ic_ifout=1							! Change ramses output index for restarts
 ic_format='Gadget2'					! Format of the initial conditions. 'Gadget1' or 'Gadget2'
 gadget_scale_l=3.085677581282D+21	! AGAMA file length unit   -> 1 kpc
@@ -128,6 +136,6 @@ gadget_scale_t=3.15360D+13			! Gadget file time unit    -> 1 Myr (note that this
 &OUTPUT_PARAMS
 tend = 45.
 delta_tout = 0.1
-!output_dir='/scratch/dr86/ttg562/hbd_11/'
-output_dir='/import/photon2/tepper/hbd_11/'
+!output_dir='/scratch/dr86/ttg562/dice_restart/'
+output_dir='/import/photon2/tepper/dice_restart/'
 /

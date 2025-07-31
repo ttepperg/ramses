@@ -1,25 +1,32 @@
 ! COMPILE CODE WITH:
 ! make -f Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH_GAS
 !
-! Modified copy of hbd_11_gd0_new.nml
+! An example of how to use my dice_restart patch with gas. See also dice_restart.nml
+!
+! Modified copy of hbd_11_gd0_new.nml. Uses same ICs.
 !
 ! Allows to:
 !  - Change number of cores at restart for an N-body/HYDRO
 ! simulation WITHOUT galaxy formation physics (star formation, feedback)
 !  - Load *additional* DICE ICs at restart
 
-! For a normal run comment out RESTART_PARAMS and set:
+! For a normal run *comment out* DICE_RESTART_PARAMS and set:
 !	- nrestart = 0 in RUN_PARAMS
 !	- filetype='dice' in INIT_PARAMS
 !
-! For a normal restart comment out RESTART_PARAMS and set:
+! For a normal restart *comment out* DICE_RESTART_PARAMS and set:
 !	- nrestart = 0 in RUN_PARAMS
 !
-! For a restart to change number of cores uncomment RESTART_PARAMS
-! and set:
+! For a restart to change number of cores *uncomment* the DICE_RESTART_PARAMS
+! block and set:
 !	- nrestart = 0 in RUN_PARAMS
-!	- nrestart2 > 0 in RESTART_PARAMS
+!	- nrestart2 > 0 in DICE_RESTART_PARAMS
 !	- filetype='ramses_dice' in INIT_PARAMS
+!
+! To load additional DICE ICs files at restart do as above and set (*)
+!   - add_dice_ic = .true.
+!
+! (*) These are loaded like any other DICE ICs, so need to set DICE_PARAMS accordingly (e.g. ic_file), as well as initfile in INIT_PARAMS
 
 
 &RUN_PARAMS
@@ -115,24 +122,26 @@ no_inflow=.false.				  ! ...  with inflow
 
 
 &INIT_PARAMS
-filetype='ramses_dice'
-!filetype='dice'
+filetype='ramses_dice'  ! use this for a dice_restart run
+!filetype='dice'        ! use this for a normal dice run (possibly with restart)
 initfile(1)='/import/photon2/tepper/dice_restart_gas/ic/'
 !initfile(1)='/scratch/dr86/ttg562/dice_restart_gas/ic/'
 /
 
 
 ! The followong block must be commented out if filetype != 'ramses_dice'
-&RESTART_PARAMS
-nrestart2=3
-!add_dice_ic=.true.	! optional, to load additional DICE ICs at restart
-restart_vars=6   	!-> corresponds to actual indices of passive scalars
+&DICE_RESTART_PARAMS
+nrestart2=8
+add_dice_ic=.true.	! optional, to load additional DICE ICs at restart
+restart_vars=6   	    !-> corresponds to actual indices of passive scalars
 /
 
 
 &DICE_PARAMS
-ic_file='hbd_11_gd0_new_proc.g2'           ! Name of the initial conditions file
-ic_nfile=4                    ! If greater than one, look for files with name matching ic_file//'.n'
+!ic_file='hbd_11_gd0_new_proc.g2'           ! Name of the initial conditions file
+!ic_nfile=4                    ! If greater than one, look for files with name matching ic_file//'.n'
+ic_file='hbd_10_proc.g2.3'			! use this when add_dice_ic=.true.
+ic_nfile=1							! use this when add_dice_ic=.true.
 ic_ifout=1                    ! Change ramses output index for restarts
 ic_format='Gadget2'           ! Format of the initial conditions. 'Gadget1' or 'Gadget2'
 ic_center=0.0,0.0,0.0         ! Shift center parameter. ICs are automatically shifted with boxlen/2
