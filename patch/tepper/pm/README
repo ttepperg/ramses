@@ -81,3 +81,7 @@ MODIFIED FILES
     	sink_restart
      to sink_params block; the first three are used in routine update_sink, the last one in routines init_sink and init_part. The first three allow to exponentially decrase the mass of a sink with time (see routine update_sink). The last one, sink_restart, if set .true., allows to include sinks at restart
      via an initfile(1)/ic_sink_restart text file for a simulation that previously did not include sinks. If the simulation did include sinks, then additional sinks may be added via initfile(1)/ic_sink_restart without the need to set sink_restart
+
+
+    init_part.f90:
+    - added TRIM(output_dir) to string 'fileloc' where relevant
