@@ -12,6 +12,9 @@ CREATED: 29 JUL 2025
     - Modify the relevant files as outlined in bck_29JUL2025/README
 
 
+    Last Modified 5 AUG 2025:
+    - Added read_params.f90 to patch (see below)
+
     Last Modified 29 JUL 2025:
     - SO FAR NOTHING ELSE TO DO APPARENTLY; STILL TESTING THOUGH
     - Tested with model hbd_10, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
@@ -20,7 +23,6 @@ CREATED: 29 JUL 2025
 
 -----------------------------------------
 MODIFIED FILES
-
 
     amr_parameters.f90:
     - added output parameter 'output_dir' (type character(len=80))
@@ -59,3 +61,9 @@ MODIFIED FILES
         ! mass conversion factor
         scale_m = scale_d * scale_l**3
     - added an output block with relevant scaling information
+
+
+    read_params.f90:
+    - added variable 'output_dir' to namelist block 'output_params'
+    - added TRIM(output_dir) to info_file strings where appropriate
+    - added variable 'print_when_io' to namelist block 'run_params'
