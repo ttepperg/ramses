@@ -7,9 +7,6 @@ subroutine adaptive_loop
 #ifdef RT
   use rt_hydro_commons
 #endif
-#if USE_TURB==1
-  use turb_commons
-#endif
   use mpi_mod
   implicit none
 #ifndef WITHOUTMPI
@@ -33,26 +30,24 @@ subroutine adaptive_loop
   call init_time                     ! Initialize time variables
   if(hydro)call init_hydro           ! Initialize hydro variables
 #ifdef RT
-  if(rt.or.neq_chem) call rt_init_hydro ! Initialize radiation variables
+  if(rt.or.neq_chem) &
+       & call rt_init_hydro          ! Initialize radiation variables
 #endif
   if(poisson)call init_poisson       ! Initialize poisson variables
 #ifdef ATON
   if(aton)call init_radiation        ! Initialize radiation variables
 #endif
-#if USE_TURB==1
-  if(turb) call init_turb
-#endif
   if(nrestart==0)call init_refine    ! Build initial AMR grid
 
-  ! Initialize cooling look up table
 #ifdef grackle
   if(use_grackle==0)then
-     if(cooling.and..not.neq_chem.and..not.cooling_ism) call set_table(dble(aexp))
+     if(cooling.and..not.neq_chem) &
+        call set_table(dble(aexp))    ! Initialize cooling look up table
   endif
 #else
-  if(cooling.and..not.neq_chem.and..not.cooling_ism) call set_table(dble(aexp))
+  if(cooling.and..not.neq_chem) &
+       call set_table(dble(aexp))    ! Initialize cooling look up table
 #endif
-
   if(pic)call init_part              ! Initialize particle variables
   if(pic)call init_tree              ! Initialize particle tree
   if(nrestart==0)call init_refine_2  ! Build initial AMR grid again
@@ -106,9 +101,17 @@ subroutine adaptive_loop
            call build_comm(ilevel)
            call make_virtual_fine_int(cpu_map(1),ilevel)
            if(hydro)then
-              do ivar=1,nvar_all
+#ifdef SOLVERmhd
+              do ivar=1,nvar+3
+#else
+              do ivar=1,nvar
+#endif
                  call make_virtual_fine_dp(uold(1,ivar),ilevel)
+#ifdef SOLVERmhd
               end do
+#else
+              end do
+#endif
               if(momentum_feedback>0)call make_virtual_fine_dp(pstarold(1),ilevel)
               if(strict_equilibrium>0)call make_virtual_fine_dp(rho_eq(1),ilevel)
               if(strict_equilibrium>0)call make_virtual_fine_dp(p_eq(1),ilevel)
@@ -135,7 +138,7 @@ subroutine adaptive_loop
      ! MC Tracer !
      ! Reset fluxes
      if(MC_tracer) then
-        fluxes = 0_dp
+        fluxes(:, :) = 0_dp
      end if
 
      ! Call base level
@@ -147,9 +150,17 @@ subroutine adaptive_loop
            ! Hydro book-keeping
            if(hydro)then
               call upload_fine(ilevel)
-              do ivar=1,nvar_all
+#ifdef SOLVERmhd
+              do ivar=1,nvar+3
+#else
+              do ivar=1,nvar
+#endif
                  call make_virtual_fine_dp(uold(1,ivar),ilevel)
+#ifdef SOLVERmhd
               end do
+#else
+              end do
+#endif
               if(momentum_feedback>0)call make_virtual_fine_dp(pstarold(1),ilevel)
               if(strict_equilibrium>0)call make_virtual_fine_dp(rho_eq(1),ilevel)
               if(strict_equilibrium>0)call make_virtual_fine_dp(p_eq(1),ilevel)
@@ -193,13 +204,14 @@ subroutine adaptive_loop
            if (tot_pt==0) muspt=0 ! dont count first timestep
            n_step = int(numbtot(1,levelmin),kind=8)*twotondim
            do ilevel=levelmin+1,nlevelmax
-              n_step = n_step + int(numbtot(1,ilevel),kind=8)*product(nsubcycle(levelmin:ilevel-1))*(twotondim-1)
+             n_step = n_step + int(numbtot(1,ilevel),kind=8)*product(nsubcycle(levelmin:ilevel-1))*(twotondim-1)
            enddo
            muspt_this_step = (tt2-tt1)*1e6/n_step*ncpu
            muspt = muspt + muspt_this_step
            tot_pt = tot_pt + 1
-           write(*,'(a,f8.2,a,f12.2,a,f12.2,a)')' Time elapsed since last coarse step:', &
-                & tt2-tt1,' s',muspt_this_step,' mus/pt',muspt/max(tot_pt,1),' mus/pt (av)'
+           write(*,'(a,f8.2,a,f12.2,a,f12.2,a)')' Time elapsed since last coarse step:',tt2-tt1 &
+          ,' s',muspt_this_step,' mus/pt'  &
+          ,muspt / max(tot_pt,1), ' mus/pt (av)'
            call writemem(real_mem_tot)
            write(*,*)'Total running time:', NINT((tt2-tstart)*100.0)*0.01,'s'
         endif
@@ -208,7 +220,6 @@ subroutine adaptive_loop
            dumpsec = minutes_dump*60       ! Convert minutes before end to seconds
            if(wallsec-dumpsec.lt.tt2-tstart) then
               output_now=.true.
-              finish_run=.true.
               if(myid==1) write(*,*) 'Dumping snapshot before walltime runs out'
               ! Now set walltime to a negative number so we don't keep printing outputs
               walltime_hrs = -1d0

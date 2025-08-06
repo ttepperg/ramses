@@ -1,37 +1,21 @@
 subroutine read_params
   use amr_commons
-  use pm_parameters
-  use poisson_parameters
-  use hydro_parameters
-  use sink_feedback_parameters
+  use hydro_parameters, only:nvar,nhydro
   use mpi_mod
   implicit none
   !--------------------------------------------------
   ! Local variables
   !--------------------------------------------------
-  integer::i,narg,levelmax
+  integer::i,narg
   character(LEN=80)::infile, info_file
   character(LEN=80)::cmdarg
   character(LEN=5)::nchar
-  integer(kind=8)::ngridtot=0
-  integer(kind=8)::nparttot=0
-  real(kind=8)::tend=0
-  real(kind=8)::aend=0
   logical::nml_ok, info_ok, log_exist
   integer,parameter::tag=1134
 #ifndef WITHOUTMPI
   integer::dummy_io,ierr,info2
 #endif
   character(LEN=128)::logdir,filename
-
-
-#if NDIM==1
-  integer, parameter :: max_level_wout_quadhilbert = 61
-#elif NDIM==2
-  integer, parameter :: max_level_wout_quadhilbert = 29
-#elif NDIM==3
-  integer, parameter :: max_level_wout_quadhilbert = 19
-#endif
 
 #ifdef LIGHT_MPI_COMM
    ! RAMSES legacy communicator (from amr_commons.f90)
@@ -48,48 +32,10 @@ subroutine read_params
    type(communicator_legacy),allocatable,dimension(:,:)::emission_reception_legacy  ! 2D (ncpu,nlevelmax) data emission/reception/active_mg/emission_mg "heavy" buffer
 #endif
 
-  !--------------------------------------------------
-  ! Namelist definitions
-  !--------------------------------------------------
-  namelist/run_params/clumpfind,cosmo,pic,sink,tracer,lightcone,poisson,hydro,rt,verbose,debug &
-       & ,nrestart,ncontrol,nstepmax,nsubcycle,nremap,ordering &
-       & ,bisec_tol,static,overload,cost_weighting,aton,nrestart_quad,restart_remap &
-       & ,static_dm,static_gas,static_stars,convert_birth_times,use_proper_time,remap_pscalar &
-       & ,unbind,make_mergertree,stellar
-  namelist/output_params/noutput,foutput,aout,tout &
-       & ,tend,delta_tout,aend,delta_aout,gadget_output,walltime_hrs,minutes_dump &
-       & ,output_dir
-  namelist/amr_params/levelmin,levelmax,ngridmax,ngridtot &
-       & ,npartmax,nparttot,nexpand,boxlen,nlevel_collapse
-  namelist/poisson_params/epsilon,gravity_type,gravity_params &
-       & ,cg_levelmin,cic_levelmax
-  namelist/lightcone_params/thetay_cone,thetaz_cone,zmax_cone
-  namelist/movie_params/levelmax_frame,nw_frame,nh_frame,ivar_frame &
-       & ,xcentre_frame,ycentre_frame,zcentre_frame &
-       & ,deltax_frame,deltay_frame,deltaz_frame,movie,zoom_only_frame &
-       & ,imovout,imov,tstartmov,astartmov,tendmov,aendmov,proj_axis,movie_vars_txt &
-       & ,theta_camera,phi_camera,dtheta_camera,dphi_camera,focal_camera,dist_camera,ddist_camera &
-       & ,perspective_camera,smooth_frame,shader_frame,tstart_theta_camera,tstart_phi_camera &
-       & ,tend_theta_camera,tend_phi_camera,method_frame,varmin_frame,varmax_frame &
-       & ,center_on_particles,center_on_particles_file,do_particle_snapshot,particle_snapshot_file
-  namelist/tracer_params/MC_tracer,tracer_feed,tracer_feed_fmt &
-       & ,tracer_mass,tracer_first_balance_part_per_cell &
-       & ,tracer_first_balance_levelmin, tracer_ivar_refine, tracer_var_cut_refine
+  !-----------------------------------------------------
+  ! Advertise RAMSES and print some general information
+  !-----------------------------------------------------
 
-  ! MPI initialization
-#ifndef WITHOUTMPI
-  call MPI_INIT(ierr)
-  call MPI_COMM_RANK(MPI_COMM_WORLD,myid,ierr)
-  call MPI_COMM_SIZE(MPI_COMM_WORLD,ncpu,ierr)
-  myid=myid+1 ! Careful with this...
-#endif
-#ifdef WITHOUTMPI
-  ncpu=1
-  myid=1
-#endif
-  !--------------------------------------------------
-  ! Advertise RAMSES
-  !--------------------------------------------------
   if(myid==1)then
   write(*,*)'_/_/_/       _/_/     _/    _/    _/_/_/   _/_/_/_/    _/_/_/  '
   write(*,*)'_/    _/    _/  _/    _/_/_/_/   _/    _/  _/         _/    _/ '
@@ -106,19 +52,26 @@ subroutine read_params
   ! Check nvar is not too small
 #ifdef SOLVERhydro
   write(*,'(" Using solver = hydro with nvar = ",I2)')nvar
-  if(nvar<ndim+2)then
+  if(nvar<nhydro)then
      write(*,*)'You should have: nvar>=ndim+2'
-     write(*,'(" Please recompile with -DNVAR=",I2)')ndim+2
+     write(*,'(" Please recompile with -DNVAR=",I2)')nhydro
      call clean_stop
   endif
 #endif
 #ifdef SOLVERmhd
   write(*,'(" Using solver = mhd with nvar = ",I2)')nvar
-  if(nvar<8)then
+  if(nvar<nhydro)then
      write(*,*)'You should have: nvar>=8'
      write(*,'(" Please recompile with -DNVAR=8")')
      call clean_stop
   endif
+#endif
+
+#ifdef TSC
+  if (ndim/=3)then
+     write(*,*)'TSC not supported for ndim neq 3'
+     call clean_stop
+  end if
 #endif
 
   !Write I/O group size information
@@ -159,46 +112,68 @@ subroutine read_params
      endif
 #endif
 
-
+  ! Check if namelist file exists
   namelist_file=TRIM(infile)
   INQUIRE(file=infile,exist=nml_ok)
   if(.not. nml_ok)then
-     if(myid==1)then
-        write(*,*)'File '//TRIM(infile)//' does not exist'
-     endif
+     if(myid==1)write(*,*)'File '//TRIM(infile)//' does not exist'
      call clean_stop
   end if
 
-  !-------------------------------------------------
-  ! Default passive scalar map
-  !-------------------------------------------------
-#if NVAR>NDIM+2
-  allocate(remap_pscalar(1:nvar-(ndim+2)))
-  do i=1,nvar-(ndim+2)
-     remap_pscalar(i) = i+ndim+2
-  enddo
+  ! Open namelist
+  open(1,file=infile)
+
+  ! Read parameter blocks
+  call read_run_params(1,nml_ok)  !should be read first
+  call read_amr_params(1,nml_ok)
+  call read_output_params(1,nml_ok)
+  call read_movie_params(1,nml_ok)
+  call read_lightcone_params(1,nml_ok)
+  call read_tracer_params(1,nml_ok)
+  call read_poisson_params(1,nml_ok)
+
+  call read_hydro_params(nml_ok)
+#ifdef RT
+  call read_rt_params(nml_ok)
+#endif
+#if NDIM==3
+  if (sink)call read_sink_params
+  if (clumpfind .or. sink)call read_clumpfind_params
+  if (stellar)call read_stellar_params
+  if (unbind)call read_unbinding_params
+  if (make_mergertree)call read_mergertree_params
+#if USE_TURB==1
+  call read_turb_params(nml_ok)
+#endif
 #endif
 
-  open(1,file=infile)
-  rewind(1)
-  read(1,NML=run_params)
-  rewind(1)
-  read(1,NML=output_params)
-  rewind(1)
-  read(1,NML=amr_params)
-  rewind(1)
-  read(1,NML=tracer_params,END=84)
-84 continue
-  if (tracer_first_balance_levelmin <= 0) tracer_first_balance_levelmin = levelmax + 1
-  rewind(1)
-  read(1,NML=lightcone_params,END=83)
-83 continue
-  rewind(1)
-  read(1,NML=movie_params,END=82)
-82 continue
-  rewind(1)
-  read(1,NML=poisson_params,END=81)
-81 continue
+  ! DEV INFO: add here your call for new namelist blocks
+
+  ! Close namelist
+  close(1)
+
+  if(.not. nml_ok)then
+     if(myid==1)write(*,*)'Too many errors in the namelist'
+     if(myid==1)write(*,*)'Aborting...'
+     call clean_stop
+  end if
+
+  ! Custom movie settings checks
+  if (center_on_particles .and. trim(center_on_particles_file) == "") then
+     if(myid==1)write(*,*)'You need to specify a file containing particle ids (`center_on_particles_file`) when centering a movie on a set of particles'
+     call clean_stop
+  end if
+
+  if (center_on_particles .and. (any(xcentre_frame /= 0) .or. any(ycentre_frame /= 0) .or. any(zcentre_frame /= 0))) then
+     if(myid==1)write(*,*)'WARNING: the parameters {xyz}centre_frame will be ignored as center_on_particles is set to .true.'
+     xcentre_frame = 0
+     ycentre_frame = 0
+     zcentre_frame = 0
+  end if
+
+  !-------------------------------------------------
+  ! LIGHT MPI memory usage message
+  !-------------------------------------------------
 
 #ifndef WITHOUTMPI
 #ifdef LIGHT_MPI_COMM
@@ -208,14 +183,14 @@ subroutine read_params
     write(*,*) "  http://www.idris.fr/docs/docu/support-avance/ramses.html"
     write(*,*) ""
 
-    allocate(emission_reception_legacy(1:100, 1:levelmax))
+    allocate(emission_reception_legacy(1:100, 1:nlevelmax))
     mem_used_legacy_buff = dble(sizeof(emission_reception_legacy)*2)*ncpu/100.0
     deallocate(emission_reception_legacy)
     write(*,*) "  * Old MPI communication structures (emission+reception) would have allocated : ", mem_used_legacy_buff/1.0e6," MB"
     write(*,*) "      - reception(1:ncpu,1:nlevelmax) : ", mem_used_legacy_buff/2.0e6," MB"
     write(*,*) "      - emission(1:ncpu,1:nlevelmax)  : ", mem_used_legacy_buff/2.0e6," MB"
     if (poisson) then
-        allocate(emission_reception_legacy(1:100, 1:levelmax-1))
+        allocate(emission_reception_legacy(1:100, 1:nlevelmax-1))
         mem_used_legacy_buff_mg = dble(sizeof(emission_reception_legacy)*2)*ncpu/100.0
         deallocate(emission_reception_legacy)
         write(*,*) "  * Old Poisson-related MPI communication structures (active_mg+emission_mg) would have allocated : ", mem_used_legacy_buff_mg/1.0e6," MB"
@@ -224,9 +199,9 @@ subroutine read_params
         mem_used_legacy_buff = mem_used_legacy_buff + mem_used_legacy_buff_mg
     endif
 
-    allocate(reception(1:100, 1:levelmax))
-    allocate(emission(1:levelmax))
-    allocate(emission_part(1:levelmax))
+    allocate(reception(1:100, 1:nlevelmax))
+    allocate(emission(1:nlevelmax))
+    allocate(emission_part(1:nlevelmax))
     mem_used_new_buff = dble(sizeof(emission)) + dble(sizeof(reception))*ncpu/100.0 + dble(sizeof(emission_part))
     deallocate(reception)
     deallocate(emission)
@@ -236,8 +211,8 @@ subroutine read_params
     write(*,*) "       - emission_part(1:nlevelmax)    : ", dble(sizeof(emission_part))/1.0e6," MB"
     write(*,*) "       - reception(1:ncpu,1:nlevelmax) : ", dble(sizeof(reception))*ncpu/1.0e8," MB"
     if (poisson) then
-        allocate(reception(1:100, 1:levelmax-1)) ! active_mg
-        allocate(emission(1:levelmax-1)) ! emission_mg
+        allocate(reception(1:100, 1:nlevelmax-1)) ! active_mg
+        allocate(emission(1:nlevelmax-1)) ! emission_mg
         mem_used_new_buff_mg = dble(sizeof(emission)) + dble(sizeof(reception))*ncpu/100.0
         deallocate(reception)
         deallocate(emission)
@@ -255,11 +230,15 @@ subroutine read_params
   !-------------------------------------------------
   ! Read optional nrestart command-line argument
   !-------------------------------------------------
+
+  ! Will overwrite whatever was set in the namelist
   if (myid==1 .and. narg == 2) then
      CALL getarg(2,cmdarg)
      read(cmdarg,*) nrestart
   endif
 
+  ! Check if info file of restart output exists,
+  ! otherwise look for earlier outputs
   if (myid==1 .and. nrestart .gt. 0) then
      call title(nrestart,nchar)
      info_file=TRIM(output_dir)//'output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
@@ -287,113 +266,6 @@ subroutine read_params
   call MPI_BCAST(nrestart,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 #endif
 
-  !-------------------------------------------------
-  ! Compute time step for outputs
-  !-------------------------------------------------
-  ! check how many predetermined output times are listed (either give tout or aout)
-  if(noutput==0.and..not.all(tout==HUGE(1.0D0)))then
-     do while(tout(noutput+1)<HUGE(1.0D0))
-        noutput = noutput+1
-     enddo
-  endif
-  if(noutput==0.and..not.all(aout==HUGE(1.0D0)))then
-     do while(aout(noutput+1)<HUGE(1.0D0))
-        noutput = noutput+1
-     enddo
-  endif
-  ! add final time and expansion factor at the back of the predetermined output list
-  if(tend>0)then
-     noutput=noutput+1
-     tout(noutput)=tend
-  endif
-  if(aend>0)then
-     noutput=noutput+1
-     aout(noutput)=aend
-  endif
-  ! set periodic output params
-  tout_next=delta_tout
-  aout_next=delta_aout
-
-  if(imovout>0) then
-     allocate(tmovout(0:imovout))
-     allocate(amovout(0:imovout))
-     tmovout=1d100
-     amovout=1d100
-     if(tendmov>0)then
-        do i=0,imovout
-           tmovout(i)=(tendmov-tstartmov)*dble(i)/dble(imovout)+tstartmov
-        enddo
-     endif
-     if(aendmov>0)then
-        do i=0,imovout
-           amovout(i)=(aendmov-astartmov)*dble(i)/dble(imovout)+astartmov
-        enddo
-     endif
-     if(tendmov==0.and.aendmov==0)movie=.false.
-  endif
-  !--------------------------------------------------
-  ! Check for errors in the namelist so far
-  !--------------------------------------------------
-  levelmin=MAX(levelmin,1)
-  nlevelmax=levelmax
-  nml_ok=.true.
-  if(levelmin<1)then
-     if(myid==1)write(*,*)'Error in the namelist:'
-     if(myid==1)write(*,*)'levelmin should not be lower than 1 !!!'
-     nml_ok=.false.
-  end if
-  if(nlevelmax<levelmin)then
-     if(myid==1)write(*,*)'Error in the namelist:'
-     if(myid==1)write(*,*)'levelmax should not be lower than levelmin'
-     nml_ok=.false.
-  end if
-  if(ngridmax==0)then
-     if(ngridtot==0)then
-        if(myid==1)write(*,*)'Error in the namelist:'
-        if(myid==1)write(*,*)'Allocate some space for refinements !!!'
-        nml_ok=.false.
-     else
-        ngridmax=int(ngridtot/int(ncpu,kind=8),kind=4)
-     endif
-  end if
-  if(npartmax==0)then
-     npartmax=int(nparttot/int(ncpu,kind=8),kind=4)
-  endif
-  if(myid>1)verbose=.false.
-
-  if(stellar.and.(.not.sink))then
-     if(myid==1)write(*,*)'Error in the namelist:'
-     if(myid==1)write(*,*)'sink=.true. is needed if stellar=.true. !'
-     nml_ok=.false.
-  endif
-  if(sink.and.(.not.pic))then
-     pic=.true.
-  endif
-  !if(clumpfind.and.(.not.pic))then
-  !   pic=.true.
-  !endif
-  !if(pic.and.(.not.poisson))then
-  !   poisson=.true.
-  !endif
-
-  call read_hydro_params(nml_ok)
-#ifdef RT
-  call read_rt_params(nml_ok)
-#endif
-#if NDIM==3
-  if (sink)call read_sink_params
-  if (clumpfind .or. sink)call read_clumpfind_params
-  if (stellar)call read_stellar_params
-  if (unbind)call read_unbinding_params
-  if (make_mergertree)call read_mergertree_params
-#if USE_TURB==1
-  call read_turb_params(nml_ok)
-#endif
-#endif
-  if (movie)call set_movie_vars
-
-  close(1)
-
   ! Send the token
 #ifndef WITHOUTMPI
   if(IOGROUPSIZE>0) then
@@ -405,45 +277,6 @@ subroutine read_params
   endif
 #endif
 
-  !-----------------
-  ! Max size checks
-  !-----------------
-  if(nlevelmax>MAXLEVEL)then
-     write(*,*) 'Error: nlevelmax>MAXLEVEL'
-     call clean_stop
-  end if
-  if(nregion>MAXREGION)then
-     write(*,*) 'Error: nregion>MAXREGION'
-     call clean_stop
-  end if
-#ifndef QUADHILBERT
-  if(nlevelmax>=max_level_wout_quadhilbert) then
-     if (myid == 1) then
-        write(*,*) "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        write(*,"(a,i2,a)")"WARNING: running with nlevelmax>=", max_level_wout_quadhilbert, " will likely fail."
-        write(*,*)"It is recommended to compiling with -DQUADHILBERT"
-        write(*,*) "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-     end if
-  end if
-#endif
-
-  !-----------------
-  ! MC tracer
-  !-----------------
-  if(MC_tracer .and. (.not. tracer))then
-     write(*,*)'Error: you have activated the MC tracer but not the tracers.'
-     call clean_stop
-  end if
-
-  if(MC_tracer .and. (.not. pic)) then
-     write(*,*)'Error: you have activated the MC tracer but pic is false.'
-     call clean_stop
-  end if
-
-  if(MC_tracer) then
-     if (tracer_ivar_refine == -1) tracer_ivar_refine = ivar_refine
-     if (tracer_var_cut_refine == 0) tracer_var_cut_refine = var_cut_refine
-  end if
 
   !----------------------------------------
   ! Diagnostics for star formation events
@@ -461,10 +294,10 @@ subroutine read_params
      if(myid==1) write(*,*) "SF log keeps one file per CPU with unit 5000."
      inquire(file=filename, exist=log_exist)
      if(log_exist)then
-        open(unit=SFunit_out,file=filename,status="old",position="append",action="write")
+      open(unit=SFunit_out,file=filename,status="old",position="append",action="write")
      else
         open(unit=SFunit_out,file=filename,status="new",action="write")
-        write(SFunit_out,*)"# 'nstep'   'index'   'ilevel'  'rho [H/cc]'   'x [kpc]'   'y [kpc]'   'z [kpc]'   'mstar [Msun]'   'tform [s]'    'aexp'"
+        write(SFunit_out,*)"# 'nstep'   'index'   'ilevel'  'rho [H/cc]'   'x [kpc]'   'y [kpc]'   'z [kpc]'   'mstar [Msun]'   'tform [s]'  'aexp'"
      endif
   endif
 
@@ -484,7 +317,7 @@ subroutine read_params
      if(myid==1) write(*,*) "SN log keeps one file per CPU with unit 5001."
      inquire(file=filename, exist=log_exist)
      if(log_exist)then
-        open(unit=SNunit_out,file=filename,status="old",position="append",action="write")
+      open(unit=SNunit_out,file=filename,status="old",position="append",action="write")
      else
         open(unit=SNunit_out,file=filename,status="new",action="write")
         write(SNunit_out,*)"# 'nstep'   'type'   'index'   'ilevel'   'numSN'   't [Myr]'   'aexp'   'age [Myr]'   'momST'   'rho [H/cc]'   'mstar [Msun]'   'Zgas'   'mp [Msun]'   'x [kpc]'   'y [kpc]'   'z [kpc]'"
@@ -521,31 +354,369 @@ subroutine read_params
      initfile  (i)= ' '
   end do
 
-  if(.not.cosmo)then
-     use_proper_time=.false.
-     convert_birth_times=.false.
-  endif
-
-  if(.not. nml_ok)then
-     if(myid==1)write(*,*)'Too many errors in the namelist'
-     if(myid==1)write(*,*)'Aborting...'
-     call clean_stop
-  end if
-
-  if (center_on_particles .and. trim(center_on_particles_file) == "") then
-     if(myid==1)write(*,*)'You need to specify a file containing particle ids (`center_on_particles_file`) when centering a movie on a set of particles'
-     call clean_stop
-  end if
-
-  if (center_on_particles .and. (any(xcentre_frame /= 0) .or. any(ycentre_frame /= 0) .or. any(zcentre_frame /= 0))) then
-     if(myid==1)write(*,*)'WARNING: the parameters {xyz}centre_frame will be ignored as center_on_particles is set to .true.'
-     xcentre_frame = 0
-     ycentre_frame = 0
-     zcentre_frame = 0
-  end if
-
 #ifndef WITHOUTMPI
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 #endif
 
 end subroutine read_params
+!###############################################################
+!###############################################################
+!###############################################################
+subroutine read_run_params(namelist_unit,nml_ok)
+   use amr_parameters
+   use amr_commons
+   use hydro_parameters, only:nhydro,nvar
+   implicit none
+   integer,intent(in)::namelist_unit
+   logical,intent(inout)::nml_ok
+   integer::nml_err
+#if NVAR>NHYDRO
+   integer::i
+#endif
+
+   ! Namelist definition for general run parameters
+   namelist/run_params/clumpfind,cosmo,pic,sink,tracer,lightcone,poisson,hydro,rt,verbose,debug &
+   & ,nrestart,ncontrol,nstepmax,nsubcycle,nremap,ordering &
+   & ,bisec_tol,static,overload,cost_weighting,aton,nrestart_quad,restart_remap &
+   & ,static_dm,static_gas,static_stars,convert_birth_times,use_proper_time,remap_pscalar &
+   & ,unbind,make_mergertree,stellar &
+   & ,print_when_io
+
+  ! Default passive scalar map
+#if NVAR>NHYDRO
+   allocate(remap_pscalar(1:nvar-nhydro))
+   do i=1,nvar-nhydro
+      remap_pscalar(i) = i+nhydro
+   enddo
+#endif
+
+   ! Go to the beginning of the file
+   rewind(namelist_unit)
+
+   ! Read namelist
+   read(namelist_unit,NML=run_params,IOSTAT=nml_err)
+
+   if(nml_err<0)then
+      ! EOF reached before namelist was found
+      if(myid==1)write(*,*)'You need to set up namelist &RUN_PARAMS in parameter file.'
+      nml_ok=.false.
+   elseif(nml_err>0)then
+      if(myid==1)write(*,*)'Error reading namelist &RUN_PARAMS. Check formatting.'
+      nml_ok=.false.
+   endif
+
+   ! Verify input
+   if(myid>1)verbose=.false.
+
+   if(stellar.and.(.not.sink))then
+      if(myid==1)write(*,*)'Error in the namelist: sink=.true. is needed if stellar=.true. !'
+      nml_ok=.false.
+   endif
+   if(sink.and.(.not.pic))then
+      pic=.true.
+   endif
+   !if(clumpfind.and.(.not.pic))then
+   !   pic=.true.
+   !endif
+   !if(pic.and.(.not.poisson))then
+   !   poisson=.true.
+   !endif
+
+   if(.not.cosmo)then
+      use_proper_time=.false.
+      convert_birth_times=.false.
+   endif
+
+end subroutine read_run_params
+!###############################################################
+!###############################################################
+!###############################################################
+subroutine read_amr_params(namelist_unit,nml_ok)
+   use amr_parameters
+   use amr_commons, only:myid,ncpu
+   use pm_parameters, only:npartmax
+   implicit none
+   integer,intent(in)::namelist_unit
+   logical,intent(inout)::nml_ok
+   integer::nml_err
+   integer::levelmax
+   integer(kind=8)::ngridtot=0 !total number of grid among all MPI processes
+   integer(kind=8)::nparttot=0 !total number of particles
+#if NDIM==1
+   integer, parameter :: max_level_wout_quadhilbert = 61
+#elif NDIM==2
+   integer, parameter :: max_level_wout_quadhilbert = 29
+#elif NDIM==3
+   integer, parameter :: max_level_wout_quadhilbert = 19
+#endif
+
+   !TODO replace nlevelmax by levelmax everywhere
+
+   ! AMR grid parameters
+   namelist/amr_params/levelmin,levelmax,ngridmax,ngridtot &
+   & ,npartmax,nparttot,nexpand,boxlen,nlevel_collapse
+
+   ! Go to the beginning of the file
+   rewind(namelist_unit)
+
+   ! Read namelist
+   read(namelist_unit,NML=amr_params,IOSTAT=nml_err)
+
+   if(nml_err<0)then
+      ! EOF reached before namelist was found
+      if(myid==1)write(*,*)'You need to set up namelist &AMR_PARAMS in parameter file.'
+      nml_ok=.false.
+   elseif(nml_err>0)then
+      if(myid==1)write(*,*)'Error reading namelist &INIT_PARAMS. Check formatting.'
+      nml_ok=.false.
+   endif
+
+   ! Verify input
+   levelmin=MAX(levelmin,1)
+   nlevelmax=levelmax
+   if(nlevelmax<levelmin)then
+      if(myid==1)write(*,*)'Error in the namelist:'
+      if(myid==1)write(*,*)'levelmax should not be lower than levelmin'
+      nml_ok=.false.
+   end if
+   if(ngridmax==0)then
+      if(ngridtot==0)then
+         if(myid==1)write(*,*)'Error in the namelist: ngridmax and ngridtot are 0!'
+         if(myid==1)write(*,*)'Allocate some space for refinements !!!'
+         nml_ok=.false.
+      else
+         ngridmax=int(ngridtot/int(ncpu,kind=8),kind=4)
+      endif
+   end if
+
+   if(pic .and. npartmax==0) then
+      npartmax=int(nparttot/int(ncpu,kind=8),kind=4)
+   else if (.not. pic) then
+      npartmax=0
+   end if
+
+   if(nlevelmax>MAXLEVEL)then
+      write(*,*) 'Error: nlevelmax>MAXLEVEL'
+      call clean_stop
+   endif
+
+#ifndef QUADHILBERT
+   if(nlevelmax>=max_level_wout_quadhilbert) then
+      if (myid == 1) then
+         write(*,*) "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+         write(*,"(a,i2,a)")"WARNING: running with nlevelmax>=", max_level_wout_quadhilbert, " will likely fail."
+         write(*,*)"It is recommended to compiling with -DQUADHILBERT"
+         write(*,*) "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      end if
+   end if
+#endif
+
+end subroutine read_amr_params
+!###############################################################
+!###############################################################
+!###############################################################
+subroutine read_output_params(namelist_unit,nml_ok)
+   use amr_parameters
+   use amr_commons, only:myid
+   implicit none
+   integer,intent(in)::namelist_unit
+   logical,intent(inout)::nml_ok
+   integer::nml_err
+   real(kind=8)::tend=0  ! end time for the simulation
+   real(kind=8)::aend=0  ! end expansion factor
+
+   ! Parameters to specify when to write an output
+   namelist/output_params/noutput,foutput,aout,tout &
+   & ,tend,delta_tout,aend,delta_aout,gadget_output,walltime_hrs,minutes_dump,output_to_log &
+   & ,output_dir
+
+   ! Go to the beginning of the file
+   rewind(namelist_unit)
+
+   ! Read namelist
+   read(namelist_unit,NML=output_params,IOSTAT=nml_err)
+
+   if(nml_err>0)then
+      if(myid==1)write(*,*)'Error reading namelist &OUTPUT_PARAMS. Check formatting.'
+      nml_ok=.false.
+   endif
+
+   !-------------------------------------------------
+   ! Compute time step for outputs
+   !-------------------------------------------------
+   ! check how many predetermined output times are listed (either give tout or aout)
+   if(noutput==0.and..not.all(tout==HUGE(1.0D0)))then
+      do while(tout(noutput+1)<HUGE(1.0D0))
+         noutput = noutput+1
+      enddo
+   endif
+   if(noutput==0.and..not.all(aout==HUGE(1.0D0)))then
+      do while(aout(noutput+1)<HUGE(1.0D0))
+         noutput = noutput+1
+      enddo
+   endif
+   ! add final time and expansion factor at the back of the predetermined output list
+   if(tend>0)then
+      noutput=noutput+1
+      tout(noutput)=tend
+   endif
+   if(aend>0)then
+      noutput=noutput+1
+      aout(noutput)=aend
+   endif
+   ! set periodic output params
+   tout_next=delta_tout
+   aout_next=delta_aout
+
+end subroutine read_output_params
+!###############################################################
+!###############################################################
+!###############################################################
+subroutine read_movie_params(namelist_unit,nml_ok)
+   use amr_parameters
+   use amr_commons, only:myid
+   implicit none
+   integer,intent(in)::namelist_unit
+   logical,intent(inout)::nml_ok
+   integer::nml_err,i
+
+   ! Namelist parameters for making movies on the fly
+   namelist/movie_params/levelmax_frame,nw_frame,nh_frame,ivar_frame &
+   & ,xcentre_frame,ycentre_frame,zcentre_frame &
+   & ,deltax_frame,deltay_frame,deltaz_frame,movie,zoom_only_frame &
+   & ,imovout,imov,tstartmov,astartmov,tendmov,aendmov,proj_axis,movie_vars_txt &
+   & ,theta_camera,phi_camera,dtheta_camera,dphi_camera,focal_camera,dist_camera,ddist_camera &
+   & ,perspective_camera,smooth_frame,shader_frame,tstart_theta_camera,tstart_phi_camera &
+   & ,tend_theta_camera,tend_phi_camera,method_frame,varmin_frame,varmax_frame
+
+   ! Go to the beginning of the file
+   rewind(namelist_unit)
+
+   ! Read namelist
+   read(namelist_unit,NML=movie_params,IOSTAT=nml_err)
+
+   if(nml_err>0)then
+      if(myid==1)write(*,*)'Error reading namelist &MOVIE_PARAMS. Check formatting.'
+      nml_ok=.false.
+   endif
+
+   ! Setup up movie times
+   if(imovout>0) then
+      allocate(tmovout(0:imovout))
+      allocate(amovout(0:imovout))
+      tmovout=1d100
+      amovout=1d100
+      if(tendmov>0)then
+         do i=0,imovout
+            tmovout(i)=(tendmov-tstartmov)*dble(i)/dble(imovout)+tstartmov
+         enddo
+      endif
+      if(aendmov>0)then
+         do i=0,imovout
+            amovout(i)=(aendmov-astartmov)*dble(i)/dble(imovout)+astartmov
+         enddo
+      endif
+      if(tendmov==0.and.aendmov==0)movie=.false.
+   endif
+
+   if (movie)call set_movie_vars
+
+end subroutine read_movie_params
+!###############################################################
+!###############################################################
+!###############################################################
+subroutine read_lightcone_params(namelist_unit,nml_ok)
+   use amr_parameters
+   use amr_commons, only:myid
+   implicit none
+   integer,intent(in)::namelist_unit
+   logical,intent(inout)::nml_ok
+   integer::nml_err
+
+   namelist/lightcone_params/thetay_cone,thetaz_cone,zmax_cone
+
+   ! Go to the beginning of the file
+   rewind(namelist_unit)
+
+   ! Read namelist
+   read(namelist_unit,NML=lightcone_params,IOSTAT=nml_err)
+
+   if(nml_err>0)then
+      if(myid==1)write(*,*)'Error reading namelist &LIGHTCONE_PARAMS. Check formatting.'
+      nml_ok=.false.
+   endif
+
+end subroutine read_lightcone_params
+!###############################################################
+!###############################################################
+!###############################################################
+subroutine read_tracer_params(namelist_unit,nml_ok)
+   use amr_parameters, only:tracer,mc_tracer,pic,nlevelmax &
+   & ,ivar_refine,var_cut_refine
+   use amr_commons, only:myid
+   use pm_parameters
+   implicit none
+   integer,intent(in)::namelist_unit
+   logical,intent(inout)::nml_ok
+   integer::nml_err
+
+   namelist/tracer_params/MC_tracer,tracer_feed,tracer_feed_fmt &
+   & ,tracer_mass,tracer_first_balance_part_per_cell &
+   & ,tracer_first_balance_levelmin
+
+   ! Go to the beginning of the file
+   rewind(namelist_unit)
+
+   ! Read namelist
+   read(namelist_unit,NML=tracer_params,IOSTAT=nml_err)
+
+   if(nml_err>0)then
+      if(myid==1)write(*,*)'Error reading namelist &TRACER_PARAMS. Check formatting.'
+      nml_ok=.false.
+   endif
+
+   ! Verify input
+   if (tracer_first_balance_levelmin <= 0) tracer_first_balance_levelmin = nlevelmax + 1
+
+   if(MC_tracer .and. (.not. tracer))then
+      if(myid==1)write(*,*)'Error: you have activated the MC tracer but not the tracers in RUN_PARAMS.'
+      nml_ok=.false.
+   end if
+
+   if(MC_tracer .and. (.not. pic)) then
+      if(myid==1)write(*,*)'Error: you have activated the MC tracer but pic is false.'
+      nml_ok=.false.
+   end if
+
+   if(MC_tracer) then
+      if (tracer_ivar_refine == -1) tracer_ivar_refine = ivar_refine
+      if (tracer_var_cut_refine == 0) tracer_var_cut_refine = var_cut_refine
+   end if
+
+end subroutine read_tracer_params
+!###############################################################
+!###############################################################
+!###############################################################
+subroutine read_poisson_params(namelist_unit,nml_ok)
+   use amr_commons, only:myid
+   use poisson_parameters
+   implicit none
+   integer,intent(in)::namelist_unit
+   logical,intent(inout)::nml_ok
+   integer::nml_err
+
+   namelist/poisson_params/epsilon,gravity_type,gravity_params &
+   & ,cg_levelmin,cic_levelmax
+
+   ! Go to the beginning of the file
+   rewind(namelist_unit)
+
+   ! Read namelist
+   read(namelist_unit,NML=poisson_params,IOSTAT=nml_err)
+
+   if(nml_err>0)then
+      if(myid==1)write(*,*)'Error reading namelist &POISSON_PARAMS. Check formatting.'
+      nml_ok=.false.
+   endif
+
+end subroutine read_poisson_params

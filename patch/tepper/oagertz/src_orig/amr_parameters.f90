@@ -62,7 +62,6 @@ module amr_parameters
   logical::cosmo   =.false.   ! Cosmology activated
   logical::star    =.false.   ! Star formation activated
   logical::sink    =.false.   ! Sink particles activated
-  logical::stellar = .false.  ! stellar particles for sink feedback
   logical::rt      =.false.   ! Radiative transfer activated
   logical::debug   =.false.   ! Debug mode activated
   logical::static  =.false.   ! Static mode activated
@@ -76,7 +75,7 @@ module amr_parameters
   logical::unbind=.false.     ! Enable particle unbinding for the clump finder
   logical::make_mergertree=.false. ! Make on the fly mergertrees
   logical::aton=.false.       ! Enable ATON coarse grid radiation transfer
-
+  
   ! Mesh parameters
   integer::nx=1,ny=1,nz=1                  ! Number of coarse cells in each dimension
   integer::levelmin=1                      ! Full refinement up to levelmin
@@ -102,25 +101,17 @@ module amr_parameters
   integer::ncontrol=1            ! Write control variables
   integer::nremap=0              ! Load balancing frequency (0: never)
   integer,allocatable,dimension(:)::remap_pscalar
-
+  
   ! Output parameters
   integer::iout=1                ! Increment for output times
   integer::ifout=1               ! Increment for output files
-  integer::noutput=0             ! Total number of predefined outputs
+  integer::iback=1               ! Increment for backup files
+  integer::noutput=1             ! Total number of outputs
   integer::foutput=1000000       ! Frequency of outputs
   logical::gadget_output=.false. ! Output in gadget format
   logical::output_now=.false.    ! write output next step
   real(dp)::walltime_hrs=-1      ! Wallclock time for submitted job
   real(dp)::minutes_dump=1       ! Dump an output minutes before walltime ends
-  logical::finish_run=.false.! trigger cleanup after walltime end dump
-  real(dp)::delta_tout=HUGE(1.0D0)         ! time difference between outputs
-  real(dp)::delta_aout=HUGE(1.0D0)         ! expansion factor difference between outputs
-  real(dp),dimension(1:MAXOUT)::aout=HUGE(1.0D0)      ! Output expansion factors
-  real(dp),dimension(1:MAXOUT)::tout=HUGE(1.0D0)      ! Output times
-  real(dp)::tout_next=HUGE(1.0D0)     ! next output time using delta_tout
-  real(dp)::aout_next=HUGE(1.0D0)     ! next output expansion factor using delta_aout
-  logical::output_to_log=.true.  ! write output to log for 1D runs
-  character(len=80)::output_dir='./'  ! Data output directory
 
   ! Lightcone parameters
   real(dp)::thetay_cone=12.5d0
@@ -154,7 +145,6 @@ module amr_parameters
   real(dp)::f_ek   =1                ! Supernovae kinetic energy fraction (only between 0 and 1)
   real(dp)::rbubble=0                ! Supernovae superbubble radius in pc
   real(dp)::f_w    =0                ! Supernovae mass loading factor
-  real(dp)::f_esn  =1                ! Supernovae energy in units of 1d51 erg
   integer ::ndebris=1                ! Supernovae debris particle number
   real(dp)::mass_gmc=-1              ! Stochastic exploding GMC mass
   real(dp)::z_ave  =0                ! Average metal abundance
@@ -204,29 +194,12 @@ module amr_parameters
   logical ::SNdiagnostics=.true.
   logical ::SFdiagnostics=.true.
   !-------------------------------------  
-  ! PIC dust parameters
-  real(dp)::charge_to_mass=0.0       ! Charge to mass ratio for dust grains
-  real(dp)::t_stop=0.0               ! Stopping time for dust grains
-  real(dp)::stopping_rate=-1.0       ! When greater than or equal to zero, overrides t_stop for constant_t_stop==.true. Allows for zero drag.
-  real(dp)::grain_size=0.0           ! Grain size parameter rho_d^i r_d/(rho_g l_0). May wan to get rid of t_stop.
-  logical::boris=.false.             ! Activate boris pusher for PIC solver for grain dynamics
-  logical::constant_t_stop=.false.    ! Dictates whether stopping time is constant t_stop, or uses grain_size, gas density, velocity, etc.
-  logical::second_order=.false.      ! Only works for constant t-stop
-  real(dp)::dust_to_gas=1.0          ! Dust-to-gas mass ratio.
-  real(dp),dimension(1:3)::accel_gr=0 ! constant external grain force
-  integer,dimension(1:MAXOUT)::trajectories=0 ! determines whether or not to output trajectories, which particles to output, and how many.
-  logical :: supersonic_drag=.true.   ! if true, Epstein drag is used. If false, drag depends only on density and the sound speed.
-  integer :: ndust=1                  ! Determines how many dust grains we has as a multiple of the resolution.
-  real(dp):: ddex=0.0                 ! Determines how many decades the dust spectrum spans.
-  real(dp):: charge_slope=0.0         ! Determines how the grain charge scales with grain size (power law option)
-
   logical ::self_shielding=.false.
   logical ::pressure_fix=.false.
   logical ::nordlund_fix=.true.
   logical ::cooling=.false.
   logical ::neq_chem=.false.            ! Non-equilbrium chemistry activated
-  logical ::isothermal=.false.          ! Enable equation of state for gas (heating and cooling disabled if .true.)
-  logical ::barotropic_eos=.false.      ! New keyword to replace the confusing name "isothermal"
+  logical ::isothermal=.false.
   logical ::metal=.false.
   logical ::haardt_madau=.false.
   logical ::delayed_cooling=.false.
@@ -236,25 +209,12 @@ module amr_parameters
   logical ::convert_birth_times=.false. ! Convert stellar birthtimes: conformal -> proper
   logical ::ir_feedback=.false.         ! Activate ir feedback from accreting sinks
   logical ::sf_virial=.false.           ! Activate SF Virial criterion
-  logical ::sf_log_properties=.false.   ! Log in ascii files birth properties of stars and supernovae
   logical ::sf_imf=.false.              ! Activate IMF sampling for SN feedback when resolution allows it
   logical ::sf_compressive=.false.      ! Advect compressive and solenoidal turbulence terms separately
-  logical ::cooling_ism = .false.      ! Use cooling module from Audit & Hennebelle 2005 (non-RT)
-                                        ! instead of ramses classical cooling
 
-  ! EOS parameters
-  character(len=20)::barotropic_eos_form='legacy'  !Type of barotropic EOS: choose from:
-                                        !'isothermal': constant temperature T0
-                                        !'polytrope': T = T0*(rho/rho0)**(gamma-1) or P ~ rho**gamma for ideal gas
-                                        !'double_polytrope': isothermal with T0 below rho0 and polytropic with gamma above
-                                        !'custom': for patching your own eos
-                                        !'legacy': same as polytrop but using the old n_star, g_star and T2_star
-  real(dp)::polytrope_rho=1.0d50        ! sets rho0 in EOS = density normalisation or knee-density, in g/cm3
-  real(dp)::polytrope_rho_cu=1.0d50     ! rho0 in code units
-  real(dp)::polytrope_index=1.0d0       ! sets gamma in EOS = polytropic index
-  real(dp)::T_eos=10                    ! sets T0 in EOS: isothermal temperature or temperature normalisation, in K
-  real(dp)::mu_gas=1d0                  ! molecular weight
-  real(dp)::T2_eos=10                   ! = T/mu, used in the computations
+  ! Output times
+  real(dp),dimension(1:MAXOUT)::aout=1.1d0      ! Output expansion factors
+  real(dp),dimension(1:MAXOUT)::tout=HUGE(1.0D0)! Output times
 
   ! Movie
   integer,parameter::NMOV=5
@@ -324,9 +284,6 @@ module amr_parameters
   real(dp)::mass_cut_refine=-1                   ! Mass threshold for particle-based refinement
   integer::ivar_refine=-1                        ! Variable index for refinement
   logical::sink_refine=.false.                   ! Fully refine on sink particles
-
-  ! Initial condition selection parameter
-  character(LEN=60)::condinit_kind ='region'
 
   ! Initial condition files for each level
   logical::multiple=.false.

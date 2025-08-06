@@ -9,10 +9,6 @@ module pm_parameters
   integer::nstar_tot=0              ! Total number of star particles
   real(dp)::mstar_tot=0             ! Total star mass
   real(dp)::mstar_lost=0            ! Missing star mass
-  logical::remove_sink=.false.      ! Exponentially dampen sink mass over ...
-  real(dp)::sink_tscale=1.D10       ! ... this time scale (in code units) ...
-  real(dp)::sink_tscale0=1.D10      ! ... from this time on (in code units)
-  logical::sink_restart=.false.     ! allow to include sinks at restart
 
   integer::ntracer_tot=0            ! Total number of tracers
   ! More sink related parameters, can all be set in namelist file
@@ -21,21 +17,17 @@ module pm_parameters
   integer::ir_cloud_massive=4                ! Radius of massive cloud region in unit of grid spacing for PM sinks
   real(dp)::sink_soft=2                      ! Sink grav softening length in dx at levelmax for "direct force" sinks
   real(dp)::mass_sink_direct_force=-1        ! mass above which sinks are treated as "direct force" objects
-  integer::nlevelmax_sink=0                  ! HACK to put sinks at coarser level (for sims which are not fully refined)
 
   logical::create_sinks=.false.              ! turn formation of new sinks on
-  logical::check_energies=.true.             ! when flagging clumps for sink formation, check whether their gravitational energy is dominant
 
   real(dp)::merging_timescale=-1             ! time during which sinks are considered for merging (only when 'timescale' is used),
                                              ! used also as contraction timescale in creation
   real(dp)::cont_speed=0                     ! Clump contraction rate
 
-  character(LEN=15)::accretion_scheme='none' ! Sink accretion scheme; options: 'none', 'bondi', 'threshold'
-  logical::threshold_accretion=.false.       ! NOT A NAMELIST PARAMETER
+  character(LEN=15)::accretion_scheme='none' ! Sink accretion scheme; options: 'none', 'bondi'
   logical::bondi_accretion=.false.           ! NOT A NAMELIST PARAMETER
   logical::bondi_use_vrel=.true.             ! Use v_rel^2 in the denominator of Bondi formula
-  real(dp)::c_acc=0.75                       ! "courant factor" for sink accretion
-                                             ! gives fraction of available gas that can be accreted in one timestep
+
   real(dp)::mass_sink_seed=0                 ! Initial sink mass
   real(dp)::mass_smbh_seed=0                 ! Initial SMBH mass
   real(dp)::mass_merger_vel_check=1d100      ! Threshold for velocity check in merging in M_sun; default: don't check
@@ -44,7 +36,6 @@ module pm_parameters
   logical::clump_core=.false.                ! Trims the clump (for star formation)
   logical::verbose_AGN=.false.               ! Controls print verbosity for the SMBH case
   real(dp)::acc_sink_boost=1                 ! Boost coefficient for accretion
-  real(dp)::eddington_cap=1                  ! Set the accretion cap in units of the Eddington limit
 
   real(dp)::AGN_fbk_frac_ener=1              ! Fraction of AGN feedback released as thermal blast
   real(dp)::AGN_fbk_frac_mom=0               ! Fraction of AGN feedback released as momentum injection
@@ -52,7 +43,6 @@ module pm_parameters
   real(dp)::T2_min=1d7                      ! Minimum temperature of the gas to trigger AGN blast; in K
   real(dp)::T2_max=1d9                      ! Maximum allowed temperature of the AGN blast; in K
   real(dp)::T2_AGN=1d12                     ! AGN blast temperature; in K
-  real(dp)::v_max=2000                      ! Maximum allowed velocity of the AGN jet; in km/s
 
   real(dp)::cone_opening=180d0              ! Outflow cone opening angle; in deg
   real(dp)::epsilon_kin=1                    ! Efficiency of kinetic feedback

@@ -89,57 +89,10 @@ subroutine star_formation(ilevel)
 
   if(verbose)write(*,*)' Entering star_formation'
 
-  if(sf_log_properties.and.ifout.gt.1) then
-     call title(ifout-1,nchar)
-     if(IOGROUPSIZEREP>0) then
-        call title(((myid-1)/IOGROUPSIZEREP)+1,ncharcpu)
-        filedirini=TRIM(output_dir)//'output_'//TRIM(nchar)//'/'
-        filedir=TRIM(output_dir)//'output_'//TRIM(nchar)//'/group_'//TRIM(ncharcpu)//'/'
-     else
-        filedir=TRIM(output_dir)//'output_'//TRIM(nchar)//'/'
-     endif
-     filename=TRIM(filedir)//'stars_'//TRIM(nchar)//'.out'
-     ilun=myid+103
-     call title(myid,nchar)
-     fileloc=TRIM(filename)//TRIM(nchar)
-     ! Wait for the token
-#ifndef WITHOUTMPI
-     if(IOGROUPSIZE>0) then
-        if (mod(myid-1,IOGROUPSIZE)/=0) then
-           call MPI_RECV(dummy_io,1,MPI_INTEGER,myid-1-1,tag,&
-                & MPI_COMM_WORLD,MPI_STATUS_IGNORE,info2)
-        end if
-     endif
-#endif
-
-     inquire(file=fileloc,exist=file_exist)
-     if((.not.file_exist).or.(abs(t-trestart).lt.dtnew(ilevel))) then
-        open(ilun, file=fileloc, form='formatted')
-        write(ilun,'(A24)',advance='no') '# event id  ilevel  mp  '
-        do idim=1,ndim
-           write(ilun,'(A2,I1,A2)',advance='no') 'xp',idim,'  '
-        enddo
-        do idim=1,ndim
-           write(ilun,'(A2,I1,A2)',advance='no') 'vp',idim,'  '
-        enddo
-        do ivar=1,nvar
-           if(ivar.ge.10) then
-              write(ilun,'(A1,I2,A2)',advance='no') 'u',ivar,'  '
-           else
-              write(ilun,'(A1,I1,A2)',advance='no') 'u',ivar,'  '
-           endif
-        enddo
-        write(ilun,'(A5)',advance='no') 'tag  '
-        write(ilun,'(A1)') ' '
-     else
-        open(ilun, file=fileloc, status="old", position="append", action="write", form='formatted')
-     endif
-  endif
-
   ! Conversion factor from user units to cgs units
   call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
   scale_m=scale_d*scale_l*scale_l*scale_l/M_sun ! code to Msun
-
+  
   ! Mesh spacing in that level
   dx=0.5D0**ilevel
   nx_loc=(icoarse_max-icoarse_min+1)
@@ -178,6 +131,7 @@ subroutine star_formation(ilevel)
      mstar=(mstarparticle*M_sun)/scale_d/scale_l/scale_l/scale_l  !mstar in internal units
   endif
   dstar=mstar/vol_loc
+
 
   factG = 1d0
   if(cosmo) factG = 3d0/4d0/twopi*omega_m*aexp
@@ -787,35 +741,9 @@ subroutine star_formation(ilevel)
               endif
            endif
 
-           if(sf_log_properties) then
-              write(ilun,'(I10)',advance='no') 0
-              write(ilun,'(2I10,E24.12)',advance='no') idp(ind_part(i)),ilevel,mp(ind_part(i))
-              do idim=1,ndim
-                 write(ilun,'(E24.12)',advance='no') xp(ind_part(i),idim)
-              enddo
-              do idim=1,ndim
-                 write(ilun,'(E24.12)',advance='no') vp(ind_part(i),idim)
-              enddo
-              write(ilun,'(E24.12)',advance='no') uold(ind_cell_new(i),1)
-              do ivar=2,nvar
-                 if(ivar.eq.neul)then
-                    ! Temperature
-                    uvar=(gamma-1.0d0)*(uold(ind_cell_new(i),neul))*scale_T2
-                 else
-                    uvar=uold(ind_cell_new(i),ivar)
-                 endif
-                 write(ilun,'(E24.12)',advance='no') uvar
-              enddo
-              write(ilun,'(I10)',advance='no') typep(ind_part(i))%tag
-              write(ilun,'(A1)') ' '
-           endif
-
-
         end do
         ! End loop over new star particles
-        if(SFdiagnostics)then
-            flush(SFunit_out) ! Ensure writing to disk of the SF log after all stars particle have been created
-        endif
+        flush(SFunit_out) ! Ensure writing to disk of the SF log after all stars particle have been created 
 
         ! Modify gas density according to mass depletion
         do i=1,nnew
@@ -862,7 +790,7 @@ subroutine star_formation(ilevel)
 
                  ipart = nextp(ipart)
               end do
-           endif
+           end if
         end do
 
      end do
@@ -925,8 +853,6 @@ subroutine star_formation(ilevel)
         end do
      end do
   end do
-
-  if(sf_log_properties) close(ilun)
 
 end subroutine star_formation
 #endif

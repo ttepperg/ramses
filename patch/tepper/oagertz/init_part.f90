@@ -72,8 +72,10 @@ subroutine init_part
   allocate(xp    (npartmax,ndim))
   allocate(vp    (npartmax,ndim))
   allocate(mp    (npartmax))
-  if (MC_tracer) then
+  if (MC_tracer .or. do_particle_snapshot) then
      allocate(itmpp (npartmax))
+  end if
+  if (MC_tracer) then
      allocate(partp (npartmax))
      allocate(move_flag(npartmax))
      move_flag = 0
@@ -201,7 +203,7 @@ subroutine init_part
         if(metal)then
            ! Read metallicity
            do imet=1,nmetals ! EDGE2
-           read(ilun)xdp
+              read(ilun)xdp
               zp(1:npart2,imet)=xdp
            enddo
         end if
@@ -287,7 +289,7 @@ subroutine init_part
      end select
 
      ! Initialize tracer particles
-     if(MC_tracer) call init_tracer
+     if(tracer) call init_tracer
 
   end if
 
@@ -1049,7 +1051,7 @@ contains
        end if
     end do
 
-    write(*,*)'npart=',ipart,'/',npartmax,' for PE=',myid
+    if(debug)write(*,*)'npart=',ipart,'/',npartmax,' for PE=',myid
 #endif
 
     ! Compute particle initial level

@@ -1,0 +1,19 @@
+AUTHOR: Dr. Thorsten Tepper Garcia
+
+CREATED: 31 JUL 2025
+
+ABOUT:
+    This directory contains the source files relevant to this patch.
+    They have been automatically rsync'd using the script retrieve_src_orig.sh
+
+    Note that these files are the ORIGINAL source files from Oscar Agertz' Ramses patch, found in:
+
+        /Users/tepper/codes/ramses_agertz/ramses/
+
+    and they NEED TO BE MODIFIED to work with my patches.
+
+    See README_NEW and retrieve_src_orig.sh for more information.
+
+NOTE
+    If ACCIDENTALLY deleted, simply run retrieve_src_orig.sh.
+    This requires of course that the files are present at their original location (see above).

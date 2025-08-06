@@ -6,7 +6,7 @@ subroutine add_list(ind_part,ind_grid,ok,np)
   use amr_commons
   use pm_commons
   implicit none
-  integer, intent(in)::np
+  integer, intent(in )::np
   integer,dimension(1:nvector), intent(in)::ind_part,ind_grid
   logical,dimension(1:nvector), intent(in)::ok
   !
@@ -43,7 +43,6 @@ subroutine add_free(ind_part,np)
   use amr_commons
   use pm_commons
   use hydro_parameters,only: nmetals ! ERIC
-  use dice_commons
   implicit none
   integer, intent(in)::np
   integer,dimension(1:nvector), intent(in)::ind_part
@@ -74,18 +73,12 @@ subroutine add_free(ind_part,np)
      end do
      if(metal)then
         do imet=1,nmetals ! ERIC
-        do j=1,np
+           do j=1,np
               zp(ind_part(j),imet)=0.0
            end do
         end do
      end if
   end if
-  ! DICE patch
-  if(dice_init) then
-     do j=1,np
-        up(ind_part(j))=0.0
-     end do
-  endif
 
   do j=1,np
      if(numbp_free>0)then
@@ -115,7 +108,6 @@ subroutine add_free_cond(ind_part,ok,np)
   use amr_commons
   use pm_commons
   use hydro_parameters,only: nmetals ! ERIC
-  use dice_commons
   implicit none
   integer::np
   integer,dimension(1:nvector)::ind_part
@@ -153,22 +145,14 @@ subroutine add_free_cond(ind_part,ok,np)
      end do
      if(metal)then
         do imet=1,nmetals ! ERIC
-        do j=1,np
-           if(ok(j))then
+           do j=1,np
+              if(ok(j))then
                  zp(ind_part(j),imet)=0.0
-           endif
+              endif
            end do
         end do
      end if
   end if
-  ! DICE patch
-  if(dice_init) then
-     do j=1,np
-        if(ok(j))then
-           up(ind_part(j))=0.0
-        endif
-     end do
-  endif
 
   do j=1,np
      if(ok(j))then

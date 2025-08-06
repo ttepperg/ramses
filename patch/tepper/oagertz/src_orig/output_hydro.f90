@@ -12,7 +12,6 @@ subroutine backup_hydro(filename, filename_desc)
 
   integer :: i, ivar, ncache, ind, ilevel, igrid, iskip, istart, ibound
   integer :: unit_out, unit_info
-  real(dp) :: d
   integer, allocatable, dimension(:) :: ind_grid
   real(dp), allocatable, dimension(:) :: xdp
   character(LEN = 5) :: nchar
@@ -83,14 +82,14 @@ subroutine backup_hydro(filename, filename_desc)
            ! Loop over cells
            do ind = 1, twotondim
               iskip = ncoarse+(ind-1)*ngridmax
-              do ivar = 1, neul-1
+              do ivar = 1, ndim+1
                  if (ivar == 1) then
                     ! Write density
                     do i = 1, ncache
                        xdp(i) = uold(ind_grid(i)+iskip, 1)
                     end do
                     field_name = 'density'
-                 else
+                 else if (ivar >= 2 .and. ivar <= ndim+1) then
                     ! Write velocity field
                     do i = 1, ncache
                        xdp(i) = uold(ind_grid(i)+iskip, ivar)/max(uold(ind_grid(i)+iskip, 1), smallr)
@@ -101,44 +100,43 @@ subroutine backup_hydro(filename, filename_desc)
               end do
 #if NENER > 0
               ! Write non-thermal pressures
-              do ivar = nhydro+1, nhydro+nener
+              do ivar = ndim+3, ndim+2+nener
                  do i = 1, ncache
-                    xdp(i) = (gamma_rad(ivar-nhydro)-1d0)*uold(ind_grid(i)+iskip, ivar)
+                    xdp(i) = (gamma_rad(ivar-ndim-2)-1d0)*uold(ind_grid(i)+iskip, ivar)
                  end do
-                 write(field_name, '("non_thermal_pressure_", i0.2)') ivar-3
+                 write(field_name, '("non_thermal_energy_", i0.2)') ivar-3
                  call generic_dump(field_name, info_var_count, xdp, unit_out, dump_info_flag, unit_info)
               end do
 #endif
               ! Write thermal pressure
               do i = 1, ncache
-                 d = max(uold(ind_grid(i)+iskip, 1), smallr)
-                 xdp(i) = uold(ind_grid(i)+iskip, neul)
-                 xdp(i) = xdp(i)-0.5d0*uold(ind_grid(i)+iskip, 2)**2/d
+                 xdp(i) = uold(ind_grid(i)+iskip, ndim+2)
+                 xdp(i) = xdp(i)-0.5d0*uold(ind_grid(i)+iskip, 2)**2/max(uold(ind_grid(i)+iskip, 1), smallr)
 #if NDIM > 1
-                 xdp(i) = xdp(i)-0.5d0*uold(ind_grid(i)+iskip, 3)**2/d
+                 xdp(i) = xdp(i)-0.5d0*uold(ind_grid(i)+iskip, 3)**2/max(uold(ind_grid(i)+iskip, 1), smallr)
 #endif
 #if NDIM > 2
-                 xdp(i) = xdp(i)-0.5d0*uold(ind_grid(i)+iskip, 4)**2/d
+                 xdp(i) = xdp(i)-0.5d0*uold(ind_grid(i)+iskip, 4)**2/max(uold(ind_grid(i)+iskip, 1), smallr)
 #endif
 #if NENER > 0
                  do irad = 1, nener
-                    xdp(i) = xdp(i)-uold(ind_grid(i)+iskip, nhydro+irad)
+                    xdp(i) = xdp(i)-uold(ind_grid(i)+iskip, ndim+2+irad)
                  end do
 #endif
                  xdp(i) = (gamma-1d0)*xdp(i)
               end do
               field_name = 'pressure'
               call generic_dump(field_name, info_var_count, xdp, unit_out, dump_info_flag, unit_info)
-#if NVAR > NHYDRO+NENER
-              ! Write passive scalars if any
-              do ivar = nhydro+1+nener, nvar
+#if NVAR > NDIM+2+NENER
+              ! Write passive scalars
+              do ivar = ndim+3+nener, nvar
                  do i = 1, ncache
                     xdp(i) = uold(ind_grid(i)+iskip, ivar)/max(uold(ind_grid(i)+iskip, 1), smallr)
                  end do
                  if (metal .and. (ivar .ge. imetal .and. ivar < imetal+nmetals)) then
                     field_name = 'metal_' // trim(met_keys(ivar-imetal+1))
                  else
-                    write(field_name, '("scalar_", i0.2)') ivar - nhydro - 1 - nener
+                    write(field_name, '("scalar_", i0.2)') ivar - ndim - 3 - nener
                  end if
                  call generic_dump(field_name, info_var_count, xdp, unit_out, dump_info_flag, unit_info)
               end do

@@ -8,7 +8,7 @@ subroutine read_hydro_params(nml_ok)
   !--------------------------------------------------
   ! Local variables
   !--------------------------------------------------
-  integer::i,idim,nboundary_true=0
+  integer::i,idim,ifixed,nboundary_true=0
   integer ,dimension(1:MAXBOUND)::bound_type
   real(dp)::ek_bound
   logical :: dummy
@@ -21,20 +21,24 @@ subroutine read_hydro_params(nml_ok)
   !--------------------------------------------------
 
   ! Initial conditions parameters
-  namelist/init_params/condinit_kind,filetype,initfile,multiple,nregion,region_type &
+  namelist/init_params/filetype,initfile,multiple,nregion,region_type &
        & ,x_center,y_center,z_center,aexp_ini &
        & ,length_x,length_y,length_z,exp_region &
        & ,d_region,u_region,v_region,w_region,p_region &
 #ifdef SOLVERmhd
        & ,A_region,B_region,C_region,B_ave &
-#endif
-#if NVAR>NHYDRO+NENER
+#if NVAR>8+NENER
        & ,var_region &
+#endif
+#else
+#if NVAR>NDIM+2+NENER
+       & ,var_region &
+#endif
 #endif
 #if NENER>0
        & ,prad_region &
 #endif
-       & ,omega_b,alpha_dense_core,beta_dense_core,crit_dense_core,delta_rho
+       & ,omega_b
 
   ! Hydro parameters
   namelist/hydro_params/gamma,courant_factor,smallr,smallc &
@@ -44,12 +48,9 @@ subroutine read_hydro_params(nml_ok)
 #endif
 #ifdef SOLVERmhd
        & ,riemann2d,slope_mag_type,eta_mag &
-       & ,allow_switch_solver, allow_switch_solver2D &
-       & ,switch_solv_B,switch_solv_dens,switch_solv_min_dens &
 #endif
        & ,pressure_fix,beta_fix,scheme,riemann &
        & ,strict_equilibrium
-
   ! Refinement parameters
   namelist/refine_params/x_refine,y_refine,z_refine,r_refine &
        & ,a_refine,b_refine,exp_refine,jeans_refine,mass_cut_refine &
@@ -69,16 +70,20 @@ subroutine read_hydro_params(nml_ok)
        & ,prad_bound &
 #endif
 #ifdef SOLVERmhd
-       & ,A_bound,B_bound,C_bound &
-#endif
-#if NVAR>NHYDRO+NENER
+#if NVAR>8+NENER
        & ,var_bound &
+#endif
+       & ,A_bound,B_bound,C_bound &
+#else
+#if NVAR>NDIM+2+NENER
+       & ,var_bound &
+#endif
 #endif
        & ,d_bound,u_bound,v_bound,w_bound,p_bound,no_inflow
 
   ! Feedback parameters
   namelist/feedback_params/eta_sn,eta_ssn,yield,rbubble,f_ek,ndebris &
-       & ,f_w,f_esn,mass_gmc,kappa_IR,delayed_cooling,momentum_feedback &
+       & ,f_w,mass_gmc,kappa_IR,delayed_cooling,momentum_feedback &
        & ,ir_feedback,ir_eff,t_diss,t_sne,mass_star_max,mass_sne_min &
        & ,eta_rap,SNenergy,eta_w &
        & ,vmaxFB, Tmax,smallT,Nrcool,fbsafety,maxadvfb &
@@ -88,15 +93,12 @@ subroutine read_hydro_params(nml_ok)
 
   ! Cooling / basic chemistry parameters
   namelist/cooling_params/cooling,metal,isothermal,haardt_madau,J21 &
-       & ,barotropic_eos,barotropic_eos_form,polytrope_rho,polytrope_index,T_eos,mu_gas &
-       & ,a_spec,self_shielding,z_ave,z_reion,ind_rsink,T2max,neq_chem &
-       & ,cooling_ism
+       & ,a_spec,self_shielding, z_ave,z_reion,ind_rsink,T2max,neq_chem
 
   ! Star formation parameters
   namelist/sf_params/m_star,n_star,T2_star,g_star,del_star &
-       & ,eps_star,jeans_ncells,sf_virial,sf_trelax,sf_tdiss,sf_model&
-       & ,sf_log_properties,sf_imf,sf_compressive &
-       & ,mstarparticle,temp_star,SFdiagnostics
+       & ,eps_star,jeans_ncells,sf_virial,sf_trelax,sf_tdiss,sf_model &
+       & ,sf_imf,sf_compressive,mstarparticle,temp_star,SFdiagnostics
 
   ! Units parameters
   namelist/units_params/units_density,units_time,units_length
@@ -177,7 +179,7 @@ subroutine read_hydro_params(nml_ok)
 
   CASE DEFAULT
     write(*,*)'unknown scheme'
-    nml_ok=.false.
+    call clean_stop
   END SELECT
   !------------------------------------------------
   ! set iriemann
@@ -198,7 +200,7 @@ subroutine read_hydro_params(nml_ok)
 
   CASE DEFAULT
     write(*,*)'unknown riemann solver'
-    nml_ok=.false.
+    call clean_stop
   END SELECT
   !------------------------------------------------
   ! set iriemann
@@ -218,7 +220,7 @@ subroutine read_hydro_params(nml_ok)
     iriemann2d = 5
   CASE DEFAULT
     write(*,*)'unknown 2D riemann solver'
-    nml_ok=.false.
+    call clean_stop
   END SELECT
 
   !--------------------------------------------------
@@ -248,22 +250,14 @@ subroutine read_hydro_params(nml_ok)
   !--------------------------------------------------
   ! Check for metal
   !--------------------------------------------------
-  if(metal.and.nvar<(nhydro+1))then
-     if(myid==1)write(*,*)'Error: metals need nvar >= nhydro+1'
+#ifdef SOLVERmhd
+  if(metal.and.nvar<(ndim+6))then
+#else
+  if(metal.and.nvar<(ndim+3))then
+#endif
+     if(myid==1)write(*,*)'Error: metals need nvar >= ndim+3'
      if(myid==1)write(*,*)'Modify hydro_parameters.f90 and recompile'
      nml_ok=.false.
-  endif
-
-  !--------------------------------------------------
-  ! Check EOS parameters
-  !--------------------------------------------------
-  if(isothermal .and. .not. barotropic_eos)then
-    barotropic_eos=.true.
-    if(myid==1)write(*,*)'WARNING: The isothermal keyword is replaced by "barotropic_eos". Running with barotropic_eos=.true.'
-  endif
-  if(barotropic_eos)then
-    ! set T2 for computations
-    T2_eos = T_eos/mu_gas
   endif
 
   !--------------------------------------------------
@@ -276,13 +270,17 @@ subroutine read_hydro_params(nml_ok)
      nml_ok=.false.
   endif
 #endif
-
+  
   !--------------------------------------------------
   ! Check for non-thermal energies
   !--------------------------------------------------
 #if NENER>0
-  if(nvar<(nhydro+nener))then
-     if(myid==1)write(*,*)'Error: non-thermal energy need nvar >= nhydro+nener'
+#ifdef SOLVERmhd
+  if(nvar<(8+nener))then
+#else
+  if(nvar<(ndim+2+nener))then
+#endif
+     if(myid==1)write(*,*)'Error: non-thermal energy need nvar >= ndim+2+nener'
      if(myid==1)write(*,*)'Modify NENER and recompile'
      nml_ok=.false.
   endif
@@ -426,9 +424,18 @@ subroutine read_hydro_params(nml_ok)
   do i=1,nboundary
      boundary_var(i,1)=MAX(d_bound(i),smallr)
      boundary_var(i,2)=d_bound(i)*u_bound(i)
-#ifdef SOLVERmhd
+#if NDIM>1 || SOLVERmhd
      boundary_var(i,3)=d_bound(i)*v_bound(i)
+#endif
+#if NDIM>2 || SOLVERmhd
      boundary_var(i,4)=d_bound(i)*w_bound(i)
+#endif
+     ek_bound=0.0d0
+     do idim=1,ndim
+        ek_bound=ek_bound+0.5d0*boundary_var(i,idim+1)**2/boundary_var(i,1)
+     end do
+     boundary_var(i,ndim+2)=ek_bound+P_bound(i)/(gamma-1.0d0)
+#ifdef SOLVERmhd
      boundary_var(i,6)=A_bound(i)
      boundary_var(i,7)=B_bound(i)
      boundary_var(i,8)=C_bound(i)
@@ -438,18 +445,6 @@ subroutine read_hydro_params(nml_ok)
      ek_bound=0.5d0*d_bound(i)*(u_bound(i)**2+v_bound(i)**2+w_bound(i)**2)
      em_bound=0.5d0*(A_bound(i)**2+B_bound(i)**2+C_bound(i)**2)
      boundary_var(i,5)=ek_bound+em_bound+P_bound(i)/(gamma-1.0d0)
-#else
-#if NDIM>1
-     boundary_var(i,3)=d_bound(i)*v_bound(i)
-#endif
-#if NDIM>2
-     boundary_var(i,4)=d_bound(i)*w_bound(i)
-#endif
-     ek_bound=0.0d0
-     do idim=1,ndim
-        ek_bound=ek_bound+0.5d0*boundary_var(i,idim+1)**2/boundary_var(i,1)
-     end do
-     boundary_var(i,neul)=ek_bound+P_bound(i)/(gamma-1.0d0)
 #endif
   end do
 
@@ -466,7 +461,15 @@ subroutine read_hydro_params(nml_ok)
   !-----------------------------------
   ! Sort out passive variable indices
   !-----------------------------------
-  inener=nhydro+1
+#ifdef SOLVERmhd
+  ! Hard-coded variables are rho,v*ndim,P,B*ndim
+  ! MHD only works in 3D, so ndim=3
+  ifixed=8
+#else
+  ! Hard-coded variables are rho,v*ndim,P
+  ifixed=ndim+2
+#endif
+  inener=ifixed+1
   imetal=inener+nener
   idelay=imetal
   if(metal)idelay=imetal+nmetals !ERIC, nmetals=5 is EDGE2
@@ -483,7 +486,7 @@ subroutine read_hydro_params(nml_ok)
   if(sf_virial)ixion=ivirial2+1
   ichem=ixion
   if(aton)ichem=ixion+1
-  if(myid==1.and.hydro.and.(nvar>nhydro)) then
+  if(myid==1.and.hydro.and.(nvar>ndim+2)) then
      write(*,'(A50)')"__________________________________________________"
      write(*,*) 'Hydro var indices:'
 #if NENER>0

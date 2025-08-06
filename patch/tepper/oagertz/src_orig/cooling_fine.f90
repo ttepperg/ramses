@@ -28,7 +28,7 @@ subroutine cooling_fine(ilevel)
      call coolfine1(ind_grid,ngrid,ilevel)
   end do
 
-  if((cooling.and..not.neq_chem.and..not.cooling_ism).and.ilevel==levelmin.and.cosmo)then
+  if((cooling.and..not.neq_chem).and.ilevel==levelmin.and.cosmo)then
 #ifdef grackle
      if(use_grackle==0)then
         if(myid==1)write(*,*)'Computing new cooling table'
@@ -86,7 +86,7 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
   integer::ii,ig,iNp,il
   real(kind=8),dimension(1:nvector),save:: ekk_new,T2_new
   logical,dimension(1:nvector),save::cooling_on=.true.
-  real(dp)::scale_Np,scale_Fp,work,Npc,Npnew,fred,kIR,E_rad,TR
+  real(dp)::scale_Np,scale_Fp,work,Npc,Npnew, kIR, E_rad, TR
   real(dp),dimension(1:ndim)::Fpnew
   real(dp),dimension(nIons, 1:nvector),save:: xion
   real(dp),dimension(nGroups, 1:nvector),save:: Np, Np_boost=0d0, dNpdt=0d0
@@ -99,6 +99,11 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
 #endif
 #ifdef grackle
   real(kind=8),dimension(1:nvector),save:: T2_new
+#endif
+#ifdef SOLVERmhd
+  integer::neul=5
+#else
+  integer::neul=ndim+2
 #endif
 #if NENER>0
   integer::irad
@@ -124,18 +129,14 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
   ! Typical ISM density in H/cc
   nISM = n_star; nCOM=0
   if(cosmo)then
-#ifdef grackle
-     nCOM = del_star*omega_b*rhoc*(h0/100)**2/aexp**3*grackle_HydrogenFractionByMass/mH
-#else
      nCOM = del_star*omega_b*rhoc*(h0/100)**2/aexp**3*X/mH
-#endif
   endif
   nISM = MAX(nCOM,nISM)
-  polytrope_rho_cu = polytrope_rho/scale_d
 
   ! Polytropic constant for Jeans length related polytropic EOS
   if(jeans_ncells>0)then
-     polytropic_constant=factG_in_cgs*(boxlen*jeans_ncells*0.5d0**dble(nlevelmax)*scale_l/aexp)**2/ pi / gamma
+     polytropic_constant=2d0*(boxlen*jeans_ncells*0.5d0**dble(nlevelmax)*scale_l/aexp)**2/ &
+          & twopi*6.67d-8*scale_d*(scale_t/scale_l)**2
   endif
 
 #ifdef RT
@@ -143,7 +144,7 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
   if(rt_isIRtrap) then
      ! For conversion from photon number density to photon energy density:
      Np2Ep = scale_Np * group_egy(iIR) * eV2erg                       &
-           * rt_c_cgs(ilevel)/c_cgs * rt_pressBoost / scale_d / scale_v**2
+           * rt_pressBoost / scale_d / scale_v**2
   endif
 #endif
   aexp_loc=aexp
@@ -176,18 +177,12 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
 
      ! Compute metallicity in solar units
      if(metal)then
-#ifdef grackle
-        do i=1,nleaf
-           Zsolar(i)=uold(ind_leaf(i),imetal)/nH(i)/grackle_SolarMetalFractionByMass
-        end do
-#else
         do i=1,nleaf
            uold(ind_leaf(i),imetal)=max(uold(ind_leaf(i),imetal),0.0)
            uold(ind_leaf(i),imetal+1)=max(uold(ind_leaf(i),imetal+1),0.0)
            Zsolar(i)=(2.09d0*uold(ind_leaf(i),imetal+1) + &
-           & 1.06d0*uold(ind_leaf(i),imetal))/nH(i)/0.02d0 !Asplund solar mix,  !EDGE2, 2 O+1 Fe
+                & 1.06d0*uold(ind_leaf(i),imetal))/nH(i)/0.02d0 !Asplund solar mix,  !EDGE2, 2 O+1 Fe
         end do
-#endif
      else
         do i=1,nleaf
            Zsolar(i)=z_ave
@@ -226,16 +221,16 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
            if(is_kIR_T) then                        ! kIR depends on T_rad
               ! For rad. temperature,  weigh the energy in each group by
               ! its opacity over IR opacity (derived from IR temperature)
-              E_rad = group_egy(iIR) * eV2erg * NIRtot *scale_Np
-              TR = max(0d0,(E_rad*rt_c_cgs(ilevel)/c_cgs/a_r)**0.25d0)! IR temp.
-              kIR  = kappaAbs(iIR)  * (TR/10d0)**2
+              E_rad = group_egy(iIR) * eV2erg * NIRtot * scale_Np
+              TR = max(0d0, (E_rad*rt_c_fraction/a_r)**0.25d0)     ! IR temp.
+              kIR = kappaAbs(iIR) * (TR/10d0)**2
               do ig=1,nGroups
                  if(ig .ne. iIR)                                         &
                       E_rad = E_rad + kappaAbs(ig) / kIR                 &
                             * max(rtuold(il,iGroups(ig)),smallNp)        &
                             * eV2erg * scale_Np
               end do
-              TR = max(0d0,(E_rad*rt_c_cgs(ilevel)/c_cgs/a_r)**0.25d0)! Rad. temp.
+              TR = max(0d0,(E_rad*rt_c_fraction/a_r)**0.25d0)   ! Rad. temp.
               ! Set the IR opacity according to the rad. temperature:
               kIR  = kappaSc(iIR)  * (TR/10d0)**2 * exp(-TR/1d3)
            endif
@@ -252,11 +247,7 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
 
            rtuold(il,iNp) = rtuold(il,iNp) - work !Remove from rad density
            rtuold(il,iNp) = max(rtuold(il,iNp),smallnp)
-           ! Reduce the flux to c*Np if necessary:
-           fred = sqrt(sum(rtuold(il,iNp+1:iNp+ndim)**2)) &
-                / rtuold(il,iNp)*rt_c(ilevel)
-           if(fred .gt. 1.d0) &
-                rtuold(il,iNp+1:iNp+ndim) = rtuold(il,iNp+1:iNp+ndim)/fred
+           call reduce_flux(rtuold(il,iNp+1:iNp+ndim),rtuold(il,iNp)*rt_c)
         enddo
      endif
 #endif
@@ -290,7 +281,7 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
 #ifdef SOLVERmhd
      do idim=1,3
         do i=1,nleaf
-           emag(i)=emag(i)+0.125d0*(uold(ind_leaf(i),idim+neul)+uold(ind_leaf(i),idim+nvar))**2
+           emag(i)=emag(i)+0.125d0*(uold(ind_leaf(i),idim+5)+uold(ind_leaf(i),idim+nvar))**2
         end do
      end do
 #endif
@@ -329,23 +320,15 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
      !==========================================
      ! Compute temperature from polytrope EOS
      !==========================================
-     if(barotropic_eos.and.(barotropic_eos_form.ne.'legacy'))then
+     if(jeans_ncells>0)then
         do i=1,nleaf
-           ! analytic EOS
-           call barotropic_eos_temperature(nH(i), T2min(i))
-        enddo
+           T2min(i) = nH(i)*polytropic_constant*scale_T2
+        end do
      else
-        ! cooling floor
-        if(jeans_ncells>0)then
-           do i=1,nleaf
-              T2min(i) = nH(i)*polytropic_constant*mH**2/X/kB
-           end do
-        else
-           do i=1,nleaf
-              T2min(i) = T2_star*(nH(i)/nISM)**(g_star-1.0d0)
-           end do
-        endif
-      endif
+        do i=1,nleaf
+           T2min(i) = T2_star*(nH(i)/nISM)**(g_star-1.0d0)
+        end do
+     endif
      !==========================================
      ! You can put your own polytrope EOS here
      !==========================================
@@ -388,28 +371,26 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
            end if
         end do
 
-        if(cooling .and. delayed_cooling .and. .not. cooling_ism) then
+        if(cooling .and. delayed_cooling) then
            cooling_on(1:nleaf)=.true.
            do i=1,nleaf
               if(uold(ind_leaf(i),idelay)/uold(ind_leaf(i),1) .gt. 1d-3) &
                    cooling_on(i)=.false.
            end do
         end if
-        if(barotropic_eos)cooling_on(1:nleaf)=.false.
+        if(isothermal)cooling_on(1:nleaf)=.false.
      endif
 
      if(rt_vc) then ! Do the Lorentz boost. Eqs A4 and A5. in RT15
         do i=1,nleaf
            do ig=1,nGroups
-              Npc=Np(ig,i)*rt_c_cgs(ilevel)
+              Npc=Np(ig,i)*rt_c_cgs
               call cmp_Eddington_tensor(Npc,Fp(:,ig,i),tEdd)
-              Np_boost(ig,i) = - 2d0/c_cgs/rt_c_cgs(ilevel)  &
-                               * sum(u_gas(:,i)*Fp(:,ig,i))
+              Np_boost(ig,i) = - 2d0/c_cgs/rt_c_cgs * sum(u_gas(:,i)*Fp(:,ig,i))
               do idim=1,ndim
                  Fp_boost(idim,ig,i) =  &
-                      -u_gas(idim,i)*Np(ig,i) * rt_c_cgs(ilevel)/c_cgs   &
-                      -sum(u_gas(:,i)*tEdd(idim,:))                      &
-                       *Np(ig,i)*rt_c_cgs(ilevel)/c_cgs
+                      -u_gas(idim,i)*Np(ig,i) * rt_c_cgs/c_cgs &
+                      -sum(u_gas(:,i)*tEdd(idim,:))*Np(ig,i)*rt_c_cgs/c_cgs
               end do
            end do
            Np(:,i)   = Np(:,i) + Np_boost(:,i)
@@ -443,12 +424,12 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
            if(metal)then
               gr_metal_density(i) = uold(ind_leaf(i),imetal)
            else
-              gr_metal_density(i) = uold(ind_leaf(i),1)*grackle_SolarMetalFractionByMass*z_ave
+              gr_metal_density(i) = uold(ind_leaf(i),1)*0.02d0*z_ave
            endif
            gr_energy(i) = T2(i)/(scale_T2*(gamma-1.0d0))
-           gr_HI_density(i) = grackle_HydrogenFractionByMass*gr_density(i)
-           gr_HeI_density(i) = (1.0d0-grackle_HydrogenFractionByMass)*gr_density(i)
-           gr_DI_density(i) = grackle_DeuteriumToHydrogenRatio*gr_density(i)
+           gr_HI_density(i) = X*gr_density(i)
+           gr_HeI_density(i) = (1.0d0-X)*gr_density(i)
+           gr_DI_density(i) = 2*3.4d-5*gr_density(i)
         enddo
         ! Update grid properties
         my_grackle_fields%grid_rank = gr_rank
@@ -471,33 +452,20 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
      else
         ! Compute net cooling at constant nH
         if(cooling.and..not.neq_chem)then
-           if(cooling_ism) then
-              ! Use cooling from cooling_module_frig described in Audit & Hennebelle 2005
-              call solve_cooling_ism(nH,T2,dtcool,delta_T2,nleaf)
-           else
-              ! Use classical ramses cooling
-              call solve_cooling(nH,T2,Zsolar,boost,dtcool,delta_T2,nleaf)
-           endif
+           call solve_cooling(nH,T2,Zsolar,boost,dtcool,delta_T2,nleaf)
         endif
      endif
 #else
      ! Compute net cooling at constant nH
      if(cooling.and..not.neq_chem)then
-        if(cooling_ism) then
-           ! Use cooling from cooling_module_frig described in Audit & Hennebelle 2005
-           call solve_cooling_ism(nH,T2,dtcool,delta_T2,nleaf)
-        else
-           ! Use classical ramses cooling
-           call solve_cooling(nH,T2,Zsolar,boost,dtcool,delta_T2,nleaf)
-        endif
+        call solve_cooling(nH,T2,Zsolar,boost,dtcool,delta_T2,nleaf)
      endif
 #endif
 #ifdef RT
      if(neq_chem) then
         T2_new(1:nleaf) = T2(1:nleaf)
         call rt_solve_cooling(T2_new, xion, Np, Fp, p_gas, dNpdt, dFpdt  &
-                             ,nH, cooling_on, Zsolar, dtcool, aexp_loc   &
-                             ,nleaf, ilevel)
+                         , nH, cooling_on, Zsolar, dtcool, aexp_loc,nleaf)
         delta_T2(1:nleaf) = T2_new(1:nleaf) - T2(1:nleaf)
      endif
 #endif
@@ -577,7 +545,7 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
      endif
 
      ! Update total fluid energy
-     if(barotropic_eos)then
+     if(isothermal)then
         do i=1,nleaf
            uold(ind_leaf(i),neul) = T2min(i) + ekk(i) + err(i) + emag(i)
         end do
@@ -635,15 +603,15 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
               ! For rad. temperature,  weigh the energy in each group by
               ! its opacity over IR opacity (derived from IR temperature)
               E_rad = group_egy(iIR) * eV2erg * NIRtot * scale_Np
-              TR = max(0d0,(E_rad*rt_c_cgs(ilevel)/c_cgs/a_r)**0.25d0)! IR temp.
-              kIR  = kappaAbs(iIR) * (TR/10d0)**2
+              TR = max(0d0,(E_rad*rt_c_fraction/a_r)**0.25d0)     ! IR temp.
+              kIR = kappaAbs(iIR) * (TR/10d0)**2
               do ig=1,nGroups
                  if(ig .ne. iIR)                                         &
                       E_rad = E_rad + kappaAbs(ig) / kIR                 &
                             * max(rtuold(il,iGroups(ig)),smallNp)        &
                             * eV2erg * scale_Np
               end do
-              TR = max(0d0,(E_rad*rt_c_cgs(ilevel)/c_cgs/a_r)**0.25d0)! Rad. temp.
+              TR = max(0d0,(E_rad*rt_c_fraction/a_r)**0.25d0)   ! Rad. temp.
               ! Set the IR opacity according to the rad. temperature:
               kIR  = kappaSc(iIR)  * (TR/10d0)**2 * exp(-TR/1d3)
            endif
@@ -661,11 +629,7 @@ subroutine coolfine1(ind_grid,ngrid,ilevel)
            ! Update the trapped photon energy:
            uold(il,iIRtrapVar) = EIR_trapped
 
-           ! Reduce the flux to c*Np if necessary:
-           fred = sqrt(sum(rtuold(il,iNp+1:iNp+ndim)**2)) &
-                / rtuold(il,iNp)*rt_c(ilevel)
-           if(fred .gt. 1.d0) &
-                rtuold(il,iNp+1:iNp+ndim) = rtuold(il,iNp+1:iNp+ndim)/fred
+           call reduce_flux(rtuold(il,iNp+1:iNp+ndim),rtuold(il,iNp)*rt_c)
         end do ! i=1,nleaf
 
      endif  !rt_isIRtrap
