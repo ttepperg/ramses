@@ -58,26 +58,9 @@ IMPORTANT:
 		endif
 
 	as does my dice patch in, e.g. particle_tree.f90.
-	BUT MUST split these to allow metal advection for gas w | w/o cooling also when there is not star formation!
 
 TO DO:
     - Make feedback.f90 compatible with main branch. For now, it has been copied as is from src_orig as is
-
-    - To allow for metal advection for gas w | w/o cooling also when there is not star formation, MUST split all if-clauses of the form:
-
-		if(star.or.sink)then
-			if(metal)then
-			endif
-		endif
-	into:
-		if(star.or.sink)then
-			...
-		endif
-		if(metal)then
-			...
-		endif
-
-	as does my dice patch in, e.g. particle_tree.f90
 
 
 (*) REQUIRED STEPS:
