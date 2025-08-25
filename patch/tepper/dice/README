@@ -12,10 +12,10 @@ CREATED: 29 JUL 2025
     - Modify the relevant files as outlined in bck_29JUL2025/README
 
 
-    Last Modified 30 JUL 2025:
-        - SO FAR NOTHING ELSE TO DO APPARENTLY; STILL TESTING THOUGH
-        - Tested with model hbd_10, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
-        - Tested with model hbd_10_gd0, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
+Last Modified 30 JUL 2025:
+    - SO FAR NOTHING ELSE TO DO APPARENTLY; STILL TESTING THOUGH
+    - Tested with model hbd_10, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
+    - Tested with model hbd_10_gd0, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
 
 
 -----------------------------------------

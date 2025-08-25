@@ -25,6 +25,7 @@ rsync -avzP ../../../pm/init_part.f90 .
 rsync -avzP ../../../pm/particle_tree.f90 .
 rsync -avzP ../../../pm/rho_fine.f90 .
 
+-----------------------------------------
 IMPORTANT:
 
 	1) These patches do not split all if-clauses of the form:

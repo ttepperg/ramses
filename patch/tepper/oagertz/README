@@ -13,13 +13,13 @@ CREATED: 30 JUL 2025
     - Modified the relevant files as outlined below (*)
 
 
-    Last Modified 5 AUG 2025:
-    - Compilation succeeds
-    - TESTED with fgas10_ramses_fork: FAILS
+Last Modified 5 AUG 2025:
+- Compilation succeeds
+- TESTED with fgas10_ramses_fork: FAILS
 
-    Last Modified 6 AUG 2025:
-    - Fixed bug in feedback.f90 (see README for details)
-    - TESTED with fgas10_ramses_fork: SUCCESS
+Last Modified 6 AUG 2025:
+- Fixed bug in feedback.f90 (see README for details)
+- TESTED with fgas10_ramses_fork: SUCCESS
 
 
 ABOUT:
@@ -41,8 +41,43 @@ BUGS:
     - feedback.f90/ subroutine 'kinetic_feedback':
         variable 'ZSN' is hardcoded to use the first entry in 'zp', i.e. zp(...,1); not sure if this is correct!
 
+IMPORTANT:
+
+	1) These patches DO NOT SPLIT all if-clauses of the form:
+
+		if(star.or.sink)then
+			if(metal)then
+			endif
+		endif
+	into:
+		if(star.or.sink)then
+			...
+		endif
+		if(metal)then
+			...
+		endif
+
+	as does my dice patch in, e.g. particle_tree.f90.
+	BUT MUST split these to allow metal advection for gas w | w/o cooling also when there is not star formation!
+
 TO DO:
-    Make feedback.f90 compatible with main branch. For now, it has been copied as is from src_orig as is
+    - Make feedback.f90 compatible with main branch. For now, it has been copied as is from src_orig as is
+
+    - To allow for metal advection for gas w | w/o cooling also when there is not star formation, MUST split all if-clauses of the form:
+
+		if(star.or.sink)then
+			if(metal)then
+			endif
+		endif
+	into:
+		if(star.or.sink)then
+			...
+		endif
+		if(metal)then
+			...
+		endif
+
+	as does my dice patch in, e.g. particle_tree.f90
 
 
 (*) REQUIRED STEPS:

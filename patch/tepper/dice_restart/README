@@ -12,70 +12,69 @@ CREATED: 30 JUL 2025
     - Modified the relevant files as outlined in bck_29JUL2025/README
 
 
-    USAGE (*):
+Last Modified 31 JUL 2025:
 
-    In the NML, use:
+    - Tested with model dice_restart_gas, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH_GAS
+        - tested normal run
+        - tested normal restart run
+        - tested dice_restart run
+            - changing number of cpus
+            - adding ICs at restart
 
-    &RESTART_PARAMS
-    nrestart2=N			! restart at snapshot N
-    add_dice_ic=.true.  ! optional; to load additional DICE ICS at restart
-    restart_vars=6,7   	!-> corresponds to the actual indices of passive scalars (excluding temperature); mandatory when hydro = .true.
-    /
+Last Modified 30 JUL 2025:
 
-    &INIT_PARAMS
-    filetype='ramses_dice'
-    /
-
-    &RUN_PARAMS
-    nrestart=0
-    /
-
-    (*) See patch/tepper/namelist/dice_restart.nml and dice_restart_gas.nml
-
-
-    KNOWN BUGS
-
-        - DOES NOT WORK when star-formation is included:
-        Restarting a simulation (h_00_gh0_lr_ofe_wh_rs) with the oagertz/dice_restart patch (which derives from this), leads to the mass of evolved, newborn stellar particles drop below their allowed minimum value.
-        -> TO BE CHECKED AGAIN AND FIXED ASAP
-
-        - Main step starts at 1 instead of at the actual last value at restart; the same is true for nstep_coarse.
-        -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
-
-    	- When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)
-        -> TO BE CHECKED AGAIN AND FIXED ASAP
-
-    	- Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
-        -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
-
-    	- Particles at or beyond the box boundary will be tossed at restart
-        -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
+    - SO FAR NOTHING ELSE TO DO APPARENTLY; STILL TESTING THOUGH
+    - Tested with model dice_restart, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH
+        - tested normal run
+        - tested normal restart run
+        - tested dice_restart run
+            - changing number of cpus
+            - adding ICs at restart
 
 
-    TO DO:
+USAGE (*):
 
-    	- Remove obsolete bits such as uu for particles [what else?]
+In the NML, use:
+
+&RESTART_PARAMS
+nrestart2=N			! restart at snapshot N
+add_dice_ic=.true.  ! optional; to load additional DICE ICS at restart
+restart_vars=6,7   	!-> corresponds to the actual indices of passive scalars (excluding temperature); mandatory when hydro = .true.
+/
+
+&INIT_PARAMS
+filetype='ramses_dice'
+/
+
+&RUN_PARAMS
+nrestart=0
+/
+
+(*) See patch/tepper/namelist/dice_restart.nml and dice_restart_gas.nml
 
 
-    Last Modified 31 JUL 2025:
+BUGS
 
-        - Tested with model dice_restart_gas, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH_GAS
-            - tested normal run
-            - tested normal restart run
-            - tested dice_restart run
-                - changing number of cpus
-                - adding ICs at restart
+    - DOES NOT WORK when star-formation is included:
+    Restarting a simulation (h_00_gh0_lr_ofe_wh_rs) with the oagertz/dice_restart patch (which derives from this), leads to the mass of evolved, newborn stellar particles drop below their allowed minimum value.
+    -> TO BE CHECKED AGAIN AND FIXED ASAP
 
-    Last Modified 30 JUL 2025:
+    - Main step starts at 1 instead of at the actual last value at restart; the same is true for nstep_coarse.
+    -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
 
-        - SO FAR NOTHING ELSE TO DO APPARENTLY; STILL TESTING THOUGH
-        - Tested with model dice_restart, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH
-            - tested normal run
-            - tested normal restart run
-            - tested dice_restart run
-                - changing number of cpus
-                - adding ICs at restart
+	- When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)
+    -> TO BE CHECKED AGAIN AND FIXED ASAP
 
+	- Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
+    -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
+
+	- Particles at or beyond the box boundary will be tossed at restart
+    -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
+
+
+TO DO:
+
+	- Remove obsolete bits such as uu for particles [what else?]
 
 -----------------------------------------
 MODIFIED FILES
