@@ -36,4 +36,4 @@ __pycache__
 .vscode
 *bck*
 *txt
-*nml
+*.nml
