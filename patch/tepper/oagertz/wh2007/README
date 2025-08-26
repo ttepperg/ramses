@@ -1,25 +1,48 @@
-Author: Dr. Thorsten Tepper Garcia
+Author
+    Dr. Thorsten Tepper Garcia
 
-Created: 07 MAR 2024
+Created
+    07 MAR 2024
 
     Last modified:
 
-    26 AUG 2025:
+    26 AUG 2025
     Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
-    TESTING in progress with model
-        h_01_gh2_lr_ofe_wh
+    Tested in progress with model h_01_gh2_lr_ofe_wh, compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH_WH07
 
-About:
+
+About
+
 	This directory contains a modified version of oagertz/feedback.90. The idea is to test different SNII O and Fe yields, specifically the yields as given by EDGE (default) vs. Woosley and Hager (2007).
 
-	The modification consists in swapping the following lines (commented vs uncommented, and fixing some typos in the authors' names), i.e. changing this:
+
+Usage
+    N/A
+
+
+Notes
+    N/A
+
+
+To-Do
+    N/A
+
+
+Bugs
+    N/A
+
+
+Modifications
+
+    feedback.f90:
+	Swapped the following lines (commented vs uncommented, and fixed some typos in the authors' names), i.e. changed this:
 
         !mlossmetals(j,1)=mlossmetals(j,1)+numII*0.375d0*exp(-17.94d0/meanmassM)*scale_m/vol_loc(j)  !1=Fe  ------ Woosley & Hager (2007)
         !mlossmetals(j,2)=mlossmetals(j,2)+numII*27.66d0*exp(-51.81d0/meanmassM)*scale_m/vol_loc(j)  !2=O ------ Woosley & Hager (2007)
         mlossmetals(j,1)=mlossmetals(j,1)+numII*SNII_Fe_yield(meanmassM,mettM)*scale_m/vol_loc(j) !1=Fe EDGE2
         mlossmetals(j,2)=mlossmetals(j,2)+numII*SNII_O_yield(meanmassM,mettM)*scale_m/vol_loc(j)  !2=O  EDGE2
 
-	to this:
+	by this:
 
         mlossmetals(j,1)=mlossmetals(j,1)+numII*0.375d0*exp(-17.94d0/meanmassM)*scale_m/vol_loc(j)  !1=Fe  ------ Woosley & Hager (2007)
         mlossmetals(j,2)=mlossmetals(j,2)+numII*27.66d0*exp(-51.81d0/meanmassM)*scale_m/vol_loc(j)  !2=O ------ Woosley & Hager (2007)

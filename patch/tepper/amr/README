@@ -1,28 +1,44 @@
-AUTHOR: Dr. Thorsten Tepper Garcia
+Author
+    Dr. Thorsten Tepper Garcia
 
-CREATED: 29 JUL 2025
+Created
+    12 MAY 2020
 
-    This file is a log intended to keep track and guide me through the process of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
+    Last Modified:
 
-    This file replaces bck_29JUL2025/README. See the latter for more information.
+    5 AUG 2025
+    - Added read_params.f90 to patch (see below)
 
-    STEPS COMPLETED
-    - Backed up old patch files in bck_29JUL2025
-    - Copied relevant files from ramses_fork/amr
-    - Modify the relevant files as outlined in bck_29JUL2025/README
-
-
-Last Modified 5 AUG 2025:
-- Added read_params.f90 to patch (see below)
-
-Last Modified 29 JUL 2025:
-- SO FAR NOTHING ELSE TO DO APPARENTLY; STILL TESTING THOUGH
-- Tested with model hbd_10, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
-- Tested with model hbd_10_gd0, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
+    29 JUL 2025:
+    Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir. The previous patched files have been moved to the directory bck_29JUL2025.
+    Added detail information about the modifications needed (see below).
+    Tested with model hbd_10, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
+    Tested with model hbd_10_gd0, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
 
 
------------------------------------------
-MODIFIED FILES
+About
+
+    This subdirectory contains a number of patches
+    to files originally in amr, unless stated otherwise.
+
+Usage
+    N/A
+
+
+Notes
+    N/A
+
+
+To-DO
+    N/A
+
+
+Bugs
+    N/A
+
+
+Modifications
+** Note that not all modifications are detailed as they are, but they can be easily searched for with the information provided
 
     amr_parameters.f90:
     - added output parameter 'output_dir' (type character(len=80))

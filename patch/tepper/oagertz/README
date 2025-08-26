@@ -1,28 +1,39 @@
-AUTHOR: Dr. Thorsten Tepper Garcia
+Author
+    Dr. Thorsten Tepper Garcia
 
-CREATED: 30 JUL 2025
+Created
+    01 FEB 2023
 
-    This file is a log intended to keep track and guide me through the process of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
+	Last modified:
 
-    This file replaces bck_29JUL2025/README. See the latter for more information.
-
-    STEPS COMPLETED
-    - Backed up old patch files in bck_29JUL2025 (back dated for consistency with modifications to other of my patches)
-    - Copied relevant files from /Users/tepper/codes/ramses_agertz/ramses (see below)
-    - Copied the relevant files from /Users/tepper/codes/ramses_fork
-    - Modified the relevant files as outlined below (*)
-
-
-Last Modified 5 AUG 2025:
-- Compilation succeeds
-- TESTED with fgas10_ramses_fork: FAILS
-
-Last Modified 6 AUG 2025:
-- Fixed bug in feedback.f90 (see README for details)
-- TESTED with fgas10_ramses_fork: SUCCESS
+    6 AUG 2025
+    Fixed bug in feedback.f90 (see  Modifications below for details)
+    Tested with model fgas10_ramses_fork, compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZPATCH
+    Test SUCCESSFUL
 
 
-ABOUT:
+    5 AUG 2025
+    Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir. The previous patched files have been moved to the directory bck_29JUL2025.
+    Added detail information about the modifications needed (see below).
+    Tested with model fgas10_ramses_fork, compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZPATCH
+    Test FAILED
+    IMPORTANT: The file condinit.f90_fgas10_ramses_fork is needed to run model 'fgas10_ramses_fork'. To this end, see instructions in header of NML file namelist/fgas10_ramses_fork.nml
+
+
+	15 JAN 2024
+	Added some missing files:
+		- adaptive_loop.f90
+		- movie.f90
+		- particle_snapshot.f90
+		- pm_parameters.f90
+		- read_params.f90
+	which required CHANGES to:
+		- amr_parameters.f90
+	The changes have been carried out including the changes required by O.Agertz patch and my own patches (where applicable)
+	This in turn required some changes to the relevant files in oagertz/dice
+
+
+About
 
     This directory contains a number of source files modified to duplicate Oscar Agertz's Ramses patch shared by him with me and fully self-contained in:
 
@@ -34,16 +45,93 @@ ABOUT:
 
     The file src_orig_list.txt (created with retrieve_src.sh) contains a list of the files WITH THEIR FULL PATHS in here less sub-directories and their content, created for convenience. These files are automatically retrieved and copied into src_orig.
 
-    The file condinit.f90_fgas10_ramses_fork is needed to run model 'fgas10_ramses_fork'. To this end, see instructions in header of NML file namelist/fgas10_ramses_fork.nml
+	Instructions from Oscar Agertz himself to include his changes:
+
+	"
+		the only thing we want which is different from the master branch is:
+
+		1) The DICE loader
+		2) feedback.f90, with the relevant parameters added to amr_parameters.f90, read_hydro.f90 and read_hydro_parameters.f90.
+		3) The fact that we have more variables for star particles than in standard RAMSES, specifically
+			mpb: birth mass of particles
+			zp: metals.
+		The treatment of extra star variables entail minor modifications to files like the output_part.f90, init_part.f90, particle_tree.f90 and a couple of others (easily identifiable by grepping for mpb and zp, EDGE, or ERIC within the *f90 source files).
+
+		The rest of the changes made relate to things like particle tracers, compatibility with the genetIC code, a new movie routine used for zoom simulations with automatic particle centering. We don’t need this and a new patch for our project can leave them out.
+	"
+
+    A step by step guide:
+
+        1) From
+                /Users/tepper/codes/ramses_agertz/ramses/
+            copy the relevant source files into
+                /Users/tepper/codes/ramses_fork/patch/tepper/oagertz/src_orig
+            These are automatically retrieved and copied into src_orig by script retrieve_src.sh. See the latter for an full explanation.
+            The file src_orig_list.txt contains a list of these FILES WITH THEIR FULL PATHS, useful to complete the next steps.
+
+        2) From
+                /Users/tepper/codes/ramses_fork/
+            OR
+                /Users/tepper/codes/ramses_fork/patch/tepper
+            copy the corresponding source files; ideally, these are from the most recent Ramses version. Probably THE BEST APPROACH is to do this one by one, together with 3 below.
+            IMPORTANT: My patched files have PRIORITY over their standard copies!
+            Make sure to check if the file under consideration is present in my patches! To check if the file under consideration is present in my patches, see content of file mypatches_list.txt (generated by mypatches_list.txt)
+
+        3) Merge corresponding files using FileMerge
+
+            On a file by file basis:
+
+            3.1 Compare the corresponding files in
+                /Users/tepper/codes/ramses_fork_29JUL2025/patch/tepper/oagertz
+            and
+                /Users/tepper/codes/ramses_fork_29JUL2025/
+            OR
+                /Users/tepper/codes/ramses_fork_29JUL2025/patch/tepper
+            to find out the relevant changes/differences in the former with respect to the latter. It is recommended to open the former on the left, the latter on the right, of FileMerge.
+            IMPORTANT: My patched files have PRIORITY over their standard copies!
+            This means that if file xx.f90 is in any of my patches, this should be copied. To check if the file under consideration is present in my patches, see content of file mypatches_list.txt (generated by mypatches_list.txt)
+
+            3.2 Compare the corresponding files in
+                /Users/tepper/codes/ramses_fork/patch/tepper/oagertz/src_orig
+            and
+                /Users/tepper/codes/ramses_fork/patch/tepper/oagertz/
+            copied in step 3.1, and merge into the latter the differences found in 3.1. It is recommended to open the former on the left, the latter on the right, of FileMerge.
+
+            3.3 Compare the corresponding files in
+                /Users/tepper/codes/ramses_fork/patch/tepper/oagertz/
+            and
+                /Users/tepper/codes/ramses_fork/
+            OR
+                /Users/tepper/codes/ramses_fork/patch/tepper
+            and make sure they only differ by the same bits found in 3.1. It is recommended to open the former on the left, the latter on the right, of FileMerge.
+            IMPORTANT: My patched files have PRIORITY over their standard copies!
+            This means that if file xx.f90 is in any of my patches, this should be copied. To check if the file under consideration is present in my patches, see content of file mypatches_list.txt (generated by mypatches_list.txt)
 
 
-BUGS:
-    - feedback.f90/ subroutine 'kinetic_feedback':
-        variable 'ZSN' is hardcoded to use the first entry in 'zp', i.e. zp(...,1); not sure if this is correct!
+Usage
+    N/A
 
-IMPORTANT:
 
-	1) These patches DO NOT SPLIT all if-clauses of the form:
+Notes
+    - eta_sn is an *obsolete* parameter; but can be used to de-activate feedback if set to =< 0 in NML file
+
+    - units.f90 has been renamed so that it is not longer compiled and overriden by tepper/amr/units.f90. Note that this change MUST be accompanied by including the following block in the NML file (also when running Oscar's original setup!)
+
+	&UNITS_PARAMS
+	units_density = 1.573391528d-26			! g/cm^3 = 1 H / cm^3
+	units_time    = 3.00386047142391D+15 	! s; irrelevant if poisson=.true.
+	units_length  = 3.0856776D+21 			! cm = 1 kpc
+	/
+
+	- condinit.f90 has been copied directly
+
+	- metal_yields.f90 does not exist in the current Ramses version and has been copied directly; note that this requires an appropriate Makefile:
+
+	/Users/tepper/codes/ramses_fork/bin/Makefile_3D_GNU_OLDMPI0_OAGERTZPATCH
+
+	which also contains other modifications wrt my standard Makefiles, e.g. NMETALS = 2, etc.
+
+    - These patches DO NOT SPLIT all if-clauses of the form:
 
 		if(star.or.sink)then
 			if(metal)then
@@ -59,61 +147,22 @@ IMPORTANT:
 
 	as does my dice patch in, e.g. particle_tree.f90.
 
-TO DO:
-    - Make feedback.f90 compatible with main branch. For now, it has been copied as is from src_orig as is
+
+To-Do
+    - Make feedback.f90 compatible with main branch (?)
 
 
-(*) REQUIRED STEPS:
+Bugs
 
-    1) From:
-            /Users/tepper/codes/ramses_agertz/ramses/
-        copy the relevant source files into
-            /Users/tepper/codes/ramses_fork/patch/tepper/oagertz/src_orig
-        These are automatically retrieved and copied into src_orig by script retrieve_src.sh. See the latter for an full explanation.
-        The file src_orig_list.txt contains a list of these FILES WITH THEIR FULL PATHS, useful to complete the next steps.
+    - S*unit_out are not defined if SNdiagnostics = .false.
+	   -> ASSESS AND FIX if necessary
 
-
-    2) From:
-            /Users/tepper/codes/ramses_fork/
-        OR
-            /Users/tepper/codes/ramses_fork/patch/tepper
-        copy the corresponding source files; ideally, these are from the most recent Ramses version. Probably THE BEST APPROACH is to do this one by one, together with 3 below.
-        IMPORTANT: My patched files have PRIORITY over their standard copies!
-        Make sure to check if the file under consideration is present in my patches! To check if the file under consideration is present in my patches, see content of file mypatches_list.txt (generated by mypatches_list.txt)
+   - feedback.f90 / subroutine 'kinetic_feedback':
+       variable 'ZSN' is hardcoded to use the first entry in 'zp', i.e. zp(...,1); not sure if this is correct!
 
 
-    3) Merge corresponding files using FileMerge
-
-        On a file by file basis:
-
-        3.1 Compare the corresponding files in
-            /Users/tepper/codes/ramses_fork_29JUL2025/patch/tepper/oagertz
-        and
-            /Users/tepper/codes/ramses_fork_29JUL2025/
-        OR
-            /Users/tepper/codes/ramses_fork_29JUL2025/patch/tepper
-        to find out the relevant changes/differences in the former with respect to the latter. It is recommended to open the former on the left, the latter on the right, of FileMerge.
-        IMPORTANT: My patched files have PRIORITY over their standard copies!
-        This means that if file xx.f90 is in any of my patches, this should be copied. To check if the file under consideration is present in my patches, see content of file mypatches_list.txt (generated by mypatches_list.txt)
-
-        3.2 Compare the corresponding files in
-            /Users/tepper/codes/ramses_fork/patch/tepper/oagertz/src_orig
-        and
-            /Users/tepper/codes/ramses_fork/patch/tepper/oagertz/
-        copied in step 3.1, and merge into the latter the differences found in 3.1. It is recommended to open the former on the left, the latter on the right, of FileMerge.
-
-        3.3 Compare the corresponding files in
-            /Users/tepper/codes/ramses_fork/patch/tepper/oagertz/
-        and
-            /Users/tepper/codes/ramses_fork/
-        OR
-            /Users/tepper/codes/ramses_fork/patch/tepper
-        and make sure they only differ by the same bits found in 3.1. It is recommended to open the former on the left, the latter on the right, of FileMerge.
-        IMPORTANT: My patched files have PRIORITY over their standard copies!
-        This means that if file xx.f90 is in any of my patches, this should be copied. To check if the file under consideration is present in my patches, see content of file mypatches_list.txt (generated by mypatches_list.txt)
-
------------------------------------------
-MODIFIED FILES
+Modifications
+** Note that not all modifications are detailed as they are, but they can be easily searched for with the information provided
 
     adaptive_loop.f90:
     1 relevant difference(s) with respect to standard version
@@ -125,27 +174,22 @@ MODIFIED FILES
         write(SNunit_out,'("# LOGS OPENED AT: fine step = ",I7,",  t = ",E12.5,",  aexp = ",E10.3)')nstep,t,aexp
     endif
 
-
     add_list.f90:
     11 relevant difference(s) with respect to standard version
     - Added a number of lines, all easily identifiable by 'ERIC', 'EDGE2', or related to variables 'nmetals', 'mpb', or 'zp'
 
-
     amr_commons.f90:
     1 relevant difference(s) with respect to standard version
     - Added declaration of variables SNunit_out, SFunit_out
-
 
     amr_parameters.f90:
     4 relevant difference(s) with respect to my patched version
     - Added declaration of eta_w
     - Added declaration of movie related variables: center_on_particles, do_particle_snapshot, movie_particle_ids, and related
 
-
-    cooling_fine:
+    cooling_fine.f90:
     1 relevant difference(s) with respect to standard version
     - Added calculation of Zolar as ~2 Fe + 1 O (look for 'EDGE2')
-
 
     dump_utils.f90:
     2 relevant difference(s) with respect to standard version
@@ -153,8 +197,8 @@ MODIFIED FILES
 
     feedback.f90:
     Many (~45) differences with respect to standard version
-    copied as is from src_orig, as it seems OK to do so
-    - IMPORTANT: the code required one crucial change to avoid a fatal bug!
+    copied as is from src_orig
+    IMPORTANT: the code required one crucial change to avoid a fatal bug!
     In subroutine 'feedbk', the calling signature of subroutine 'get3cubefather' (declared in  amr/nbors_utils.f90) changed:
     !  old: get3cubefather(ind_cell,nbors_father_cells,nbors_father_grids,ng,ilevel)
     ! new
@@ -166,11 +210,9 @@ MODIFIED FILES
             flush(SNunit_out)
         endif
 
-
     hydro_parameters.f90:
     1 relevant difference(s) with respect to standard version
     - Added declaration and initialisation of variable 'nmetals'
-
 
     init_part.f90:
     9 relevant difference(s) with respect to my patched version
@@ -178,15 +220,12 @@ MODIFIED FILES
     - Added use of do_particle_snapshot in conditional statement
     - Allocate mpb, extend allocation zp to two dimensions to accomodate nmetals
 
-
     init_tracer.f90:
     1 relevant difference(s) with respect to standard version
     - Replaced tracer_refine by tracer_ivar_refine (and related)
 
-
     metal_yields.f90:
     Non-existent in standard version; copied from src_orig as is
-
 
     movie.f90:
     8 relevant differences with respect to my patched version
@@ -194,12 +233,10 @@ MODIFIED FILES
     - Added declaration of variable 'part_snapshot_file'
     - Added call to (and definition of) subroutine 'compute_frame_center_from_particles'
 
-
     output_hydro.f90:
     2 relevant difference(s) with respect to standard version
     - Add use of met_keys from dump_utils
     - Tag new metal variables with metal_XXX where XXX is one of met_key
-
 
     output_part.f90:
     7 relevant difference(s) with respect to my patched version
@@ -209,10 +246,8 @@ MODIFIED FILES
     - Distinguish between tracer and other particles when writing out mass (why?)
     - Adapted output of particle metallicities to deal with nmetals species
 
-
     particle_snapshot.f90:
     Non-existent in the standard version; copied from src_orig as is
-
 
     particle_tree.90 (one of the TRICKIEST ones)
     9 relevant difference(s) with respect to standard version
@@ -227,17 +262,14 @@ MODIFIED FILES
         - declaration of imet
         - Added/modified emmission of zp and mbp (must be VERY careful with this!)
 
-
     pm_commons.f90:
     2 relevant differences with respect to the standard version
     - Added declaration of variable 'mpb'
     - Modified declaration of variable 'zp' from one to two dimensions
 
-
     pm_parameters.f90:
     1 relevant difference(s) with respect to my patched version
     - Added tweak to initialisation of tracers, by variables and initialising variables 'tracer_ivar_refine' and 'tracer_var_cut_refine'
-
 
     read_hydro_parameters.f90:
     6 relevant difference(s) with respect to the standard version
@@ -248,7 +280,6 @@ MODIFIED FILES
     - Modified initialisation of variable 'idelay'
     - Added a check for 'nmetals'
 
-
     read_params.f90:
     7 relevant differences with respect to my patched version
     - Added variables 'log_exist', 'logdir' and 'filename', related to SF/SN output diagnostics
@@ -258,7 +289,6 @@ MODIFIED FILES
         - Added SN/SF diagnostics block just before 'Rearrange level dependent arrays'
         - Added customo movie settings checks just after 'Too many errors in the namelist'
     - Added TRIM(output_dir) to variable 'logdir' relevant to SN/SFunits
-
 
     star_formation.f90:
     N relevant differences with respect to my patched version
@@ -284,7 +314,6 @@ MODIFIED FILES
     at end of loop over new star particles
     - Modified the calculation of gas density according to mass depletion
     - Added a block to empty the tracer particle cache
-
 
     tracer_utils.f90:
     N relevant differences with respect to the standard version

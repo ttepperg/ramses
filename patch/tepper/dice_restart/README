@@ -1,59 +1,100 @@
-AUTHOR: Dr. Thorsten Tepper Garcia
+Author
+    Dr. Thorsten Tepper Garcia
 
-CREATED: 30 JUL 2025
+Created
+    01 JAN 2024
 
-    This file is a log intended to keep track and guide me through the process of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
+	Last modified:
 
-    This file replaces bck_29JUL2025/README. See the latter for more information.
+    31 JUL 2025
+    Tested with model dice_restart_gas, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH_GAS
+    - tested normal run
+    - tested normal restart run
+    - tested dice_restart run
+        - changing number of cpus
+        - adding ICs at restart
 
-    STEPS COMPLETED
-    - Backed up old patch files in bck_29JUL2025 (back dated for consistency with modifications to other of my patches)
-    - Copied relevant files from ramses_fork/path/tepper/dice
-    - Modified the relevant files as outlined in bck_29JUL2025/README
+    30 JUL 2025
+    Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir. The previous patched files have been moved to the directory bck_29JUL2025.
+    Added detail information about the modifications needed (see below).
+    Renamed RESTART_PARAMS by DICE_RESTART_PARAMS.
+    Tested modifications with model dice_restart, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH
+    - tested normal run
+    - tested normal restart run
+    - tested dice_restart run
+        - changing number of cpus
+        - adding ICs at restart
 
+	16 JAN 2024
+	I've introduced a new RESTART_PARAMS specific parameter, nrestart2, to remove the complication introduced by the complication of having nrestart < 0 as the traditional restart patch requires, in particular the need for patched versions of adaptive_loop.f90 and init_time.f90.
+	With this change, the DICE_RESTART is virtually identical to DICE with except of the loading routine in init_part.f90 and some additions to read_params.f90.
 
-Last Modified 31 JUL 2025:
+	18 JAN 2024
+	Allow to load additional DICE ICs at restart; note that this change implies that load_dice is now linked to load_ramses through two parameters: restart_init and add_dice_ic (new!)
+	IMPORTANT: May need to increase npartmax and ngridmax (understandably)
+	Replaced 'ramses' to 'ramses_dice' where relevant to distinguish this patch from the original.
 
-    - Tested with model dice_restart_gas, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH_GAS
-        - tested normal run
-        - tested normal restart run
-        - tested dice_restart run
-            - changing number of cpus
-            - adding ICs at restart
+	25 JAN 2024
+	Added a counter for particle that are tossed because they are moved beyond the box in the previous time step.
+	Removed unnecessary MPI_BCAST clauses.
+	Particle tracer pointer has been added BUT NOT YET TESTED!
 
-Last Modified 30 JUL 2025:
+	20 FEB 2024
+	Remove the use of sink_restart from init_part.f90 as it appeared unnecessary
 
-    - SO FAR NOTHING ELSE TO DO APPARENTLY; STILL TESTING THOUGH
-    - Tested with model dice_restart, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH
-        - tested normal run
-        - tested normal restart run
-        - tested dice_restart run
-            - changing number of cpus
-            - adding ICs at restart
+	28 FEB 2024
+	Added family tag, previously set to 0 by default, now set to the value specified by the ICs (if available)
 
-
-USAGE (*):
-
-In the NML, use:
-
-&RESTART_PARAMS
-nrestart2=N			! restart at snapshot N
-add_dice_ic=.true.  ! optional; to load additional DICE ICS at restart
-restart_vars=6,7   	!-> corresponds to the actual indices of passive scalars (excluding temperature); mandatory when hydro = .true.
-/
-
-&INIT_PARAMS
-filetype='ramses_dice'
-/
-
-&RUN_PARAMS
-nrestart=0
-/
-
-(*) See patch/tepper/namelist/dice_restart.nml and dice_restart_gas.nml
+	20 MAR 2024
+	Assign particles actual level 'lev_restart' read from particle file instead of 'levelmin'; particularly relevant for star particles, which are placed at maximum refinement level
 
 
-BUGS
+About
+
+    This directory contains a patch intended to run DICE simulations
+    with the capability to restart and include additional DICE initial conditions
+    at restart.
+
+    The base of the patch are the original RESTART patch and the DICE patch (in my case composed of the original patch in patch/init/dice and my patched version in patch/tepper/dice).
+
+    The first patch modification consists of an addition of a modified version of the case('ramses') snippet taken from patch/init/restart/init_part.f90, available via the subroutine load_ramses.
+
+    It has been renamed to ramses_dice to distinguish it from the original.
+    Relevant bits are identified by comments containing 'DICE [patch]' and 'RESTART [patch]'.
+
+
+Usage (*)
+
+    In the NML, use:
+
+    &DICE_RESTART_PARAMS
+    nrestart2=N			! restart at snapshot N
+    add_dice_ic=.true.  ! optional; to load additional DICE ICS at restart
+    restart_vars=6,7   	!-> corresponds to the actual indices of passive scalars (excluding temperature); mandatory when hydro = .true.
+    /
+
+    &INIT_PARAMS
+    filetype='ramses_dice'
+    /
+
+    &RUN_PARAMS
+    nrestart=0
+    /
+
+
+    (*) See e.g. patch/tepper/namelist/dice_restart.nml and dice_restart_gas.nml
+
+
+Notes
+    N/A
+
+
+To-Do
+
+	- Remove obsolete bits such as uu for particles, etc.
+
+
+Bugs
 
     - DOES NOT WORK when star-formation is included:
     Restarting a simulation (h_00_gh0_lr_ofe_wh_rs) with the oagertz/dice_restart patch (which derives from this), leads to the mass of evolved, newborn stellar particles drop below their allowed minimum value.
@@ -62,37 +103,31 @@ BUGS
     - Main step starts at 1 instead of at the actual last value at restart; the same is true for nstep_coarse.
     -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
 
-	- When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)
+    - When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)
     -> TO BE CHECKED AGAIN AND FIXED ASAP
 
-	- Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
+    - Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
     -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
 
-	- Particles at or beyond the box boundary will be tossed at restart
+    - Some particles end up at or beyond the box boundary at restart
+    The fix for now is to toss these, which is not fully consistent with the restart snapshot state
     -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
 
 
-TO DO:
-
-	- Remove obsolete bits such as uu for particles [what else?]
-
------------------------------------------
-MODIFIED FILES
-
+Modifications
+** Note that not all modifications are detailed as they are, but they can be easily searched for with the information provided
 
     read_params.f90:
     - added module 'dice_restart_commons' (called restart_commons pre JUL2025)
     - added subroutine 'read_dice_restart_params()', which includes the declaration of the NML block dice_restart_params (called restart_params pre JUL2025).
-    IMPORTANT: Note that this requires to update all relevant NML files in patch/tepper/namelist -> TO DO
+    IMPORTANT: Note that this requires to update all relevant NML files in patch/tepper/namelist -> DONE
     - added the strings '! DICE patch' and '! DICE_RESTART patch' to several locations to distinguish between the snippets particular to each of thee patches
     - added verification of some dice_restart_params parameters to subroutine read_run_params()
-
 
     init_part.f90:
     - added subroutine load_ramses_dice and corresponding:
         case ('ramses_dice')
             call load_ramses_dice
-
     - added to subroutine load_dice the following:
         use restart_commons, only: restart_init
     and some related checks (look for dice_restart_init)

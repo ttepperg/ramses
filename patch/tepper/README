@@ -1,20 +1,21 @@
-Author: Dr. Thorsten Tepper Garcia
+Author
+    Dr. Thorsten Tepper Garcia
 
-Created: 13 MAY 2020
+Created
+    13 MAY 2020
 
-About:
+About
 
-This directory contains a number of patches, organised
-in subdirectories with names identical to the directories
-where the original source files are located.
+    This directory contains a number of patches, organised
+    in subdirectories with names identical to the directories
+    where the original source files are located.
 
-The idea is to preserve ramses' package structure to
-facilitate updating my patches whenever the code gets
-updated, and conversely, to suggest changes to the main code
-(and request the corresponding git pulls).
+    The idea is to preserve ramses' package structure to
+    facilitate updating my patches whenever the code gets
+    updated, and conversely, to suggest changes to the main code
+    (and request the corresponding git pulls).
 
-For more information see each subdirectory's README.
+    For more information see each subdirectory's README.
 
-Note that other patches may exist within this directory,
-e.g. oagertz, that contain a number of files NOT organised
-in subdirectories to facilitate their handling.
+    Note that other patches may exist within this directory,
+    e.g. oagertz.

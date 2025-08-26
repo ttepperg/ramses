@@ -1,33 +1,50 @@
-AUTHOR: Dr. Thorsten Tepper Garcia
+Author
+    Dr. Thorsten Tepper Garcia
 
-CREATED: 29 JUL 2025
+Created
+    13 MAY 2020
 
-    This file is a log intended to keep track and guide me through the process of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
+	Last modified:
 
-    This file replaces bck_29JUL2025/README. See the latter for more information.
+    6 AUG 2025
+    Added feedback.f90 to patch (see Modifications below)
 
-    STEPS COMPLETED
-    - Backed up old patch files in bck_29JUL2025
-    - Copied relevant files from ramses_fork/pm
-    - Modify the relevant files as outlined in bck_29JUL2025/README
+    5 AUG 2025
+    Added init_part.f90 to patch (see Modifications below)
+    Added star_formation.f90 to patch (see Modifications below)
 
+    29 JUL 2025
+    Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir. The previous patched files have been moved to the directory bck_29JUL2025.
+    Added detail information about the modifications needed (see below).
+    Tested with model hbd_10, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
+    Tested with model hbd_10_gd0, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
 
-Last Modified 6 AUG 2025:
-- Added feedback.f90 to patch (see below)
-
-Last Modified 5 AUG 2025:
-- Added init_part.f90 to patch (see below)
-- Added star_formation.f90 to patch (see below)
-
-Last Modified 29 JUL 2025:
-- SO FAR NOTHING ELSE TO DO APPARENTLY; STILL TESTING THOUGH
-- Tested with model hbd_10, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
-- Tested with model hbd_10_gd0, compiled with  Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
+	20 FEB 2024
+	init_sink.f90: For some strange reason, restarting with a sink without having previous sinks fails due to the absence of the sink_XXXXX.csv file (not sure why it worked before!). Made several changes to the block if(nrestart > 0) to fix (?) this issue.
 
 
------------------------------------------
-MODIFIED FILES
+About
 
+    This subdirectory contains a number of patches
+    to files originally in pm, unless stated otherwise.
+
+Usage
+    N/A
+
+
+Notes
+    N/A
+
+
+To-Do
+    N/A
+
+
+Bugs
+    N/A
+
+
+Modifications
 
     output_sink.f90:
     - changed (again) output file header string 'msink' to 'mass' for
@@ -37,8 +54,8 @@ MODIFIED FILES
     output_part.f90:
     - split all if-clauses of the form:
           if(star.or.sink)then
-        	if(metal)then
-        	endif
+            if(metal)then
+            endif
           endif
      into
           if(star.or.sink)then
@@ -68,13 +85,13 @@ MODIFIED FILES
     - added input value 'sid' to last column
     - changed slevel to levelmin in lines 258-9
     - swapped lines 261 and 262:
-         	sinkint_level=levelmin
-    		103  continue
-    	to:
-    		103  continue
-         	sinkint_level=levelmin
+            sinkint_level=levelmin
+            103  continue
+        to:
+            103  continue
+            sinkint_level=levelmin
 
-    	as otherwise sinkint_level may remain uninitialised.
+        as otherwise sinkint_level may remain uninitialised.
     - moved output sink properties to screen to end of subroutine
     - added direct force scheme information to output to screen
     - added TRIM(output_dir) to filename strings where relevant
@@ -82,10 +99,10 @@ MODIFIED FILES
 
     sink_particle.f90:
     - added parameters
-    	remove_sink
-    	sink_tscale
-    	sink_tscale0
-    	sink_restart
+        remove_sink
+        sink_tscale
+        sink_tscale0
+        sink_restart
      to sink_params block; the first three are used in routine update_sink, the last one in routines init_sink and init_part. The first three allow to exponentially decrase the mass of a sink with time (see routine update_sink). The last one, sink_restart, if set .true., allows to include sinks at restart
      via an initfile(1)/ic_sink_restart text file for a simulation that previously did not include sinks. If the simulation did include sinks, then additional sinks may be added via initfile(1)/ic_sink_restart without the need to set sink_restart
 

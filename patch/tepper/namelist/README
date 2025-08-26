@@ -1,25 +1,33 @@
-Author: Dr. Thorsten Tepper Garcia
+Author
+    Dr. Thorsten Tepper Garcia
 
-Created: 15 MAY 2020
+Created
+    15 MAY 2020
 
-About:
+    Last modified:
 
-The content of this subdirectory does not correspond to
-actual patches, my rather the namelist(s) I have used to run
-simulations.
+    26 AUG 2025
+    NML files are no longer tracked with Git, since they are subject to frequent changes (e.g. testing, restarting, changing destination dir, etc.) that make its tracking tedious. Tracking may not be necessary as they are saved with each simulation's output.
 
-Initial conditions: Initial conditions are expected in the
-output directory (output_dir), within a subdirectory 'ic',
-i.e. <initfile> = <output_dir>/ic
+About
 
-The idea is that the output directory, i.e. the ic directory
-and any of the output_xxxxx directories together contain
-all the necessary information and data to reproduce the
-corresponding simulation.
+    The content of this subdirectory does not correspond to
+    actual patches, my rather the namelist(s) I have used to run
+    simulations.
 
-IMPORTANT:
-- initfile dir name must be such that expanded by the IC file names
-collectively has len < 80 characters
-- output_dir name MUST have len < 40 characters to accomodate
-the longest Ramses output file names,
-such as output_xxxxx/part_file_descriptor.txt !
+    Initial conditions: Initial conditions are expected in the
+    output directory (output_dir), within a subdirectory 'ic',
+    i.e. <initfile> = <output_dir>/ic
+
+    The idea is that the output directory, i.e. the ic directory
+    and any of the output_xxxxx directories together contain
+    all the necessary information and data to reproduce the
+    corresponding simulation.
+
+
+Notes
+    - initfile dir name must be such that expanded by the IC file names
+    collectively has len < 80 characters
+    - output_dir name MUST have len < 40 characters to accomodate
+    the longest Ramses output file names,
+    such as output_xxxxx/part_file_descriptor.txt !
