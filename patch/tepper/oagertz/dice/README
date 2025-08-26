@@ -1,0 +1,323 @@
+Author: Dr. Thorsten Tepper Garcia
+
+Created: 08 FEB 2023
+
+	Last modified:
+
+    26 AUG 2025:
+    Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
+    Added detail information about the modifications needed to merge my dice patch with oagertz.
+    TESTING in progress with model
+        fgas10_agama_rf
+        hbd_10_gd11_s4_star_tag
+
+	15 JAN 2024:
+	Changes to read_params.f90 in response to changes to some files one level up (see corresponding change log in ../README)
+
+	01 FEB 2024:
+	Remove init_refine.f90 because it is redundant with the same file in patch/tepper/dice.
+
+	15 FEB 2024:
+	init_flow_fine.f90: Enclose 'if(metal)' statements within 'if(star.or.sink)' statement, consistent with other subroutines, to avoid segmentation fault when eps_star = 0. SEE "IMPORTANT 1)" below
+
+	28 FEB 2024:
+	Added family tag, previously set to 0 by default, now set to the value specified by the ICs (if available)
+
+	06 MAR 2024:
+	Introduced two new DICE input parameters, ic_scale_metalO/Fe, to weigh the O/Fe initial abundance ratios (previously hard-coded to a value of 0.333)
+
+About:
+
+This subdirectory contains a number of patches to files originally in /Users/tepper/codes/ramses_fork/patch/init/dice/.
+
+The modifications are intended to make this patch work with /Users/tepper/codes/ramses_fork/patch/tepper/oagertz/.
+
+The necessary modifications have been accomplished by:
+	1) Copying to this directory *all* the file in /Users/tepper/codes/ramses_fork/patch/init/dice/.
+	2) Comparing with FileMerge the files *common* to the two above directories (add_list.f90, init_part.f90, particle_tree.f90), and adding the required code snippets
+	3) Some files needed to be additionally edited by hand:
+		- init_part.f90: make the zp array consistent with nmetals, i.e. 2D
+        - init_flow_fine.f90: make the metallicity initialisation consistent with nmetals, i.e. 2D, accounting for the variables ic_scale_metalO and ic_scale_metalFe
+
+
+Notes:
+	- Some modifications are flagged by 'ERIC', 'EDGE2', or 'TTG', but not all
+	- See also:
+		/Users/tepper/codes/ramses_agertz/ramses/patch/dice/README
+
+IMPORTANT:
+
+	1) These patches do not split all if-clauses of the form:
+
+		if(star.or.sink)then
+			if(metal)then
+			endif
+		endif
+	into:
+		if(star.or.sink)then
+			...
+		endif
+		if(metal)then
+			...
+		endif
+
+	as does my dice patch in, e.g. particle_tree.f90.
+
+	2) From Tine Colman related to init_flow_fine.f90
+
+	    "! TC: this file should now be compatible with MHD, but I didn't test it."
+
+
+
+-----------------------------------------
+MODIFIED FILES AND MODIFICATIONS
+* Note that not all modifications are detailed as they are, but they can be easily searched for with the information provided
+
+    add_list.f90
+    12 relevant difference(s) with respect to my patched dice version
+    To subroutines add_free() and add_free_cond()
+    - added
+        use hydro_parameters,only: nmetals
+    - added
+        integer:: imet ! ERIC
+    - added initialisation
+        mpb(ind_part(j))=0.0  !EDGE2
+    - added initialisation
+        zp(ind_part(j),imet)=0.0
+    - added blocks starting with
+        if (dice_init)
+
+
+    init_part.f90:
+    14 relevant difference(s) with respect to my patched dice version
+    - all if-clauses of the form:
+        if(star.or.sink)then
+            ...
+        endif
+        if(metal)then
+        endif
+    nested into:
+        if(star.or.sink)then
+            if(metal)then
+            endif
+        endif
+    - added
+        use hydro_parameters,only: nmetals ! ERIC
+    - added
+        integer :: imet ! ERIC
+    - added allocation
+        allocate(itmpp (npartmax))
+    - added allocation / initialisation
+        allocate(mpb(npartmax))
+        mpb=0.0
+    - added allocation / initialisation
+        allocate(zp(npartmax,nmetals)) ! ERIC
+        zp=0.0
+    - added read
+        zp(1:npart2,imet)=xdp
+    - added read
+        mpb(1:npart2)=xdp
+    - added initialisation
+        zp(ipart,imet)=0d0
+    - modified assignment of metallicity
+    ! zp(ipart)  = zz(i)
+        zp(ipart,1)  = ic_scale_metalFe * zz(i) !Iron
+        zp(ipart,2)  = ic_scale_metalO  * zz(i) !Oxygen
+    and
+        zp(ipart+1,1:nmetals)  = z_ave*0.02 ! TTG
+    where relevant
+
+
+    - init_flow_fine.f90:
+    8 relevant difference(s) with respect to my patched dice version
+    - replaced in init_uold()
+        if(metal) then
+          if(ivar.eq.imetal) uold(active(ilevel)%igrid(i)+iskip,ivar) = max(IG_rho/scale_nH,smallr)*IG_metal*ic_scale_metal
+        endif
+    by
+        if(star.or.sink)then
+           ! ERIC
+           if(metal) then
+             ! Iron
+             if(ivar.eq.imetal) &
+             & uold(active(ilevel)%igrid(i)+iskip,ivar) = &
+             & ic_scale_metalFe * max(IG_rho/scale_nH,smallr) * IG_metal * ic_scale_metal
+             ! Oxygen
+             if(ivar.eq.imetal+1) &
+             & uold(active(ilevel)%igrid(i)+iskip,ivar) = &
+             & ic_scale_metalO * max(IG_rho/scale_nH,smallr) * IG_metal * ic_scale_metal
+           endif
+        endif
+    - added to surbroutine init_gas_cic()
+        integer:: imet ! ERIC
+    - replaced in soubroutine init_gas_cic()
+        if(metal) then
+          uold(indp(j,ind),imetal)=uold(indp(j,ind),imetal)+mp(ind_part(j))*vol(j,ind)/vol_loc(j)*zp(ind_part(j))
+        endif
+    by
+        if(star.or.sink)then
+           if(metal) then
+              ! ERIC
+              do imet=1,nmetals
+                 uold(indp(j,ind),imetal+imet-1) = uold(indp(j,ind),imetal+imet-1) + mp(ind_part(j))*vol(j,ind)/vol_loc(j)*zp(ind_part(j),imet)
+              enddo
+           endif
+        endif
+    - added in subroutine init_gas_ngp()
+        integer:: imet ! ERIC
+    - replaced in subroutine init_gas_ngp()
+        if(metal) then
+           uold(indp(j),imetal)=uold(indp(j),imetal)+mp(ind_part(j))/vol_loc(j)*zp(ind_part(j))
+        endif
+    by
+        if(star.or.sink)then
+           if(metal) then
+           ! ERIC
+              do imet=1,nmetals
+                  uold(indp(j),imetal+imet-1) = uold(indp(j),imetal+imet+1) + mp(ind_part(j))/vol_loc(j)*zp(ind_part(j),imet)
+              enddo
+           endif
+        endif
+
+
+    - particle_tree.f90
+    11 relevant difference(s) with respect to my patched dice version
+    - added to subroutine virtual_tree_fine()
+        use hydro_parameters,only: nmetals ! ERIC
+    - replaced
+        if(star.or.sink) then
+            particle_data_width=twondim+2
+        endif
+        if(metal) then
+           particle_data_width=twondim+3
+        endif
+    by
+        if(star.or.sink) then
+           if(metal) then
+              particle_data_width=twondim+2+nmetals+1 ! EDGE2, nmetals + mpb
+           else
+              particle_data_width=twondim+2
+           endif
+        endif
+    - added to subroutine fill_comm()
+        use hydro_parameters,only: nmetals ! ERIC
+        integer::imet ! ERIC
+    - replaced
+            ! Gather particle birth epoch
+            if(star.or.sink)then
+               do i=1,np
+          #ifdef LIGHT_MPI_COMM
+                  reception(icpu,ilevel)%pcomm%u(current_property,ind_com(i))=tp(ind_part(i))
+          #else
+                  reception(icpu,ilevel)%up(ind_com(i),current_property)=tp(ind_part(i))
+          #endif
+               end do
+               current_property = current_property+1
+            end if
+            ! Gather particle metallicity
+            if(metal)then
+               do i=1,np
+          #ifdef LIGHT_MPI_COMM
+                  reception(icpu,ilevel)%pcomm%u(current_property,ind_com(i))=zp(ind_part(i))
+          #else
+                  reception(icpu,ilevel)%up(ind_com(i),current_property)=zp(ind_part(i))
+          #endif
+               end do
+               current_property = current_property+1
+            end if
+    by
+            ! Gather particle birth epoch
+            if(star.or.sink)then
+               do i=1,np
+          #ifdef LIGHT_MPI_COMM
+                  reception(icpu,ilevel)%pcomm%u(current_property,ind_com(i))=tp(ind_part(i))
+          #else
+                  reception(icpu,ilevel)%up(ind_com(i),current_property)=tp(ind_part(i))
+          #endif
+               end do
+               current_property = current_property+1
+               if(metal)then
+                  do imet=1,nmetals ! ERIC
+                     do i=1,np
+          #ifdef LIGHT_MPI_COMM
+                        reception(icpu,ilevel)%pcomm%u(current_property,ind_com(i))=zp(ind_part(i),imet)
+          #else
+                        reception(icpu,ilevel)%up(ind_com(i),current_property)=zp(ind_part(i),imet)
+          #endif
+                     end do
+                     current_property = current_property+1
+                  end do
+               end if
+               do i=1,np
+          #ifdef LIGHT_MPI_COMM
+                  reception(icpu,ilevel)%pcomm%u(current_property,ind_com(i))=mpb(ind_part(i))
+          #else
+                  reception(icpu,ilevel)%up(ind_com(i),current_property)=mpb(ind_part(i))
+          #endif
+               end do
+               current_property = current_property+1
+            end if
+    - added to subroutine empty_comm()
+        use hydro_parameters,only: nmetals ! ERIC
+        integer::imet ! ERIC
+    - replaced
+            ! Scatter particle birth epoch
+            if(star.or.sink)then
+               do i=1,np
+          #ifdef LIGHT_MPI_COMM
+                  tp(ind_part(i))=emission_part(ilevel)%u(current_property, offset_np+ind_com(i)-1)
+          #else
+                  tp(ind_part(i))=emission(icpu,ilevel)%up(ind_com(i),current_property)
+          #endif
+               end do
+               current_property = current_property+1
+            end if
+            ! Scatter particle metallicity
+            if(metal)then
+               do i=1,np
+          #ifdef LIGHT_MPI_COMM
+                  zp(ind_part(i))=emission_part(ilevel)%u(current_property, offset_np+ind_com(i)-1)
+          #else
+                  zp(ind_part(i))=emission(icpu,ilevel)%up(ind_com(i),current_property)
+          #endif
+               end do
+               current_property = current_property+1
+            end if
+    by
+            ! Scatter particle birth epoch
+            if(star.or.sink)then
+               do i=1,np
+          #ifdef LIGHT_MPI_COMM
+                  tp(ind_part(i))=emission_part(ilevel)%u(current_property, offset_np+ind_com(i)-1)
+          #else
+                  tp(ind_part(i))=emission(icpu,ilevel)%up(ind_com(i),current_property)
+          #endif
+               end do
+               current_property = current_property+1
+               if(metal)then
+                  do imet=1,nmetals ! ERIC
+                     do i=1,np
+          #ifdef LIGHT_MPI_COMM
+                        zp(ind_part(i),imet)=emission_part(ilevel)%u(current_property, offset_np+ind_com(i)-1)
+          #else
+                        zp(ind_part(i),imet)=emission(icpu,ilevel)%up(ind_com(i),current_property)
+          #endif
+                     end do
+                     current_property = current_property+1
+                  end do
+               end if
+               do i=1,np
+          #ifdef LIGHT_MPI_COMM
+                  mpb(ind_part(i))=emission_part(ilevel)%u(current_property, offset_np+ind_com(i)-1)
+          #else
+                  mpb(ind_part(i))=emission(icpu,ilevel)%up(ind_com(i),current_property)
+          #endif
+               end do
+               current_property = current_property+1
+            end if
+
+
+    - read_paramas.f90
+    3 relevant difference(s) with respect to my patched dice version
+    - ALL relating to reading the DICE_PARAMS block; easily identifiable by 'dice', etc.
+    - added ic_scale_metalO, ic_scale_metalFe to dice_params block
