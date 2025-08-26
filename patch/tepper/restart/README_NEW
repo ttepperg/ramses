@@ -1,0 +1,1 @@
+This patch did not work prior to 29 JUL 2025, and therefore I've not yet made the effort to merge it with the post JUL2025 Ramses versions, as I did with my other patches. See e.g. the README in my dice patch for more information about this merge.
