@@ -22,7 +22,7 @@ poisson=.true.
 !tracer=.false. -> not available in this patch
 ncontrol=1
 nremap=7
-nrestart=0
+nrestart=6
 restart_remap=.true.
 nstepmax=10000000
 nsubcycle=1,1,2,2,2,2,2,2,2,2,2
@@ -58,7 +58,7 @@ energy=.true.
 metalscaling=.true.
 SNIamodel=1      		!DTD, t^-1.12
 Ia_rate=2.6d-13  		!Field DTD
-SNdiagnostics=.false. 	!not needed for now (what is it good for?)
+SNdiagnostics=.true.
 /
 
 &SF_PARAMS
@@ -68,6 +68,7 @@ n_star=10.0
 temp_star=100.0			! irrelevant parameter
 T2_star=0.1d0			! temperature floor (K)
 g_star=2.0
+SFdiagnostics=.true.
 /
 
 &COOLING_PARAMS
@@ -109,8 +110,8 @@ boxlen=600.0
 !check: $> echo initfile(1)/output_xxxxx/hydro_file_descriptor.txt | wc -c
 &INIT_PARAMS
 filetype='dice'
-initfile(1)='/g/data/aa8/ttg562/fgas10_agama_rf/ic/'
-!initfile(1)='/import/photon2/tepper/fgas10_agama_rf/ic/'
+!initfile(1)='/g/data/aa8/ttg562/fgas10_agama_rf/ic/'
+initfile(1)='/import/photon2/tepper/fgas10_agama_rf/ic/'
 !initfile(1)='/project/GalSims/fgas10_agama_rf/ic/'
 d_region=1.0d-6
 p_region=1.0d6
@@ -125,8 +126,8 @@ tend=1.0
 delta_tout=0.005
 walltime_hrs=1.0
 minutes_dump=5
-output_dir='/g/data/aa8/ttg562/fgas10_agama_rf/'
-!output_dir='/import/photon2/tepper/fgas10_agama_rf/'
+!output_dir='/g/data/aa8/ttg562/fgas10_agama_rf/'
+output_dir='/import/photon2/tepper/fgas10_agama_rf/'
 !output_dir='/project/GalSims/fgas10_agama_rf/'
 /
 

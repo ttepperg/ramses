@@ -9,7 +9,10 @@
 ! Make sure the required IC files are available at the location specified below
 !
 ! IMPORTANT:
-! - In this Ramses version output_dir does not exist and so outputs are dumped into the bin directory!
+! DO NOT FORGET to copy the modified condinit.f90 to the patch's location
+! It can be found at the ICs directory:
+!   initfile(1)='/import/photon2/tepper/fgas10_ramses_fork/ic/'
+
 
 &RUN_PARAMS
 verbose=.false.
@@ -20,7 +23,7 @@ poisson=.true.
 tracer=.false.
 ncontrol=1
 nremap=7
-nrestart=2
+nrestart=0
 restart_remap=.true.
 nstepmax=10000000
 nsubcycle=1,1,2,2,2,2,2,2,2,2,2
@@ -56,7 +59,7 @@ energy=.true.
 metalscaling=.true.
 SNIamodel=1      		!DTD, t^-1.12
 Ia_rate=2.6d-13  		!Field DTD
-SNdiagnostics=.false. 	!not needed for now (what is it good for?)
+SNdiagnostics=.true. 	!useful to track SNe events
 /
 
 &SF_PARAMS
@@ -66,6 +69,7 @@ n_star=10.0
 temp_star=100.0			! irrelevant parameter (?)
 T2_star=0.1d0			! temperature floor (K)
 g_star=2.0
+SFdiagnostics=.true. 	!useful to track SF events
 /
 
 &COOLING_PARAMS
@@ -100,6 +104,7 @@ npartmax=1000000 ! ~ 0.1 GB/core; 32 cores <-> 3.2 GB
 boxlen=600.0
 /
 
+! DO NOT FORGET to copy the modified condinit.f90 to the patch's location
 &INIT_PARAMS
 filetype='ascii'
 !initfile(1)='/home/ttep1144/ramses_agertz/fgas10/IC/'
@@ -149,12 +154,8 @@ cut_height1=3.0
 cut_height2=0.9
 rad_profile='exponential'
 IG_density_factor=1.0D-5
-!Vcirc_dat_file1='/import/photon2/tepper/fgas10_ramses_fork/ic/Vcirc.dat'
-!Vcirc_dat_file2='/import/photon2/tepper/fgas10_ramses_fork/ic/Vcirc.dat'
-Vcirc_dat_file1='/home/ttep1144/ramses_agertz/fgas10/IC/Vcirc.dat'
-Vcirc_dat_file2='/home/ttep1144/ramses_agertz/fgas10/IC/Vcirc.dat'
-!Vcirc_dat_file1='/suphys/tepper/ramses_agertz/fgas10/IC/Vcirc.dat'
-!Vcirc_dat_file2='/suphys/tepper/ramses_agertz/fgas10/IC/Vcirc.dat'
+Vcirc_dat_file1='/import/photon2/tepper/fgas10_ramses_fork/ic/Vcirc.dat'
+Vcirc_dat_file2='/import/photon2/tepper/fgas10_ramses_fork/ic/Vcirc.dat'
 gal_axis1= 0.0D0 , 0.0D0 , 1.0D0
 gal_axis2= 0.0D0 , 0.0D0 , 1.0D0
 Vgal1= 0.0D0 , 0.0D0, 0.0D0

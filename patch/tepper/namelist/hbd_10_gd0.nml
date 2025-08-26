@@ -1,4 +1,5 @@
 ! COMPILE CODE WITH: Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS
+! VIRTUALLY IDENTICAL to hbd_10_gd0_new.nml (consider deleting it)
 &RUN_PARAMS
 print_when_io=.true.
 verbose=.false.
