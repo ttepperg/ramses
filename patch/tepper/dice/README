@@ -6,6 +6,10 @@ Created
 
 	Last modified:
 
+    27 AUG 2025
+    init_flow_fine.f90 was updated in the main Ramses repo (see https://github.com/ramses-organisation/ramses/pull/174)
+    BUT I did not update this patched version, as I'm not sure yet whether they are compatible.
+
     30 JUL 2025
     Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir. The previous patched files have been moved to the directory bck_29JUL2025.
     Added detail information about the modifications needed (see below).
