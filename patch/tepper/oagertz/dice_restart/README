@@ -1,0 +1,119 @@
+Author
+    Dr. Thorsten Tepper Garcia
+
+Created
+    16 JAN 2024
+
+	Last modified:
+
+    26 AUG 2025
+    Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir. The previous patched files have been moved to the directory bck_29JUL2025.
+    Added detail information about the modifications needed (see below).
+    TESTING in progress with model h_00_gh0_lr_ofe_rs, compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICE_RESTARTPATCH
+        - Tested normal restart -> SUCCESS
+        - Tested dice_restart, change number of cores -> SUCCESS
+        - Idem, and add ICs at restart -> SUCCESS
+    APPEARS TO BE RUNNING FINE!!!
+    Not sure what changed with respect to my previous version, though.
+
+	17 JAN 2024
+	Now correctly reading particle potential, 'nmetal' metals, and initial particle mass. Particle tracer pointer has been added BUT NOT YET TESTED!
+
+	18 JAN 2024
+	Added check about nvar_min == nmetals
+	May not be appropriate if other passive variables are included, e.g. a colour tracer.
+
+	25 JAN 2024
+	Added a counter for particle that are tossed because they are moved beyond the box in the previous time step.
+	Added capability to load *additional* DICE ICs
+	Removed unnecessary MPI_BCAST clauses
+
+	28 FEB 2024:
+	Added family tag, previously set to 0 by default, now set to the value specified by the ICs (if available)
+
+	06 MAR 2024:
+	Introduced two new DICE input parameters, ic_scale_metalO/Fe, to weigh the O/Fe initial abundance ratios (previously hard-coded to a value of 0.333)
+
+	18 MAR 2024
+	Added two DICE input parameters, ic_scale_metalO/Fe, missing from read_params.f90 (on 06 MAR 2024 added to init_part.f90 by mistake only)
+
+	20 MAR 2024
+	Assign particles actual level 'lev_restart' read from particle file instead of 'levelmin'; particularly relevant for star particles, which are placed at maximum refinement level
+
+	23 APR 2024:
+	Calculate birth mass (to be checked against mstar_tot)
+
+
+About
+
+    A merge of my dice_restart patch and the oagertz/dice patch.
+
+
+Usage (*)
+(*) See e.g. patch/tepper/namelist/h_00_gh0_lr_ofe_wh_rs.nml
+
+In the NML, use:
+
+&RESTART_PARAMS
+nrestart2=N        ! restart at snapshot N
+add_dice_ic=.true. ! optional, to load additional DICE ICs at restart (**)
+restart_vars=6,7   	!-> corresponds to the actual indices of passive scalars (excluding temperature)
+/
+
+&INIT_PARAMS
+filetype='ramses_dice'
+/
+
+&RUN_PARAMS
+nrestart=0
+/
+
+(**) If add_dice_ic=.true., then the file(s) pointed at by
+    &DICE_PARAMS
+    ic_file='some_ics.g2'
+    ic_nfile=N
+    /
+will be loaded.
+
+
+
+To-Do
+    - Remove obsolete bits such as uu for particles, etc.
+
+
+Bugs (see also patch/tepper/dice_restart/README)
+
+    - DOES NOT WORK when star-formation is included:
+    Restarting a simulation (h_00_gh0_lr_ofe_wh_rs) with the oagertz/dice_restart patch (which derives from this), leads to the mass of evolved, newborn stellar particles drop below their allowed minimum value.
+    -> TO BE CHECKED AGAIN AND FIXED ASAP
+
+    - Main step starts at 1 instead of at the actual last value at restart; the same is true for nstep_coarse.
+    -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
+
+    - When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)
+    -> TO BE CHECKED AGAIN AND FIXED ASAP
+
+    - Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
+    -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
+
+    - Some particles end up at or beyond the box boundary at restart
+    The fix for now is to toss these, which is not fully consistent with the restart snapshot state
+    -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
+
+
+Modifications
+** Note that not all modifications are detailed as they are, but they can be easily searched for with the information provided
+
+    init_part.90:
+    Copy over file from oagertz/dice/ and merge with file in oagertz/bck_29JUL2025/dice_restart/
+    - added the use of restart_init module and variables
+    - added
+        case ('ramses_dice')
+           call load_ramses_dice
+    - added subroutine load_ramses_dice()
+    - slight modifications to subroutine load_dice()
+    - replaced restart_commons by dice_restart_commons
+    - replaced restart_init by dice_restart_init
+
+    read_params.f90:
+    Copy over the file from patch/tepper/dice_restart/ and merge with file in  oagertz/ and then with file in oagertz/dice/
