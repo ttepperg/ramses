@@ -94,7 +94,7 @@ To-Do
 	- Remove obsolete bits such as uu for particles, etc.
 
 
-Bugs
+Bugs (see also patch/tepper/oagertz/dice_restart/README)
 
     - DOES NOT WORK when star-formation is included:
     Restarting a simulation (h_00_gh0_lr_ofe_wh_rs) with the oagertz/dice_restart patch (which derives from this), leads to the mass of evolved, newborn stellar particles drop below their allowed minimum value.
