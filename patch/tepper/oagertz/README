@@ -6,10 +6,15 @@ Created
 
 	Last modified:
 
+    27 AUG 2025
+    Updated hydro_parameters.f90 and read_hydro_parameters.f90 to the latest changes in the main Ramses repo
+    NEED TO TEST
+
     6 AUG 2025
     Fixed bug in feedback.f90 (see  Modifications below for details)
     Tested with model fgas10_ramses_fork, compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZPATCH
     Test SUCCESSFUL
+    ****IMPORTANT****: The file condinit.f90_fgas10_ramses_fork is needed to run model 'fgas10_ramses_fork'. To this end, see instructions in header of NML file namelist/fgas10_ramses_fork.nml
 
 
     5 AUG 2025
@@ -17,7 +22,7 @@ Created
     Added detail information about the modifications needed (see below).
     Tested with model fgas10_ramses_fork, compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZPATCH
     Test FAILED
-    IMPORTANT: The file condinit.f90_fgas10_ramses_fork is needed to run model 'fgas10_ramses_fork'. To this end, see instructions in header of NML file namelist/fgas10_ramses_fork.nml
+    ****IMPORTANT****: The file condinit.f90_fgas10_ramses_fork is needed to run model 'fgas10_ramses_fork'. To this end, see instructions in header of NML file namelist/fgas10_ramses_fork.nml
 
 
 	15 JAN 2024
