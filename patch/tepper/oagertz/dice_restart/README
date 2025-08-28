@@ -83,22 +83,18 @@ To-Do
 
 Bugs (see also patch/tepper/dice_restart/README)
 
-    - DOES NOT WORK when star-formation is included:
-    Restarting a simulation (h_00_gh0_lr_ofe_wh_rs) with the oagertz/dice_restart patch (which derives from this), leads to the mass of evolved, newborn stellar particles drop below their allowed minimum value.
-    -> TO BE CHECKED AGAIN AND FIXED ASAP
+    - Check whether time should be reset or not (compare to tepper/dice_restart/init_part.f90)
+
+    - ekin and eint are NOT CONSERVED at restart, but increase by orders of magnitude (!); not sure why
 
     - Main step starts at 1 instead of at the actual last value at restart; the same is true for nstep_coarse.
-    -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
 
     - When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)
-    -> TO BE CHECKED AGAIN AND FIXED ASAP
 
     - Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
-    -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
 
     - Some particles end up at or beyond the box boundary at restart
     The fix for now is to toss these, which is not fully consistent with the restart snapshot state
-    -> TO BE CHECKED AGAIN AND FIXED IF NEEDED
 
 
 Modifications
