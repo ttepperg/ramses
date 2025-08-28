@@ -6,9 +6,12 @@ Created
 
 	Last modified:
 
+    28 AUG 2025
+    Updated hydro_parameters.f90, output_hydro.f90, read_hydro_params.f90, and pm_parameters.f90 to the latest changes in the main Ramses repo
+    NEED TO TEST
+
     27 AUG 2025
     Updated hydro_parameters.f90 and read_hydro_parameters.f90 to the latest changes in the main Ramses repo
-    NEED TO TEST
 
     6 AUG 2025
     Fixed bug in feedback.f90 (see  Modifications below for details)
