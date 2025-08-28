@@ -1760,7 +1760,7 @@ contains
     ! DICE patch
   end subroutine load_dice
 
-  ! RESTART patch
+  ! DICE_RESTART patch
   subroutine load_ramses_dice
     use dice_restart_commons
     use iso_fortran_env, only: int8 ! <- VERY important
@@ -3034,7 +3034,7 @@ contains
 	endif
 
   end subroutine load_ramses_dice
-  ! RESTART patch
+  ! DICE_RESTART patch
 
 end subroutine init_part
 
