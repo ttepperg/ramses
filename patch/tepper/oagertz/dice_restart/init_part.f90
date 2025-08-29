@@ -1749,8 +1749,8 @@ contains
 
 	! IMPORTANT: DO NOT reset output number nor simulation time if pre-loading a ramses output
     if(.not.dice_restart_init)then
-    ifout = ic_ifout
-    t = ic_t_restart
+       ifout = ic_ifout
+       t = ic_t_restart
     endif
     if(myid==1)then
        write(*,*)'Next output number (ifout): ', ifout
