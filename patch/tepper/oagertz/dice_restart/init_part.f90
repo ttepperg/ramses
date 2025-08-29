@@ -2714,13 +2714,12 @@ contains
           ! IN DEVELOPMENT
           ! Setting simulation time
           ifout          = header_amr%ifout ! to not overwrite restart snapshot
-          !t              = header_amr%t ! SEE NOTES (*)
-          t              = 0. ! SEE NOTES (**)
+          t              = header_amr%t ! SEE NOTES (*)
+          !t              = 0. ! SEE NOTES (**)
 
           ! NOTES:
-          !(*) -> messes up the output frequency (via tout_next) and leads to issues for newborn stars (stars not forming, mass going below minmass)
-          !(**) -> affects stellar ages and thus their subsequent evolution (see feedback.f90)
-          ! How to fix this???
+          !(*) -> USED to mess up the output frequency (via tout_next) and leads to issues for newborn stars (stars not forming, mass going below minmass); appears FIXED NOW
+          !(**) -> affects calculated stellar ages and thus their subsequent evolution (see feedback.f90, around line 475, look for 'Age at t')
 
           ! Number of passive scalars to load (excludes temperature)
           nvar_min = 0
