@@ -67,12 +67,11 @@ About
 
 
 Usage (*)
-
-    In the NML, use:
+(*) See e.g. patch/tepper/namelist/dice_restart.nml and dice_restart_gas.nml
 
     &DICE_RESTART_PARAMS
     nrestart2=N			! restart at snapshot N
-    add_dice_ic=.true.  ! optional; to load additional DICE ICS at restart
+    add_dice_ic=.true.  ! optional; to load additional DICE ICS at restart (**)
     restart_vars=6,7   	!-> corresponds to the actual indices of passive scalars (excluding temperature); mandatory when hydro = .true.
     /
 
@@ -85,8 +84,15 @@ Usage (*)
     /
 
 
-    (*) See e.g. patch/tepper/namelist/dice_restart.nml and dice_restart_gas.nml
-
+    (**) If add_dice_ic=.true., then the file(s) pointed at by
+        &DICE_PARAMS
+        ic_file='some_ics.g2'
+        ic_nfile=N
+        /
+    will be loaded. Also, may need to set some other DICE relevant parameters, but beware that the following are set by default to (for good reason):
+        IG_rho=0.0D0                 ! IGM gas density (default 1.0d-5)
+        IG_T2=0.0D0                  ! IGM gas temperature (default: 1.0d7)
+        IG_metal=0.0                 ! IGM metallicity (solar units)
 
 Notes
     N/A
@@ -102,8 +108,6 @@ Bugs (see also patch/tepper/oagertz/dice_restart/README)
     - Main step starts at 1 instead of at the actual last value at restart; the same is true for nstep_coarse.
 
     - When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)
-
-    - Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
 
     - Some particles end up at or beyond the box boundary at restart
     The fix for now is to toss these, which is not fully consistent with the restart snapshot state
@@ -126,3 +130,7 @@ Modifications
     - added to subroutine load_dice the following:
         use restart_commons, only: restart_init
     and some related checks (look for dice_restart_init)
+    - in subroutine load_ramses_dice(), set
+        IG_rho=0.0D0                 ! IGM gas density (default 1.0d-5)
+        IG_T2=0.0D0                  ! IGM gas temperature (default: 1.0d7)
+        IG_metal=0.0                 ! IGM metallicity (solar units)
