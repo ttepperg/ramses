@@ -8,6 +8,7 @@ Created
 
     29 AUG 2025
     In init_part.f90, subroutine load_ramses_dice(), set default DICE parameters IG_rho, IG_T2, IG_metal to 0 at restart to avoid adding a hot atmosphere.
+    Also, now simulation time 't' is correctly set to header_amr%t rather than 0.
     Tested with model fgas10_ramses_fork_rs, , compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICE_RESTARTPATCH.
 
     26 AUG 2025
@@ -91,8 +92,6 @@ To-Do
 
 
 Bugs (see also patch/tepper/dice_restart/README)
-
-    - Check whether time should be reset or not (compare to tepper/dice_restart/init_part.f90)
 
     - Main step starts at 1 instead of at the actual last value at restart; the same is true for nstep_coarse.
 
