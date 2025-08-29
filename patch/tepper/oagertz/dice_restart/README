@@ -6,6 +6,10 @@ Created
 
 	Last modified:
 
+    29 AUG 2025
+    In init_part.f90, subroutine load_ramses_dice(), set default DICE parameters IG_rho, IG_T2, IG_metal to 0 at restart to avoid adding a hot atmosphere.
+    Tested with model fgas10_ramses_fork_rs, , compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICE_RESTARTPATCH.
+
     26 AUG 2025
     Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir. The previous patched files have been moved to the directory bck_29JUL2025.
     Added detail information about the modifications needed (see below).
@@ -52,29 +56,34 @@ About
 Usage (*)
 (*) See e.g. patch/tepper/namelist/h_00_gh0_lr_ofe_wh_rs.nml
 
-In the NML, use:
-
-&RESTART_PARAMS
-nrestart2=N        ! restart at snapshot N
-add_dice_ic=.true. ! optional, to load additional DICE ICs at restart (**)
-restart_vars=6,7   	!-> corresponds to the actual indices of passive scalars (excluding temperature)
-/
-
-&INIT_PARAMS
-filetype='ramses_dice'
-/
-
-&RUN_PARAMS
-nrestart=0
-/
-
-(**) If add_dice_ic=.true., then the file(s) pointed at by
-    &DICE_PARAMS
-    ic_file='some_ics.g2'
-    ic_nfile=N
+    &RESTART_PARAMS
+    nrestart2=N        ! restart at snapshot N
+    add_dice_ic=.true. ! optional, to load additional DICE ICs at restart (**)
+    restart_vars=6,7   	!-> corresponds to the actual indices of passive scalars (excluding temperature)
     /
-will be loaded.
 
+    &INIT_PARAMS
+    filetype='ramses_dice'
+    /
+
+    &RUN_PARAMS
+    nrestart=0
+    /
+
+
+    (**) If add_dice_ic=.true., then the file(s) pointed at by
+        &DICE_PARAMS
+        ic_file='some_ics.g2'
+        ic_nfile=N
+        /
+    will be loaded. Also, may need to set some other DICE relevant parameters, but beware that the following are set by default to (for good reason):
+        IG_rho=0.0D0                 ! IGM gas density (default 1.0d-5)
+        IG_T2=0.0D0                  ! IGM gas temperature (default: 1.0d7)
+        IG_metal=0.0                 ! IGM metallicity (solar units)
+
+
+Notes
+    N/A
 
 
 To-Do
@@ -85,13 +94,9 @@ Bugs (see also patch/tepper/dice_restart/README)
 
     - Check whether time should be reset or not (compare to tepper/dice_restart/init_part.f90)
 
-    - ekin and eint are NOT CONSERVED at restart, but increase by orders of magnitude (!); not sure why
-
     - Main step starts at 1 instead of at the actual last value at restart; the same is true for nstep_coarse.
 
     - When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)
-
-    - Gas particle (cell) number and gas mass increases slightly at restart, presumably due to the fact that IG_rho != 0
 
     - Some particles end up at or beyond the box boundary at restart
     The fix for now is to toss these, which is not fully consistent with the restart snapshot state
@@ -110,6 +115,11 @@ Modifications
     - slight modifications to subroutine load_dice()
     - replaced restart_commons by dice_restart_commons
     - replaced restart_init by dice_restart_init
+    - in subroutine load_ramses_dice(), set
+        IG_rho=0.0D0                 ! IGM gas density (default 1.0d-5)
+        IG_T2=0.0D0                  ! IGM gas temperature (default: 1.0d7)
+        IG_metal=0.0                 ! IGM metallicity (solar units)
+
 
     read_params.f90:
     Copy over the file from patch/tepper/dice_restart/ and merge with file in  oagertz/ and then with file in oagertz/dice/
