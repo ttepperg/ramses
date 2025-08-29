@@ -1882,7 +1882,7 @@ contains
     dice_restart_init = .true. ! <- VERY important if additional ICs loaded
     dice_init    = .true. ! <- VERY important
 
-    ! avoid adding a hot 'atmosphere'
+    ! avoid adding a hot 'atmosphere' <- VERY important
     IG_rho=0.0D0                 ! IGM gas density (default 1.0d-5)
     IG_T2=0.0D0                  ! IGM gas temperature (default: 1.0d7)
     IG_metal=0.0                 ! IGM metallicity (solar units; default: 0.3)
