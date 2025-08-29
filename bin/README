@@ -1,0 +1,10 @@
+Author
+    Dr. Thorsten Tepper Garcia
+
+Created
+    29 AUG 2025
+
+About
+
+    This directory contains a number of Makefiles specific to my patches (patch/tepper), in addition to the standard Makefile.
+    The NML files in patch/tepper/namelist indicate in their header which Makefile is appropriate to use when running the corresponding simulation.
