@@ -105,6 +105,8 @@ To-Do
 
 Bugs (see also patch/tepper/oagertz/dice_restart/README)
 
+    - mcons and econs are reset to 0; bug or not?
+
     - Main step starts at 1 instead of at the actual last value at restart; the same is true for nstep_coarse.
 
     - When loading additional DICE ICs, there may be a potential issue with duplicate particle ids (iord)

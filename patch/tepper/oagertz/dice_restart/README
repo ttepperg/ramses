@@ -88,10 +88,13 @@ Notes
 
 
 To-Do
+
     - Remove obsolete bits such as uu for particles, etc.
 
 
 Bugs (see also patch/tepper/dice_restart/README)
+
+    - mcons and econs are reset to 0; bug or not?
 
     - Main step starts at 1 instead of at the actual last value at restart; the same is true for nstep_coarse.
 
