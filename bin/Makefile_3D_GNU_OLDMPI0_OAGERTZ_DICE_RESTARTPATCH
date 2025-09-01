@@ -13,7 +13,7 @@ DEBUG = 0
 GCOV = 0
 # Compiler flavor: GNU or INTEL
 COMPILER = GNU
-# Target cluster, to set cluster specific optimisation flags (see Makefile.machines)
+# Target cluster, to set cluster specific optimisation flags (see clusters.mk)
 MACHINE = generic
 # Size of vector cache
 NVECTOR = 1024
