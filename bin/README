@@ -4,6 +4,11 @@ Author
 Created
     29 AUG 2025
 
+    Last modified:
+
+    01 SEP 2025
+    Modified all Makefiles according to the latest changes to the main Ramses repo: Overhaul of compiler flags in Makefile (#185)
+
 About
 
     This directory contains a number of Makefiles specific to my patches (patch/tepper), in addition to the standard Makefile.
