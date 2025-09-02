@@ -96,6 +96,7 @@ Bugs (see also patch/tepper/dice_restart/README)
 
     - stellar masses go below 0 when simulation time is correctly read at restart (see init_part.f90, around lines 2717-22); the fix is to set t=0 at restart, but this affects the stellar ages and thus their subsequent evolution (see feedback.f90, around line 475, look for 'Age at t')
     -> Perhaps related to the issue with 'Main step' and 'nstep_coarse'.
+    -> Perhaps related to MISSING patched init_time.f90 (see restart patch)
 
     - mcons and econs are reset to 0; bug or not?
 
