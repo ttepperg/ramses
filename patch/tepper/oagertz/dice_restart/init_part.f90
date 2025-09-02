@@ -2718,7 +2718,7 @@ contains
           !t              = 0. ! SEE NOTES (**)
 
           ! NOTES:
-          !(*) -> USED to mess up the output frequency (via tout_next) and leads to issues for newborn stars (stars not forming, mass going below minmass)
+          !(*) -> Messes up the output frequency (via tout_next) and leads to issues for newborn stars (stars not forming, mass going below minmass)
           !(**) -> affects calculated stellar ages and thus their subsequent evolution (see feedback.f90, around line 475, look for 'Age at t')
 
           ! Number of passive scalars to load (excludes temperature)
