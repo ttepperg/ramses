@@ -18,8 +18,7 @@ Created
         - Tested normal restart -> SUCCESS
         - Tested dice_restart, change number of cores -> SUCCESS
         - Idem, and add ICs at restart -> SUCCESS
-    APPEARS TO BE RUNNING FINE!!!
-    Not sure what changed with respect to my previous version, though.
+    But there is still an issue when star-formation is switched on (see Bugs below)
 
 	17 JAN 2024
 	Now correctly reading particle potential, 'nmetal' metals, and initial particle mass. Particle tracer pointer has been added BUT NOT YET TESTED!
