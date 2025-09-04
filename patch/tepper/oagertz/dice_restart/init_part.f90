@@ -2238,10 +2238,9 @@ contains
           call MPI_BCAST(ii8,nvector   ,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(mm,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
-		  ! The following is not read in but may be needed for consistency
+		  ! The following is irrelevant for collisionless particles
           call MPI_BCAST(uu,nvector           ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
-		  ! The following may be irrelevant as is not used (why not?)
           call MPI_BCAST(lev_restart,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
 
           call MPI_BCAST(phi_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
