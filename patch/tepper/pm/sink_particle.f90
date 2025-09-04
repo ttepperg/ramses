@@ -1933,7 +1933,7 @@ subroutine update_sink(ilevel)
   ! updated by summing the conributions from all levels.
   ! Patch: if remove_sink=.true. the sink mass is exponentially decreased over
   ! a time scale sink_tscale, from sink_tscale0 on. These parameters are
-  ! included in sink_params
+  ! included in sink_params and must be set in sink_params.
   !----------------------------------------------------------------------------
 
   integer::lev,isink,jsink,nx_loc,idim,istellar
@@ -2810,6 +2810,11 @@ subroutine read_sink_params()
   ! the usual sink settings
   if (remove_sink)then
      if(myid==1)write(*,*)'WARNING: remove_sink=.true. !!!'
+     ! check that user specified values
+     if(sink_tscale0<0.or.sink_tscale<0)then
+        if(myid==1)write(*,*)'ERROR: you must specify sink_tscale0 and sink_tscale0 in &SINK_PARAMS'
+        call clean_stop
+     endif
      if(myid==1)write(*,*)'sink_tscale0: ', sink_tscale0
      if(myid==1)write(*,*)'sink_tscale: ', sink_tscale
   endif

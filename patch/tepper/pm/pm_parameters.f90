@@ -10,8 +10,8 @@ module pm_parameters
   real(dp)::mstar_tot=0             ! Total star mass
   real(dp)::mstar_lost=0            ! Missing star mass
   logical::remove_sink=.false.      ! Exponentially dampen sink mass over ...
-  real(dp)::sink_tscale=1.D10       ! ... this time scale (in code units) ...
-  real(dp)::sink_tscale0=1.D10      ! ... from this time on (in code units)
+  real(dp)::sink_tscale=-1       ! ... this time scale (in code units) ...
+  real(dp)::sink_tscale0=-1      ! ... from this time on (in code units)
   logical::sink_restart=.false.     ! allow to include sinks at restart
 
   integer::ntracer_tot=0            ! Total number of tracers
