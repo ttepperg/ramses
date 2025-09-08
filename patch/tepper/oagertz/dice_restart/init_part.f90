@@ -2710,15 +2710,21 @@ contains
           endif
           call MPI_BARRIER(MPI_COMM_WORLD,info)
 #endif
-          ! IN DEVELOPMENT
+
+          !-----------------------------------------------------
+          ! IN DEVELOPMENT BELOW
           ! Setting simulation time
           ifout          = header_amr%ifout ! to not overwrite restart snapshot
-          t              = header_amr%t ! SEE NOTES (*)
-          !t              = 0. ! SEE NOTES (**)
+          !t              = header_amr%t ! SEE NOTES (*)
+          t              = 0. ! SEE NOTES (**)
 
           ! NOTES:
           !(*) -> Messes up the output frequency (via tout_next) and leads to issues for newborn stars (stars not forming, mass going below minmass)
           !(**) -> affects calculated stellar ages and thus their subsequent evolution (see feedback.f90, around line 475, look for 'Age at t')
+
+          ! IN DEVELOPMENT ABOVE
+          !-----------------------------------------------------
+
 
           ! Number of passive scalars to load (excludes temperature)
           nvar_min = 0
