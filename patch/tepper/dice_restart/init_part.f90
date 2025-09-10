@@ -2197,9 +2197,11 @@ contains
 
           call MPI_BCAST(phi_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
-          call MPI_BCAST(fam_restart,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
+          ! VERY important to use the right integer kind
+          call MPI_BCAST(fam_restart,nvector   ,MPI_INTEGER1      ,0,MPI_COMM_WORLD,info)
 
-          call MPI_BCAST(tag_restart,nvector   ,MPI_INTEGER       ,0,MPI_COMM_WORLD,info)
+          ! VERY important to use the right integer kind
+          call MPI_BCAST(tag_restart,nvector   ,MPI_INTEGER1       ,0,MPI_COMM_WORLD,info)
 
           call MPI_BCAST(zz_restart,nvector   ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
 
