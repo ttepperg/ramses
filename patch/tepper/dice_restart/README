@@ -6,6 +6,14 @@ Created
 
 	Last modified:
 
+    10 SEP 2025
+    Fixed bug in read_params.f90 that ignored potential errors in the NML
+    Re-tested code with model dice_restart, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH
+    - tested normal run
+    - tested normal restart run
+    POSSIBLE BUG: Two snapshots are written right away at restart;
+    only one is expected.
+
     29 AUG 2025
     In init_part.f90, subroutine load_ramses_dice(), set default DICE parameters IG_rho, IG_T2, IG_metal to 0 at restart to avoid adding a hot atmosphere.
 
