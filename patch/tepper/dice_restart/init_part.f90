@@ -2064,6 +2064,7 @@ contains
 	            read(ilun1,pos=mypos) size_blck
                 mypos = mypos+sizeof(dummy_int_restart)
 	            metal_blck_restart = mypos
+                mypos = mypos+size_blck+sizeof(dummy_int)
 	         endif
 
 	      endif
