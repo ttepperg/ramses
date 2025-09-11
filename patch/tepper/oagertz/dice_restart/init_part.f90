@@ -75,7 +75,11 @@ subroutine init_part
   real(dp),dimension(1:nvector)::tt,zz,uu
   real,dimension(1:nvector,1:3)::xx_sp,vv_sp
   real,dimension(1:nvector)::mm_sp,tt_sp,zz_sp,uu_sp
-  real,dimension(1:nvector)::famtag
+
+  ! The following declaration is EXTREMELY IMPORTANT, as its kind (e.g. i8b) MUST exactly match its output format (see pm/output_part.f90)
+  integer(int8), dimension(1:nvector)::tagp
+  integer(int8):: dummy_int_int8
+
   real(dp)::mgas_tot
   real::dummy_real,ipbar
   character(LEN=12)::ifile_str
@@ -1494,7 +1498,7 @@ contains
           tt=0.
           zz=0.
           uu=0.
-          famtag=0
+          tagp=0
 
           if(myid==1)then
              jpart=0
@@ -1527,9 +1531,9 @@ contains
                    ii(i) = kpart
                 endif
                 if(tag_blck.ne.-1) then
-                   read(1,POS=tag_blck+sizeof(dummy_int)*(kpart-1)) famtag(i)
+                   read(1,POS=tag_blck+sizeof(dummy_int_int8)*(kpart-1)) tagp(i)
                 else
-                   famtag(i) = 0
+                   tagp(i) = 0
                 endif
                 if(kpart.le.header%npart(1)) then
                    if((u_blck.ne.-1).and.(u_size.eq.header%npart(1))) then
@@ -1616,7 +1620,10 @@ contains
           call MPI_BCAST(xx,nvector*3  ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(vv,nvector*3  ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(ii,nvector    ,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
-          call MPI_BCAST(famtag,nvector,MPI_INTEGER         ,0,MPI_COMM_WORLD,info)
+
+          ! VERY important to use the right integer kind
+          call MPI_BCAST(tagp,nvector,MPI_INTEGER1         ,0,MPI_COMM_WORLD,info)
+
           call MPI_BCAST(mm,nvector    ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(zz,nvector    ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
           call MPI_BCAST(tt,nvector    ,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,info)
@@ -1681,7 +1688,7 @@ contains
                       end if
                    else if(type_index.eq.2)then
                       typep(ipart)%family = FAM_DM
-                      typep(ipart)%tag    = famtag(i)
+                      typep(ipart)%tag    = tagp(i)
                    end if
                    up(ipart)      = uu(i)
                    if(ic_mask_ptype.gt.-1)then

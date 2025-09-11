@@ -6,6 +6,17 @@ Created
 
 	Last modified:
 
+    11 SEP 2025
+    Updated read_params.f90 to the latest changes in the main Ramses repo
+    Renamed variable 'famtag' to 'tagp', now correctly declared as 'int9', and broadcasted as 'MPI_INTEGER1'.
+    Tested modifications with model dice_restart, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH
+    - tested normal run
+    - tested dice_restart run
+    Tested with model dice_restart_gas, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH_GAS
+    - tested normal run
+    - tested normal restart run
+    - tested dice_restart run
+
     10 SEP 2025
     Fixed BUGS in
         - read_params.f90 that ignored errors in the NML
@@ -15,9 +26,6 @@ Created
     - tested normal restart run
     POSSIBLE BUG: Two snapshots are written right away at restart;
     only one is expected.
-
-    POTENTIAL BUG: variable 'famtag' is declared as 'real', but broadcasted as 'MPI_INTEGER'. BOTH are wrong! A particle tag is of type int8 and should be broadcasted as MPI_INTEGER1. See my restart patch for a guide.
-    !!!!FIX ASAP!!!!
 
 
     29 AUG 2025

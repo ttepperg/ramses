@@ -6,12 +6,11 @@ Created
 
 	Last modified:
 
+
     11 SEP 2025
     Updated read_params.f90 to the latest changes in the main Ramses repo
-
-    10 SEP 2025
-    POTENTIAL BUG: variable 'famtag' is declared as 'real', but broadcasted as 'MPI_INTEGER'. BOTH are wrong! A particle tag is of type int8 and should be broadcasted as MPI_INTEGER1. See my restart patch for a guide.
-    !!!!FIX ASAP!!!!
+    Renamed variable 'famtag' to 'tagp', now correctly declared as 'int9', and broadcasted as 'MPI_INTEGER1'.
+    Tested with model hbd_10, compiled with Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH
 
     27 AUG 2025
     init_flow_fine.f90 was updated in the main Ramses repo (see https://github.com/ramses-organisation/ramses/pull/174)
