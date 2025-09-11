@@ -6,6 +6,9 @@ Created
 
     Last Modified:
 
+    11 SEP 2025
+    Updated output_amr.f90, read_params.f90 to the latest changes in the main Ramses repo
+
     5 AUG 2025
     - Added read_params.f90 to patch (see below)
 

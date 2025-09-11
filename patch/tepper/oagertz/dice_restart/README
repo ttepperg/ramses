@@ -6,6 +6,15 @@ Created
 
 	Last modified:
 
+    11 SEP 2025
+    Updated read_params.f90 to the latest changes in the main Ramses repo
+
+    10 SEP 2025
+    POTENTIAL BUG: variable 'famtag' is declared as 'real', but broadcasted as 'MPI_INTEGER'. BOTH are wrong! A particle tag is of type int8 and should be broadcasted as MPI_INTEGER1.
+    The same applies to fam_restart and tag_restart.
+    See my restart patch for a guide.
+    !!!!FIX ASAP!!!!
+
     29 AUG 2025
     In init_part.f90, subroutine load_ramses_dice(), set default DICE parameters IG_rho, IG_T2, IG_metal to 0 at restart to avoid adding a hot atmosphere.
     Also, now simulation time 't' is correctly set to header_amr%t rather than 0.
