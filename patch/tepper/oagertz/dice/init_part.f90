@@ -7,6 +7,7 @@ subroutine init_part
   use dice_commons
   use cooling_module
   use gadgetreadfilemod
+  use iso_fortran_env, only: int8 ! <- VERY important
   ! DICE patch
 #ifdef RT
   use rt_parameters,only: convert_birth_times
