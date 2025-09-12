@@ -8,7 +8,11 @@ Created
 
     11 SEP 2025
     Updated read_params.f90 to the latest changes in the main Ramses repo
-    Renamed variable 'famtag' to 'tagp', now correctly declared as 'int9', and broadcasted as 'MPI_INTEGER1'. The code compiles but was not tested.
+    Renamed variable 'famtag' to 'tagp', now correctly declared as 'int9', and broadcasted as 'MPI_INTEGER1'.
+    Successfully tested with model(s)
+        fgas10_agama_rf
+        hbd_10_gd11_s4_star_tag
+    compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH
 
     27 AUG 2025
     init_flow_fine.f90 was updated in the main Ramses repo (see https://github.com/ramses-organisation/ramses/pull/174)
@@ -17,7 +21,7 @@ Created
     26 AUG 2025
     Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir. The previous patched files have been moved to the directory bck_29JUL2025.
     Added detail information about the modifications needed (see below).
-    TESTING in progress with model
+    Successfully tested with model(s)
         fgas10_agama_rf
         hbd_10_gd11_s4_star_tag
     compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH
