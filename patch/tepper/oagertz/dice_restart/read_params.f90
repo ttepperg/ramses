@@ -524,12 +524,7 @@ subroutine read_run_params(namelist_unit,nml_ok)
    ! DICE_RESTART patch
    if(nrestart<0)then
       if(myid==1)write(*,*)'Error in the namelist:'
-      if(myid==1)write(*,*)'Need to set nrestart >= 0 in RUN_PARAMS if not using DICE_RESTART_PARAMS!'
-      nml_ok=.false.
-   endif
-   if(TRIM(filetype)=='ramses_dice') then
-      if(myid==1)write(*,*)'Error in the namelist:'
-      if(myid==1)write(*,*)'Need to set DICE_RESTART_PARAMS if filetype="ramses_dice"!'
+      if(myid==1)write(*,*)'Need to set nrestart >= 0 in RUN_PARAMS!'
     nml_ok=.false.
    endif
 
@@ -887,11 +882,7 @@ integer::nml_err
    if(nml_err>0)then
       if(myid==1)write(*,*)'Error reading namelist &DICE_RESTART_PARAMS. Check formatting.'
       nml_ok=.false.
-   endif
-
-   ! Verify input
-   ! nml_err<0 means EOF reached before namelist was found; this can happen if the list has been commented out (which is a valid practice with this patch); therefore, only in the following case is verification of input needed:
-   if(nml_err==0)then
+   else if(nml_err==0)then
        if(nrestart/=0)then
          if(myid==1)write(*,*)'Error in the namelist:'
          if(myid==1)write(*,*)'Need to set nrestart = 0 in RUN_PARAMS when using DICE_RESTART_PARAMS!'
@@ -906,6 +897,12 @@ integer::nml_err
          if(myid==1)write(*,*)'Error in the namelist:'
          if(myid==1)write(*,*)'Need to set filetype="ramses_dice" in INIT_PARAMS when using DICE_RESTART_PARAMS!'
        nml_ok=.false.
+      endif
+   else ! nml_err<0
+      if(TRIM(filetype)=='ramses_dice') then
+         if(myid==1)write(*,*)'Error in the namelist:'
+         if(myid==1)write(*,*)'Need to set DICE_RESTART_PARAMS if filetype="ramses_dice"!'
+         nml_ok=.false.
       endif
    endif
 
