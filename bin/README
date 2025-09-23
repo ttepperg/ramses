@@ -6,6 +6,9 @@ Created
 
     Last modified:
 
+    18 SEP 2025
+    Added test Makefiles to link the AGAMA library
+
     02 SEP 2025
     Fixed typo in comment that referred to Makefile.machines instead of clusters.mk
     Removed MPIF90 = mpif90 directive, which is now imported from clusters.mk
