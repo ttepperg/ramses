@@ -8,7 +8,7 @@ Created
 
     11 SEP 2025
     Updated read_params.f90 to the latest changes in the main Ramses repo
-    Renamed variable 'famtag' to 'tagp', now correctly declared as 'int9', and broadcasted as 'MPI_INTEGER1'.
+    Renamed variable 'famtag' to 'tagp', now correctly declared as 'int8', and broadcasted as 'MPI_INTEGER1'.
     Tested modifications with model dice_restart, compiled with  Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH
     - tested normal run
     - tested dice_restart run
