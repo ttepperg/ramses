@@ -1,0 +1,43 @@
+Author
+    Dr. Thorsten Tepper Garcia
+
+Created
+    17 SEP 2025
+
+    Last Modified:
+
+
+About
+
+    This subdirectory contains patches intended to load some features from tje AGAMA library via its Fortran interface into Ramses.
+    The files:
+        agama.a
+        agama.so
+        test_fortran.f
+    have been linked or copied from:
+        /Users/tepper/Library/Python/3.9/lib/python/site-packages/agama
+    and correspond to the static library, the dynamic library, and a Fortran example code.
+    IMPORTANT: The AGAMA library must be compiled on the SAME system that these patches are meant to be run!
+
+Usage
+    N/A
+
+
+Notes
+    N/A
+
+
+To-DO
+    - Set IG_rho = 0 if pure N-body in NML
+    - Move c_obj5 to agama_commons in read_params.f90
+    - Sort out memory leak issue -> awaiting EV's reply
+    - x_c in simpler form in rho_ana.f90
+
+
+Bugs
+
+    - MEMORY EXHAUST: Each call to the agama_initfromfile() routine creates a new pointer object, increasing the memory by ~50 MB. Since the AGAMA Fortran interface does not provide a destructor, repeated calls to the routine eventually lead to the memory being exhausted.
+    A workaround at the moment is to limit the calls via a t_step variable.
+
+
+Modifications
