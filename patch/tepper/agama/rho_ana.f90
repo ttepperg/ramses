@@ -32,7 +32,7 @@ subroutine rho_ana(x,d,dx,ncell)
   ! The following is not an actual string, but a placeholder to keep the pointer to the C++ object
   character(len=8),save::c_obj5     ! <- VERY important to save
 
-  character(len=89)::filename,infile
+  character(len=80)::filename,infile
   logical::file_exists
   real(dp),dimension(1:3)::xyz
   real(dp)::dummy_dp, mass_factor
