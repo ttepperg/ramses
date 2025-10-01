@@ -63,25 +63,25 @@ subroutine rho_ana(x,d,dx,ncell)
   ! File needs to be read only *once* per *main* (coarse) time step
   if(read_file)then
 
-  ! Constructing an AGAMA potential from parameters stored in an INI file
-      if(TRIM(initfile(levelmin)).NE.' ')then
-         filename=TRIM(initfile(levelmin))//'/'//TRIM(agama_file)
-         INQUIRE(FILE=filename,EXIST=file_exists)
-         if(.not.file_exists) then
-            if(myid==1) write(*,*) TRIM(filename)," not found"
-            call clean_stop
-         endif
-      endif
+     ! Constructing an AGAMA potential from parameters stored in an INI file
+     if(TRIM(initfile(levelmin)).NE.' ')then
+        filename=TRIM(initfile(levelmin))//'/'//TRIM(agama_file)
+        INQUIRE(FILE=filename,EXIST=file_exists)
+        if(.not.file_exists) then
+           if(myid==1) write(*,*) TRIM(filename)," not found"
+           call clean_stop
+        endif
+     endif
 
-      if(myid==1.and.agama_verbose)then
-         write(*,*) "Reading AGAMA INI file: "
-         write(*,*) TRIM(filename)
-      end if
+     if(myid==1.and.agama_verbose)then
+        write(*,*) "Reading AGAMA INI file: "
+        write(*,*) TRIM(filename)
+     end if
 
-      ! VERY important to TRIM the file name when passing to routine:
-      call agama_initfromfile(c_obj5, TRIM(filename))
+     ! VERY important to TRIM the file name when passing to routine:
+     call agama_initfromfile(c_obj5, TRIM(filename))
 
-      if(myid==1.and.agama_verbose) write(*,*) 'DONE'
+     if(myid==1.and.agama_verbose) write(*,*) 'DONE'
 
   endif
 
