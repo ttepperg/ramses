@@ -6,6 +6,11 @@ Created
 
     Last Modified:
 
+    01 OCT 2025
+    Finalised tests and bug fixing (but see Bugs/Issues below).
+    First commit to repo.
+    TESTED SUCCESSFULLY with model agama_test.nml and hbd_28_hyb.nml
+
 
 About
 
@@ -17,7 +22,7 @@ About
     have been linked or copied from:
         /Users/tepper/Library/Python/3.9/lib/python/site-packages/agama
     and correspond to the static library, the dynamic library, and a Fortran example code.
-    IMPORTANT: The AGAMA library must be compiled on the SAME system that these patches are meant to be run!
+    IMPORTANT: The AGAMA library must be compiled on the SAME system that this patch is meant to be run!
 
 Usage
     N/A
@@ -28,15 +33,16 @@ Notes
 
 
 To-DO
-    - Set IG_rho = 0 if pure N-body in NML
-    - Move c_obj5 to agama_commons in read_params.f90
+    - Make sure IG_rho is small but > 0 (otherwise ekin = NAN)
+    - Rename and move mass_factor to agama_commons in read_params.90
+    - Move c_obj5 to agama_commons in read_params.f90 (?)
     - Sort out memory leak issue -> awaiting EV's reply
-    - x_c in simpler form in rho_ana.f90
+    - Express x_c in simpler form in rho_ana.f90
 
 
-Bugs
+Bugs/Issues
 
-    - MEMORY EXHAUST: Each call to the agama_initfromfile() routine creates a new pointer object, increasing the memory by ~50 MB. Since the AGAMA Fortran interface does not provide a destructor, repeated calls to the routine eventually lead to the memory being exhausted.
+    - MEMORY RUNAWAY: Each call to the agama_initfromfile() routine creates a new pointer object, increasing the memory by ~50 MB. Since the AGAMA Fortran interface does not provide a destructor, repeated calls to the routine eventually lead to the memory being exhausted.
     A workaround at the moment is to limit the calls via a t_step variable.
 
 
