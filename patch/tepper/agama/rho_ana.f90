@@ -39,14 +39,14 @@ subroutine rho_ana(x,d,dx,ncell)
   real(dp),dimension(1:3)::x_c      ! potential's centre coordinates
 
   logical,save::read_file=.true.    ! affects input file read
-  real(dp),save::t_prev=0.       ! affects output info
+  real(dp),save::t_prev=0.          ! affects output info
 
   ! Factor to transform density in AGAMA units (G=1, V=1km/s, L=1kpc, T~1Gyr) to Msun/kpc^3; potential is direclty given in (km/s)^2
   mass_factor = 2.33d5
 
   ! set I/O flags
-  if(t_prev < t) then
-     !read_file=.true.
+  if(t_prev + t_step < t) then
+     read_file=.true.
   endif
 
   if(myid==1.and.read_file)then

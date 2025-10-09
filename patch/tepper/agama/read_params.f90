@@ -67,6 +67,8 @@ module agama_commons
   logical::agama_test = .false.                 ! for devel
   logical::agama_verbose = .false.              ! for devel
 
+  real(dp)::t_step = 0.
+
 end module agama_commons
 
 subroutine read_params
@@ -778,7 +780,8 @@ subroutine read_agama_params(namelist_unit,nml_ok)
    integer::nml_err
 
    namelist/agama_params/agama_file,agama_scale_l,agama_scale_v &
-      &,agama_scale_m,agama_test,agama_verbose
+      &,agama_scale_m,agama_test,agama_verbose &
+      &,t_step
 
    ! Go to the beginning of the file
    rewind(namelist_unit)
