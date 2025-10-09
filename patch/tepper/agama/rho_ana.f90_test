@@ -34,10 +34,15 @@ subroutine rho_ana(x,d,dx,ncell)
   character(len=89)::filename,infile
   logical::file_exists
   real(dp),dimension(1:3)::xyz
-  real(dp)::dummy_dp
+  real(dp)::dummy_dp, mass_factor
+
+  ! Factor to transform density in AGAMA units (G=1, V=1km/s, L=1kpc, T~1Gyr) to Msun/kpc^3; potential is direclty given in (km/s)^2
+  mass_factor = 2.33d5
 
   ! get factors to scale between physical units and code units
   call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
+
+  if(agama_test) agama_verbose = .true.
 
   if(TRIM(initfile(levelmin)).NE.' ')then
      filename=TRIM(initfile(levelmin))//'/'//TRIM(agama_file)
@@ -73,7 +78,6 @@ subroutine rho_ana(x,d,dx,ncell)
      if(myid==1)write(*,*)'Density=', agama_density(c_obj5, xyz)*mass_factor* (agama_scale_m / agama_scale_l**3) / scale_d ,' [C.U.]'
 
      if(myid==1) write(*,*)"TEST SUCCESSFUL (ABORTING)"
-
      call clean_stop
 
   end if ! agama_test
