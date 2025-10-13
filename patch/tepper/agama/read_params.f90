@@ -60,14 +60,17 @@ end module dice_commons
 module agama_commons
   use amr_commons, only: dp
 
-  character(len=512)::agama_file=''
-  real(dp)::agama_scale_l = 3.0856775815D21     ! kpc in cm
-  real(dp)::agama_scale_v = 1.0D0               ! km/s
-  real(dp)::agama_scale_m = 1.988409871D33      ! Msun in g
-  logical::agama_test = .false.                 ! for devel
-  logical::agama_verbose = .false.              ! for devel
+  real(dp)::agama_scale_l = 3.0856775815D21  ! kpc in cm
+  real(dp)::agama_scale_v = 1.0D0            ! km/s
+  real(dp)::agama_scale_m = 1.988409871D33   ! Msun in g
 
-  real(dp)::t_step = 0.
+  character(len=512)::agama_file = ''        ! AGAMA INI file name
+
+  logical::agama_debug       = .false.       ! overrides the following if T
+  logical::agama_verbose     = .true.        ! output info
+  integer::agama_verbose_int = 0             ! relevant to interface func's
+
+  real(dp)::t_step = 1e10                    ! sets file read frequency
 
 end module agama_commons
 
@@ -780,7 +783,7 @@ subroutine read_agama_params(namelist_unit,nml_ok)
    integer::nml_err
 
    namelist/agama_params/agama_file,agama_scale_l,agama_scale_v &
-      &,agama_scale_m,agama_test,agama_verbose &
+      &,agama_scale_m,agama_debug,agama_verbose &
       &,t_step
 
    ! Go to the beginning of the file

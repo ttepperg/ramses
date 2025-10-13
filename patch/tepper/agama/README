@@ -6,44 +6,61 @@ Created
 
     Last Modified:
 
+    13 OCT 2025
+    Fixed memory runaway issue.
+    TESTED SUCCESSFULLY with model agama_std.nml and hbd_28_hyb.nml
+
+
     01 OCT 2025
-    Finalised tests and bug fixing (but see Bugs/Issues below).
     First commit to repo.
     TESTED SUCCESSFULLY with model agama_test.nml and hbd_28_hyb.nml
 
 
 About
 
-    This subdirectory contains patches intended to load some features from tje AGAMA library via its Fortran interface into Ramses.
-    The files:
-        agama.a
-        agama.so
-        test_fortran.f
-    have been linked or copied from:
-        /Users/tepper/Library/Python/3.9/lib/python/site-packages/agama
-    and correspond to the static library, the dynamic library, and a Fortran example code.
+    This subdirectory contains a patch that exposes AGAMA's Fortran interface to Ramses.
+
     IMPORTANT: The AGAMA library must be compiled on the SAME system that this patch is meant to be run!
 
-Usage
-    N/A
+    The directory 'devel' was used as a development space. It has been kept for future reference and guidance.
 
+Usage
+
+    Compile Ramses patch with either of:
+
+        - Makefile_AGAMA_MULTIPATCH
+        - Makefile_AGAMA_DICE_MULTIPATCH
+
+    In the NML, include the following block:
+
+    ! file path is set by initfile (in INIT_PARAMS):
+    &AGAMA_PARAMS
+    agama_file = 'some_agama_potential.ini'
+    agama_debug = .true.       ! overrides agama_verbose
+    agama_verbose = .true.     ! better to set to .true. (:default)
+    agama_file = 0.0           ! controls the file read frequency (default: 1e10)
+    /
+
+    See Notes below.
 
 Notes
-    N/A
+    - agama_file is either an INI file with [Potential] section, either specifing an analytic potential or  with a potential approximation and derivatives (with its coefficients, etc.)
+    - the file is read at every t_step; the default value of t_step = 1e10 means the file is only read at t = 0.
 
 
 To-DO
     - Make sure IG_rho is small but > 0 (otherwise ekin = NAN)
     - Rename and move mass_factor to agama_commons in read_params.90
     - Move c_obj5 to agama_commons in read_params.f90 (?)
-    - Sort out memory leak issue -> awaiting EV's reply
-    - Express x_c in simpler form in rho_ana.f90
 
 
 Bugs/Issues
 
     - MEMORY RUNAWAY: Each call to the agama_initfromfile() routine creates a new pointer object, increasing the memory by ~50 MB. Since the AGAMA Fortran interface does not provide a destructor, repeated calls to the routine eventually lead to the memory being exhausted.
     A workaround at the moment is to limit the calls via a t_step variable.
-
+    -> FIXED. It was due to poor program flow design.
 
 Modifications
+
+    - rho_ana.f90:
+    t_prev is now correctly saved whenever t > t_prev + t_step for ALL processors, and not only myid == 1, which was causing a memory runaway.

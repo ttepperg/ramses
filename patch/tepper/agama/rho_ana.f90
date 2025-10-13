@@ -8,7 +8,10 @@ subroutine rho_ana(x,d,dx,ncell)
   use hydro_parameters
   use poisson_parameters
   use constants
+
+  ! AGAMA patch
   use agama_commons
+
   implicit none
   integer ::ncell                         ! Number of cells
   real(dp)::dx                            ! Cell size
@@ -30,38 +33,43 @@ subroutine rho_ana(x,d,dx,ncell)
   real(dp)::agama_density
 
   ! The following is not an actual string, but a placeholder to keep the pointer to the C++ object
-  character(len=8),save::c_obj5     ! <- VERY important to save
+  character(len=8),save::c_obj     ! <- VERY important to save
 
   character(len=80)::filename,infile
   logical::file_exists
   real(dp),dimension(1:3)::xyz
   real(dp)::dummy_dp, mass_factor
   real(dp),dimension(1:3)::x_c      ! potential's centre coordinates
+  logical::read_file=.true.         ! ensure file read at t=0
+  real(dp),save::t_prev=0.          ! file read at this previous time
+  real(dp)::t_input=0.,t_output=0.  ! convenience variables
 
-  logical,save::read_file=.true.    ! affects input file read
-  real(dp),save::t_prev=0.          ! affects output info
+  if(verbose)write(*,*)' Entering rho_ana'
 
-  ! Factor to transform density in AGAMA units (G=1, V=1km/s, L=1kpc, T~1Gyr) to Msun/kpc^3; potential is direclty given in (km/s)^2
-  mass_factor = 2.33d5
-
-  ! set I/O flags
-  if(t_prev + t_step < t) then
-     read_file=.true.
-  endif
-
-  if(myid==1.and.read_file)then
-     write(*,*)'Entering rho_ana at t=',t,' (previous: ',t_prev,')'
-     t_prev = t             ! save current time
+  if(agama_debug)then
+     agama_verbose = .true.
   endif
 
   ! get factors to scale between physical units and code units
   call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
 
+  ! Factor to transform density in AGAMA units (G=1, V=1km/s, L=1kpc, T~1Gyr) to Msun/kpc^3; potential is directly given in (km/s)^2
+  mass_factor = 2.33d5
+
+
+  ! the following determines the read file frequency and deletes the previously allocated potential
+  t_input = t_prev+t_step
+  if(t.gt.t_input) then
+     read_file=.true.       ! update I/O flag
+     t_output = t_prev      ! save previous output time
+     t_prev = t             ! save current time
+  endif
+
   ! coordinates of potential centre IN CODE UNITS
-  x_c(1:3) = ( INT( 0.5d0 * boxlen / dx ) ) * dx
+  x_c(1:3) = 0.5d0 * boxlen
 
   ! File needs to be read only *once* per *main* (coarse) time step
-  if(read_file)then
+  if(read_file) then
 
      ! Constructing an AGAMA potential from parameters stored in an INI file
      if(TRIM(initfile(levelmin)).NE.' ')then
@@ -73,15 +81,17 @@ subroutine rho_ana(x,d,dx,ncell)
         endif
      endif
 
+     ! output info
      if(myid==1.and.agama_verbose)then
-        write(*,*) "Reading AGAMA INI file: "
-        write(*,*) TRIM(filename)
+        write(*,*) '  Reading AGAMA INI file:'
+        write(*,*) '  ', TRIM(filename)
+        write(*,*) '  At t=', t, ' (previous t=', t_output, ')'
      end if
 
      ! VERY important to TRIM the file name when passing to routine:
-     call agama_initfromfile(c_obj5, TRIM(filename))
+     call agama_initfromfile(c_obj, TRIM(filename))
 
-     if(myid==1.and.agama_verbose) write(*,*) 'DONE'
+     if(myid==1.and.agama_verbose) write(*,*) '  DONE'
 
   endif
 
@@ -96,7 +106,7 @@ subroutine rho_ana(x,d,dx,ncell)
     xyz(1:3) = (x(i,1:3) - x_c(1:3)) * scale_l / agama_scale_l
 
     ! density in physical units (Msun/kpc^3)
-    dummy_dp = agama_density(c_obj5, xyz) * mass_factor
+    dummy_dp = agama_density(c_obj, xyz) * mass_factor
 
     ! convert from physical units to code units
     d(i) = dummy_dp * (agama_scale_m / agama_scale_l**3) / scale_d

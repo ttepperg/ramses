@@ -44,6 +44,7 @@ ifeq ($(HOST_DOMAIN),gadi.nci.org.au)
   LIBAGAMA = -L${AGAMA_PATH} ${LIB_FLAGS}${AGAMA_PATH} -l:agama.so
 endif
 
+
 # Use RT? 1=Yes, 0=No
 RT = 0
 # Use turbulence? 1=Yes, 0=No (requires fftw3)
@@ -51,7 +52,7 @@ USE_TURB=0
 # Use MPI? 1=Yes, 0=No
 MPI = 1
 # Root name of executable
-EXEC = ramses_agama
+EXEC = ramses_agama_multi
 # Number of additional energies
 NENER = 0
 # Use Grackle cooling? 1=Yes, 0=No
