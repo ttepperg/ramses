@@ -59,6 +59,9 @@ To-DO
 
 Bugs/Issues
 
+    - Memory usage still INCREASES slightly despite deleting potential
+    -> FIND OUT WHY and FIX
+
     - MEMORY RUNAWAY: Each call to the agama_initfromfile() routine creates a new pointer object, increasing the memory by ~50 MB. Since the AGAMA Fortran interface does not provide a destructor, repeated calls to the routine eventually lead to the memory being exhausted.
     A workaround at the moment is to limit the calls via a t_step variable.
     -> FIXED. It was due to poor program flow design.
