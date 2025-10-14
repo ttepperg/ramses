@@ -1,6 +1,6 @@
 /** \name   interface_fortran.cpp
     \brief  Wrapper to some of AGAMA library's functions with added functionality
-    \author Thor Tepper-Garcá
+    \author Thor Tepper-García
     \date   12 OCT 2025
 
 This file works as a wrapper form some C++ Agama functions with C linkage, and provides additional functionality: it allows to delete a potential object created by invoking the AGAMA function agama_initfromfile_(), embedded in agama_initfromfile_wrapper_
@@ -12,6 +12,9 @@ These two files demonstrate how to add functionality to an existing AGAMA instal
 
 #include <cstring>
 #include <iostream> /// only needed if debug message is used
+#if defined(__GLIBC__)
+#include <malloc.h>
+#endif
 #include "potential_factory.h"
 #include "utils_config.h"
 #include "utils.h"
@@ -74,4 +77,19 @@ extern "C" void agama_delete_(int verbose, void* c_obj, long)
     }
     // zero out Fortran handle
     memset(c_obj, 0, sizeof(void*));
+
+#if defined(__GLIBC__)
+    if(verbose == 1){
+            printf("[AGAMA DEBUG] Calling malloc_trim(0)...\n");
+            fflush(stdout);
+    }
+    int released = malloc_trim(0);
+    if(released == 1){
+        printf("[AGAMA DEBUG] Memory successfully released.\n");
+        fflush(stdout);
+    }else{
+        printf("[AGAMA DEBUG] Memory WAS NOT released.\n");
+        fflush(stdout);
+    }
+#endif
 }
