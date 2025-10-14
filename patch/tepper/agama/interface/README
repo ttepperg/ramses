@@ -6,8 +6,12 @@ Created
 
     Last Modified:
 
+    14 OCT 2025
+    Added call to malloc_trim() in agama_delete() to mitigate memory usage.
+    TESTED SUCCESSFULLY with model agama_inter.nml amd hbd_28_hyb.nml
+
     13 OCT 2025
-    Fixed memory runaway issue.
+    Partially fixed memory runaway issue.
     TESTED SUCCESSFULLY with model agama_inter.nml
 
 
@@ -60,7 +64,7 @@ To-DO
 Bugs/Issues
 
     - Memory usage still INCREASES slightly despite deleting potential
-    -> FIND OUT WHY and FIX
+    -> FIND OUT WHY and FIX if possible, although it's more of a nuissance, less than 0.1 MB per call of agama_initfromfile()
 
     - MEMORY RUNAWAY: Each call to the agama_initfromfile() routine creates a new pointer object, increasing the memory by ~50 MB. Since the AGAMA Fortran interface does not provide a destructor, repeated calls to the routine eventually lead to the memory being exhausted.
     A workaround at the moment is to limit the calls via a t_step variable.
@@ -68,5 +72,6 @@ Bugs/Issues
 
 Modifications
 
-    - rho_ana.f90:
-    t_prev is now correctly saved whenever t > t_prev + t_step for ALL processors, and not only myid == 1, which was causing a memory runaway.
+    rho_ana.f90:
+    - t_prev is now correctly saved whenever t > t_prev + t_step for ALL processors, and not only myid == 1, which was causing a memory runaway.
+    - Added call to malloc_trim() in agama_delete() to mitigate memory usage.
