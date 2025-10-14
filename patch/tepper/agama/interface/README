@@ -42,17 +42,18 @@ Usage
     ! file path is set by initfile (in INIT_PARAMS):
     &AGAMA_PARAMS
     agama_file = 'some_agama_potential.ini'
-    agama_debug = .true.       ! overrides agama_verbose
-    agama_verbose = .true.     ! better to set to .true. (:default)
-    agama_file = 0.0           ! controls the file read frequency (default: 1e10)
+    agama_debug = .false.   ! overrides agama_verbose
+    agama_verbose = .false. ! (default: .true.)
+    t_step = 0.0        ! controls the file read frequency (default: 1e10)
     /
 
     See Notes below.
 
 Notes
-    - agama_file is either an INI file with [Potential] section, either specifing an analytic potential or  with a potential approximation and derivatives (with its coefficients, etc.)
-    - agama_debug is particularly useful for debugging; when set to .true., it shows when potential objects are created (and deleted, if chosen to do so).
-    - the file is read at every t_step; the default value of t_step = 1e10 means the file is only read at t = 0.
+    - 'agama_file' is either an INI file with [Potential] section, either specifing an analytic potential or with a potential approximation and derivatives (with its coefficients, etc.)
+    - 'agama_verbose' provides output to stdout about when and which INI file is read
+    - 'agama_debug' is particularly useful for debugging; when set to .true., it shows when potential objects are created (and deleted, if chosen to do so); if set to .true., it overrides agama_verbose
+    - the file is read at every 't_step'; the default value of t_step = 1e10 means the file is only read at t = 0.
 
 
 To-DO
@@ -63,15 +64,15 @@ To-DO
 
 Bugs/Issues
 
-    - Memory usage still INCREASES slightly despite deleting potential
+    - Memory usage INCREASES slightly despite deleting potential after each initialisation
     -> FIND OUT WHY and FIX if possible, although it's more of a nuissance, less than 0.1 MB per call of agama_initfromfile()
 
-    - MEMORY RUNAWAY: Each call to the agama_initfromfile() routine creates a new pointer object, increasing the memory by ~50 MB. Since the AGAMA Fortran interface does not provide a destructor, repeated calls to the routine eventually lead to the memory being exhausted.
-    A workaround at the moment is to limit the calls via a t_step variable.
-    -> FIXED. It was due to poor program flow design.
 
 Modifications
 
     rho_ana.f90:
-    - t_prev is now correctly saved whenever t > t_prev + t_step for ALL processors, and not only myid == 1, which was causing a memory runaway.
-    - Added call to malloc_trim() in agama_delete() to mitigate memory usage.
+    - Added call to agama_interface module
+    - Added variable declarations relevant to the AGAMA patch
+    - Added call to agama_initfromfile_wrapper()
+    - Added call to agama_delete()
+    - density variable d(i) is initialised with agama_density()

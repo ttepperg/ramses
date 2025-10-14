@@ -36,16 +36,16 @@ Usage
     ! file path is set by initfile (in INIT_PARAMS):
     &AGAMA_PARAMS
     agama_file = 'some_agama_potential.ini'
-    agama_debug = .true.       ! overrides agama_verbose
-    agama_verbose = .true.     ! better to set to .true. (:default)
-    agama_file = 0.0           ! controls the file read frequency (default: 1e10)
+    agama_verbose = .false. ! (default: .true.)
+    t_step = 0.0            ! controls the file read frequency (default: 1e10)
     /
 
     See Notes below.
 
 Notes
-    - agama_file is either an INI file with [Potential] section, either specifing an analytic potential or  with a potential approximation and derivatives (with its coefficients, etc.)
-    - the file is read at every t_step; the default value of t_step = 1e10 means the file is only read at t = 0.
+    - 'agama_file' is either an INI file with [Potential] section, either specifing an analytic potential or with a potential approximation and derivatives (with its coefficients, etc.)
+    - 'agama_verbose' provides output to stdout about when and which INI file is read
+    - the file is read at every 't_step'; the default value of t_step = 1e10 means the file is only read at t = 0.
 
 
 To-DO
@@ -55,12 +55,11 @@ To-DO
 
 
 Bugs/Issues
-
-    - MEMORY RUNAWAY: Each call to the agama_initfromfile() routine creates a new pointer object, increasing the memory by ~50 MB. Since the AGAMA Fortran interface does not provide a destructor, repeated calls to the routine eventually lead to the memory being exhausted.
-    A workaround at the moment is to limit the calls via a t_step variable.
-    -> FIXED. It was due to poor program flow design.
+    N/A
 
 Modifications
 
-    - rho_ana.f90:
-    t_prev is now correctly saved whenever t > t_prev + t_step for ALL processors, and not only myid == 1, which was causing a memory runaway.
+    rho_ana.f90:
+    - Added variable declarations relevant to the AGAMA patch
+    - Added call to agama_initfromfile()
+    - density variable d(i) is initialised with agama_density()
