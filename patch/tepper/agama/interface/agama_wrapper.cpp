@@ -55,6 +55,8 @@ extern "C" void agama_delete_(int verbose, void* c_obj, long)
         fflush(stdout);  // ensure immediate output
     }
 
+// E.Vasiliev's suggestion: (fails due to the way potentials is handled here)
+//    memcpy(&pot, c_obj, sizeof(void*));
 //    for(size_t i=0; i<potentials.size(); i++)
 //        if(potentials[i].get() == pot)
 //            potentials[i].reset();
