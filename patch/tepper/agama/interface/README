@@ -59,6 +59,7 @@ Notes
 To-DO
     - Make sure IG_rho is small but > 0 (otherwise ekin = NAN)
     - Rename and move mass_factor to agama_commons in read_params.90
+        - Calculate from other scale factors, i.e. agama_scale_l, etc.
     - Move c_obj5 to agama_commons in read_params.f90 (?)
 
 
