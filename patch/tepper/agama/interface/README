@@ -6,6 +6,9 @@ Created
 
     Last Modified:
 
+    10 NOV 2025
+    Small edits to the documentation
+
     14 OCT 2025
     Added call to malloc_trim() in agama_delete() to mitigate memory usage.
     TESTED SUCCESSFULLY with model agama_inter.nml amd hbd_28_hyb.nml
@@ -23,11 +26,13 @@ Created
 About
 
     This subdirectory contains a patch that
-    - exposes AGAMA's Fortran interface to Ramses (similar to ../agama)
-    - adds functionality to AGAMA's Fortran interface to an existing AGAMA installation without the need to modify it (i.e. edit source and recompile)
+    - exposes AGAMA's standard Fortran interface to Ramses (similar to ../agama)
+    - adds functionality to AGAMA's standard Fortran interface to an existing AGAMA installation without the need to modify it (i.e. edit source and recompile)
+
     For now, this additional functionality is limited to 'destroying' a previously allocated potential object with the intent to free the memory it uses. Note that the difference is minimal to non-existent with respect to not deleting it. Still, this patch is a neat, useful illustration of how to 'patch' an exisiting AGAMA installation and its Fortran interface.
 
-    IMPORTANT: The AGAMA library must be compiled on the SAME system that this patch is meant to be run!
+    IMPORTANT:
+    - The AGAMA library must be compiled on the SAME system that this patch is meant to be run!
 
 
 Usage
@@ -46,6 +51,8 @@ Usage
     agama_verbose = .false. ! (default: .true.)
     t_step = 0.0        ! controls the file read frequency (default: 1e10)
     /
+
+    Furthermore, MAY NEED TO ADJUST mass_sph in REFINE_PARAMS to match a fully responsive analogue.
 
     See Notes below.
 

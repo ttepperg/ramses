@@ -6,6 +6,10 @@ Created
 
     Last Modified:
 
+    10 NOV 2025
+    Added some explanatory notes about the difference between the standard interface and my custom interface in folder 'interface'
+    Small edits to the documentation
+
     13 OCT 2025
     Fixed memory runaway issue.
     TESTED SUCCESSFULLY with model agama_std.nml and hbd_28_hyb.nml
@@ -20,9 +24,11 @@ About
 
     This subdirectory contains a patch that exposes AGAMA's Fortran interface to Ramses.
 
-    IMPORTANT: The AGAMA library must be compiled on the SAME system that this patch is meant to be run!
-
-    The directory 'devel' was used as a development space. It has been kept for future reference and guidance.
+    IMPORTANT:
+    - The AGAMA library must be compiled on the SAME system that this patch is meant to be run!
+    - The *standard* AGAMA inferface is provided by linking to agama.so
+    - The folder 'interface' provides a *custom* interface that shows how to add functionality to the standard interface WITHOUT the need to recompile the AGAMA library
+    - The directory 'devel' was used as a development space. It has been kept for future reference and guidance.
 
 Usage
 
@@ -39,6 +45,14 @@ Usage
     agama_verbose = .false. ! (default: .true.)
     t_step = 0.0            ! controls the file read frequency (default: 1e10)
     /
+
+    ALSO IMPORTANT: Requires gravity_type < 0
+
+    &POISSON_PARAMS
+    gravity_type=-1
+    /
+
+    Furthermore, MAY NEED TO ADJUST mass_sph in REFINE_PARAMS to match a fully responsive analogue.
 
     See Notes below.
 
