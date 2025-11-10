@@ -1,0 +1,61 @@
+Author
+    Dr. Thorsten Tepper Garcia
+
+Created
+    09 NOV 2025
+
+    Last Modified:
+
+    10 NOV 2025
+    TESTED SUCCESSFULLY with model mmw_m1_a_hyb, compiled with
+    Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH_WH07
+
+
+About
+
+    This subdirectory contains a patch that exposes AGAMA's Fortran standard interface to Ramses, and couples it to my oagertz/dice patch.
+
+    See ../agama/README for more information
+
+Usage
+
+    Compile Ramses patch with either of:
+
+        - Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH
+        - Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH_WH07
+
+    In the NML, include the following block:
+
+    ! file path is set by initfile (in INIT_PARAMS):
+    &AGAMA_PARAMS
+    agama_file = 'some_agama_potential.ini'
+    agama_verbose = .false. ! (default: .true.)
+    t_step = 0.0            ! controls the file read frequency (default: 1e10)
+    /
+
+    ALSO IMPORTANT: Requires gravity_type < 0
+
+    &POISSON_PARAMS
+    gravity_type=-1
+    /
+
+    Furthermore, MAY NEED TO ADJUST mass_sph in &REFINE_PARAMS.../ to match a fully responsive analogue.
+
+    See Notes below.
+
+Notes
+    - 'agama_file' is either an INI file with [Potential] section, either specifing an analytic potential or with a potential approximation and derivatives (with its coefficients, etc.)
+    - 'agama_verbose' provides output to stdout about when and which INI file is read
+    - the file is read at every 't_step'; the default value of t_step = 1e10 means the file is only read at t = 0.
+
+
+To-DO
+    N/A
+
+Bugs/Issues
+    N/A
+
+Modifications
+
+    read_params.f90:
+    - Merged the differences from dice/read_params.f90 into ../agama/read_params.f90
