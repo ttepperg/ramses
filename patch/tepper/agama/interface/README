@@ -73,7 +73,7 @@ To-DO
 Bugs/Issues
 
     - Memory usage INCREASES slightly despite deleting potential after each initialisation
-    -> FIND OUT WHY and FIX if possible, although it's more of a nuissance, less than 0.1 MB per call of agama_initfromfile()
+    -> FIND OUT WHY and FIX if possible, although it's more of a nuisance, less than 0.1 MB per call of agama_initfromfile()
 
 
 Modifications
