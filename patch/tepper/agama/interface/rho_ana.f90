@@ -39,7 +39,7 @@ subroutine rho_ana(x,d,dx,ncell)
   character(len=80)::filename,infile
   logical::file_exists
   real(dp),dimension(1:3)::xyz
-  real(dp)::dummy_dp, mass_factor
+  real(dp)::dummy_dp
   real(dp),dimension(1:3)::x_c      ! potential's centre coordinates
   logical::read_file=.true.         ! ensure file read at t=0
   real(dp),save::t_prev=0.          ! file read at this previous time
@@ -56,7 +56,7 @@ subroutine rho_ana(x,d,dx,ncell)
   call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
 
   ! Factor to transform density in AGAMA units (G=1, V=1km/s, L=1kpc, T~1Gyr) to Msun/kpc^3; potential is directly given in (km/s)^2
-  mass_factor = 2.33d5
+  dens_scale = 2.33d5
 
 
   ! the following determines the read file frequency and deletes the previously allocated potential
@@ -111,7 +111,7 @@ subroutine rho_ana(x,d,dx,ncell)
     xyz(1:3) = (x(i,1:3) - x_c(1:3)) * scale_l / agama_scale_l
 
     ! density in physical units (Msun/kpc^3)
-    dummy_dp = agama_density(c_obj, xyz) * mass_factor
+    dummy_dp = agama_density(c_obj, xyz) * dens_scale
 
     ! convert from physical units to code units
     d(i) = dummy_dp * (agama_scale_m / agama_scale_l**3) / scale_d

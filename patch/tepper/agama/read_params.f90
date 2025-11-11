@@ -64,6 +64,9 @@ module agama_commons
   real(dp)::agama_scale_v = 1.0D0            ! km/s
   real(dp)::agama_scale_m = 1.988409871D33   ! Msun in g
 
+  ! Factor to transform density in AGAMA units (G=1, V=1km/s, L=1kpc, T~1Gyr) to Msun/kpc^3; potential is directly given in (km/s)^2
+  real(dp)::dens_scale = 2.33d5
+
   character(len=512)::agama_file = ''        ! AGAMA INI file name
 
   logical::agama_debug       = .false.       ! overrides the following if T
