@@ -6,6 +6,9 @@ Created
 
     Last Modified:
 
+    11 NOV 2025
+    Added 'dens_scale' to agama_commons in read_params.f90
+
     10 NOV 2025
     TESTED SUCCESSFULLY with model mmw_m1_a_hyb, compiled with
     Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH_WH07
