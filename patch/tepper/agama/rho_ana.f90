@@ -62,9 +62,6 @@ subroutine rho_ana(x,d,dx,ncell)
      t_prev = t             ! save current time
   endif
 
-  ! coordinates of potential centre IN CODE UNITS
-  x_c(1:3) = 0.5d0 * boxlen
-
   ! File needs to be read only *once* per *main* (coarse) time step
   if(read_pot_file) then
 
@@ -95,11 +92,14 @@ subroutine rho_ana(x,d,dx,ncell)
   ! update I/O flag
   read_pot_file=.false.
 
+  ! coordinates of potential centre IN CODE UNITS
+  x_c(1:3) = 0.5d0 * boxlen
+
   ! Assign density to grid
   do i=1,ncell
 
     ! position in physical units (kpc)
-    ! MUST take centre shift into account -> TO DO!
+    ! taking centre shift into account
     xyz(1:3) = (x(i,1:3) - x_c(1:3)) * scale_l / agama_scale_l
 
     ! density in physical units (Msun/kpc^3)
