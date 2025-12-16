@@ -35,7 +35,7 @@ subroutine rho_ana(x,d,dx,ncell)
   ! The following is not an actual string, but a placeholder to keep the pointer to the C++ object
   character(len=8),save::c_obj     ! <- VERY important to save
 
-  character(len=80)::filename,infile
+  character(len=80)::potfilename
   logical::file_exists
   real(dp),dimension(1:3)::xyz
   real(dp)::dummy_dp
@@ -70,10 +70,10 @@ subroutine rho_ana(x,d,dx,ncell)
 
      ! Constructing an AGAMA potential from parameters stored in an INI file
      if(TRIM(initfile(levelmin)).NE.' ')then
-        filename=TRIM(initfile(levelmin))//'/'//TRIM(agama_file)
-        INQUIRE(FILE=filename,EXIST=file_exists)
+        potfilename=TRIM(initfile(levelmin))//'/'//TRIM(agama_pot_file)
+        INQUIRE(FILE=potfilename,EXIST=file_exists)
         if(.not.file_exists) then
-           if(myid==1) write(*,*) TRIM(filename)," not found"
+           if(myid==1) write(*,*) TRIM(potfilename)," not found"
            call clean_stop
         endif
      endif
@@ -81,12 +81,12 @@ subroutine rho_ana(x,d,dx,ncell)
      ! output info
      if(myid==1.and.agama_verbose)then
         write(*,*) '  Reading AGAMA INI file:'
-        write(*,*) '  ', TRIM(filename)
+        write(*,*) '  ', TRIM(potfilename)
         write(*,*) '  At t=', t, ' (previous t=', t_output, ')'
      end if
 
      ! VERY important to TRIM the file name when passing to routine:
-     call agama_initfromfile(c_obj, TRIM(filename))
+     call agama_initfromfile(c_obj, TRIM(potfilename))
 
      if(myid==1.and.agama_verbose) write(*,*) '  DONE'
 
