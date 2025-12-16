@@ -49,7 +49,7 @@ Usage
 
     ! file path is set by initfile (in INIT_PARAMS):
     &AGAMA_PARAMS
-    agama_file = 'some_agama_potential.ini'
+    agama_pot_file = 'some_agama_potential.ini'
     agama_debug = .false.   ! overrides agama_verbose
     agama_verbose = .false. ! (default: .true.)
     t_step = 0.0        ! controls the file read frequency (default: 1e10)
@@ -60,7 +60,7 @@ Usage
     See Notes below.
 
 Notes
-    - 'agama_file' is either an INI file with [Potential] section, either specifing an analytic potential or with a potential approximation and derivatives (with its coefficients, etc.)
+    - 'agama_pot_file' is either an INI file with [Potential] section, either specifing an analytic potential or with a potential approximation and derivatives (with its coefficients, etc.)
     - 'agama_verbose' provides output to stdout about when and which INI file is read
     - 'agama_debug' is particularly useful for debugging; when set to .true., it shows when potential objects are created (and deleted, if chosen to do so); if set to .true., it overrides agama_verbose
     - the file is read at every 't_step'; the default value of t_step = 1e10 means the file is only read at t = 0.

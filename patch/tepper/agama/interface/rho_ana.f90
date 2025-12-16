@@ -77,7 +77,7 @@ subroutine rho_ana(x,d,dx,ncell)
 
      ! Constructing an AGAMA potential from parameters stored in an INI file
      if(TRIM(initfile(levelmin)).NE.' ')then
-        filename=TRIM(initfile(levelmin))//'/'//TRIM(agama_file)
+        filename=TRIM(initfile(levelmin))//'/'//TRIM(agama_pot_file)
         INQUIRE(FILE=filename,EXIST=file_exists)
         if(.not.file_exists) then
            if(myid==1) write(*,*) TRIM(filename)," not found"
