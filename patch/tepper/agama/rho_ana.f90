@@ -40,7 +40,7 @@ subroutine rho_ana(x,d,dx,ncell)
   real(dp),dimension(1:3)::xyz
   real(dp)::dummy_dp
   real(dp),dimension(1:3)::x_c      ! potential's centre coordinates
-  logical::read_file=.true.         ! ensure file read at t=0
+  logical::read_pot_file=.true.         ! ensure file read at t=0
   real(dp),save::t_prev=0.          ! file read at this previous time
   real(dp)::t_input=0.,t_output=0.  ! convenience variables
 
@@ -57,7 +57,7 @@ subroutine rho_ana(x,d,dx,ncell)
   ! the following determines the read file frequency and deletes the previously allocated potential
   t_input = t_prev+t_step
   if(t.gt.t_input) then
-     read_file=.true.       ! update I/O flag
+     read_pot_file=.true.       ! update I/O flag
      t_output = t_prev      ! save previous output time
      t_prev = t             ! save current time
   endif
@@ -66,7 +66,7 @@ subroutine rho_ana(x,d,dx,ncell)
   x_c(1:3) = 0.5d0 * boxlen
 
   ! File needs to be read only *once* per *main* (coarse) time step
-  if(read_file) then
+  if(read_pot_file) then
 
      ! Constructing an AGAMA potential from parameters stored in an INI file
      if(TRIM(initfile(levelmin)).NE.' ')then
@@ -93,7 +93,7 @@ subroutine rho_ana(x,d,dx,ncell)
   endif
 
   ! update I/O flag
-  read_file=.false.
+  read_pot_file=.false.
 
   ! Assign density to grid
   do i=1,ncell
