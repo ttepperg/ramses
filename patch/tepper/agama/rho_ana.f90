@@ -134,7 +134,6 @@ subroutine rho_ana(x,d,dx,ncell)
   real(dp)::dummy_dp
   real(dp),dimension(1:3)::x_c      ! potential's centre coordinates
   logical::read_pot_file=.true.     ! ensure pot file read at t_step
-  logical::read_stz_file=.true.     ! ensure stz file read at t_step
   real(dp),save::t_prev=0.          ! file read at this previous time
   real(dp)::t_input=0.,t_output=0.  ! convenience variables
 
@@ -160,10 +159,7 @@ subroutine rho_ana(x,d,dx,ncell)
   ! The following block refers to the snapshot-time-redshift table
 
   ! File needs to be read only *once* per *run*
-  if(t==0.and.read_stz_file) then
-
-    ! update I/O flag: file will be read *only* at t=0
-    read_stz_file = .false.
+  if(t==0) then
 
     if(TRIM(initfile(levelmin)).NE.' ')then
       stzfilename=TRIM(initfile(levelmin))//'/'//TRIM(agama_stz_file)
