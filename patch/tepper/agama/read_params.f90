@@ -69,8 +69,9 @@ module agama_commons
   ! with [L]=1 kpc, [V]=1 km/s and [G]=4.3e-6 (km/s)^2 kpc/Msun
   real(dp)::dens_scale = 2.33d5
 
-  character(len=512)::agama_pot_file = ''    ! AGAMA INI potential file name
-  character(len=512)::agama_stz_file = ''    ! AGAMA snap/time/redshift file name
+  ! it is safest to give these a dummy name rather than an empty string
+  character(len=512)::agama_pot_file = 'pot.txt'    ! AGAMA INI potential file name
+  character(len=512)::agama_stz_file = 'stz.txt'    ! AGAMA snap/time/redshift file name
 
   logical::agama_debug       = .false.       ! overrides the following if T
   logical::agama_verbose     = .true.        ! output info
