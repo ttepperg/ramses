@@ -6,6 +6,10 @@ Created
 
     Last Modified:
 
+    19 DEC 2025
+    Extended capabilities to load a different potential file at a specific time based on the relation between time and potential (file name) provided by a table loaded once at runtime and pointed at by agama_stz_file. If this table does not exist, the code performs the fallback option which is to load the potential pointed at by agama_pot_file at each t_step.
+    TESTED SUCCESSFULLY with model agama_std.nml
+
     16 DEC 2025
     Renamed agama_file to agama_pot_file to allow for more options while keeping clarity
     Renamed read_file to read_pot_file for clarity

@@ -70,6 +70,7 @@ module agama_commons
   real(dp)::dens_scale = 2.33d5
 
   character(len=512)::agama_pot_file = ''    ! AGAMA INI potential file name
+  character(len=512)::agama_stz_file = ''    ! AGAMA snap/time/redshift file name
 
   logical::agama_debug       = .false.       ! overrides the following if T
   logical::agama_verbose     = .true.        ! output info
@@ -787,8 +788,9 @@ subroutine read_agama_params(namelist_unit,nml_ok)
    logical,intent(inout)::nml_ok
    integer::nml_err
 
-   namelist/agama_params/agama_pot_file,agama_scale_l,agama_scale_v &
-      &,agama_scale_m,agama_debug,agama_verbose &
+   namelist/agama_params/agama_pot_file,agama_stz_file &
+      &,agama_scale_l,agama_scale_v,agama_scale_m &
+      &,agama_debug,agama_verbose &
       &,t_step
 
    ! Go to the beginning of the file
