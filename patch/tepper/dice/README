@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    25 FEB 2026
+    Updated init_time.f90 to the latest changes in the main Ramses repo
+ 
     25 SEP 2025
     Updated init_part.f90 to read in tagp as real(sp) rather than int8, and recast it to int8 when assigning it to typep(:)%tag. The reason is that he initial condition files do not allow to write a tag of type int8 (int32 in python), but rather as real(sp) (or float32 in python).
     TESTED with hbd_26_hyb (which initially was identical to hbd_26).
