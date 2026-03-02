@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    02 MAR 2026
+    Updated read_params.f90, particle_tree.f90, rho_fine.f90 to the latest changes in the main Ramses repo
+
     25 FEB 2026
     Updated init_time.f90 to the latest changes in the main Ramses repo
  

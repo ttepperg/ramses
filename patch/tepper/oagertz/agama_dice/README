@@ -6,6 +6,12 @@ Created
 
     Last Modified:
 
+    02 MAR 2026
+    Updated read_params.f90 to the latest changes in the main Ramses repo
+
+    26 FEB 2026
+    Updated read_params.f90 to the latest changes in the main Ramses repo
+
     11 NOV 2025
     Added 'dens_scale' to agama_commons in read_params.f90
 

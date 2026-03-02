@@ -6,6 +6,12 @@ Created
 
     Last Modified:
 
+    02 MAR 2026
+    Updated read_params.f90 to the latest changes in the main Ramses repo
+
+    26 FEB 2026
+    Updated read_params.f90 to the latest changes in the main Ramses repo
+
     19 DEC 2025
     Extended capabilities to load a different potential file at a specific time based on the relation between time and potential (file name) provided by a table loaded once at runtime and pointed at by agama_stz_file. If this table does not exist, the code performs the fallback option which is to load the potential pointed at by agama_pot_file at each t_step.
     TESTED SUCCESSFULLY with model agama_std.nml
