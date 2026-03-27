@@ -911,7 +911,9 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
                           unew(iicell,ndim+2)=tt+tekin
                        endif
                        !tt is old Etherm, which should not change due to momentum additions
-                       if(energy) then
+                       !TTG: Changed on 27 MAR 2027 due to collision with symbol 'energy' declared in init_hydro.f90. Requires corresponding changes in amr_parameters.f90, read_hydro_params.f90, feedback.f90
+                       !if(energy) then
+                       if(fb_energy) then
                           if(ethermal(j)>0.) then
                              !------ Update thermal energy, inject in indp(j) ----------------------------------
                              Emax=tekin+Tmaxfb*unew(indp(j),1)/scale_T2/(gamma-1.0d0)
@@ -939,7 +941,9 @@ subroutine feedbk(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
            unew(iicell,4)=unew(iicell,4)+mloss(j)*vp(ind_part(j),3)
            unew(iicell,5)=unew(iicell,5)+mloss(j)*tekinstar
         endif
-        if(energy)then
+        !TTG: Changed on 27 MAR 2027 due to collision with symbol 'energy' declared in init_hydro.f90. Requires corresponding changes in amr_parameters.f90, read_hydro_params.f90, feedback.f90
+        !if(energy)then
+        if(fb_energy)then
            if(ethermal(j)>0.)then
               Emax=tekin+Tmaxfb*unew(iicell,1)/scale_T2/(gamma-1.0d0)
               unew(iicell,ndim+2)=unew(iicell,ndim+2)+ethermal(j)

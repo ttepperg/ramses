@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    27 MAR 2926
+    Due to collision with symbol 'energy' (float) declared in init_hydro.f90 (but also output_hydro.f90), renamed 'energy' (boolean) in amr_parameters.f90, read_hydro_params.f90, feedback.f90, to 'fb_energy'
+
     02 MAR 2026
     Updated amr_parameters.f90, read_params.f90, output_hydro.f90, particle_tree.f90, star_formation.f90 to the latest changes in the main Ramses repo
 

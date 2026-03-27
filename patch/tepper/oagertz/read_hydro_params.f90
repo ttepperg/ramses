@@ -83,8 +83,12 @@ subroutine read_hydro_params(nml_ok)
        & ,eta_rap,SNenergy,eta_w &
        & ,vmaxFB, Tmax,smallT,Nrcool,fbsafety,maxadvfb &
        & ,radpressure,metalscaling &
-       & ,supernovae,winds,momentum,energy &
+       & ,supernovae,winds,momentum,fb_energy &
        & ,SNIamodel,Ia_rate,SNdiagnostics,tau_IR
+       !TTG: Changed on 27 MAR 2027 due to collision with symbol 'energy' declared in init_hydro.f90. Requires corresponding changes in amr_parameters.f90, read_hydro_params.f90, feedback.f90
+       !& ,supernovae,winds,momentum,energy &
+       !& ,SNIamodel,Ia_rate,SNdiagnostics,tau_IR
+
 
   ! Cooling / basic chemistry parameters
   namelist/cooling_params/cooling,metal,isothermal,haardt_madau,J21 &

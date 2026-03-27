@@ -200,14 +200,16 @@ module amr_parameters
   real(dp)::maxadvfb=1.0d10  ! maximum velocity allowed in km/s
   logical ::supernovae=.true.
   logical ::winds=.true.
-  logical ::energy=.true.
+  !TTG: Changed on 27 MAR 2027 due to collision with symbol 'energy' declared in init_hydro.f90. Requires corresponding changes in amr_parameters.f90, read_hydro_params.f90, feedback.f90
+  !logical ::energy=.true.
+  logical ::fb_energy=.true.
   logical ::momentum=.true.
   logical ::radpressure=.false.  !Radiation pressure on dust from young stars
   logical ::fbsafety=.false.
   logical ::momST=.false.    !S-T momentum (Blondin et al. 1998)
   logical ::SNdiagnostics=.true.
   logical ::SFdiagnostics=.true.
-  !-------------------------------------  
+  !-------------------------------------
   ! PIC dust parameters
   real(dp)::charge_to_mass=0.0       ! Charge to mass ratio for dust grains
   real(dp)::t_stop=0.0               ! Stopping time for dust grains
