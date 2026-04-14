@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    14 APR 2026
+    Updated sink_particle.f90 to the latest changes in the main Ramses repo
+
     02 MAR 2026
     Updated particle_tree.f90, star_formation.f90 to the latest changes in the main Ramses repo
 

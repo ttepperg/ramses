@@ -162,7 +162,6 @@ subroutine create_cloud_from_sink
   integer ::info
   integer ::nsink_min,nsink_max
 #endif
-
   ! Conversion factor from user units to cgs units
   call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
 
@@ -2733,7 +2732,7 @@ subroutine read_sink_params()
      call clean_stop
   end if
 
-  if (nlevelmax_sink .eq. 0) then
+  if (nlevelmax_sink <= 0 .or. nlevelmax_sink > nlevelmax) then
      nlevelmax_sink = nlevelmax
   end if
 
