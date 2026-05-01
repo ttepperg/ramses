@@ -6,6 +6,9 @@ Created
 
     Last Modified:
 
+    01 MAY 2026
+    Updated read_params.f90 to the latest changes in the main Ramses repo
+
     02 MAR 2026
     Updated read_params.f90 to the latest changes in the main Ramses repo
 
@@ -46,7 +49,7 @@ About
     IMPORTANT:
     - The AGAMA library must be compiled on the SAME system that this patch is meant to be run!
     - The *standard* AGAMA inferface is provided by linking to agama.so
-    - The folder 'interface' provides a *custom* interface that shows how to add functionality to the standard interface WITHOUT the need to recompile the AGAMA library
+    - The folder 'interface' provides a *custom* interface that shows how to add functionality to the standard interface WITHOUT the need to recompile the AGAMA library (agama.so)
     - The directory 'devel' was used as a development space. It has been kept for future reference and guidance.
 
 Usage
