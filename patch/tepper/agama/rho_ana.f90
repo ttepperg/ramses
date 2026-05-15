@@ -159,10 +159,11 @@ subroutine rho_ana(x,d,dx,ncell)
   !----------------------------------------------------
   ! The following block refers to the snapshot-time-redshift table
 
-  ! File needs to be read only *once* per *run*
-  if(t==0.and.read_stz_file) then
+  ! File needs to be read only *once* per [re]start (at t=0 or nrestart!=0)
+  read_stz_file = read_stz_file .and. ( (t==0) .or. (nrestart.ne.0))
+  if(read_stz_file) then
 
-    ! update I/O flag: file will be read only *once* at t=0
+    ! update I/O flag
     read_stz_file = .false.
 
     if(TRIM(initfile(levelmin)).NE.' ')then
@@ -241,31 +242,34 @@ subroutine rho_ana(x,d,dx,ncell)
     ! IMPORTANT: May need to use dt_agama rather than t_agama -> TO CHECK
     t_index = find_closest_t(t_agama,t_Myr)
 
-    ! Define potential filename
-    ! NB
-    ! - 'agama_pot_file' is used as as string template and is *always* required
-    ! - adjust 'snap' and the width (5) if necessary; the settings below are appropriate for a template filename of the form "str1_snap00042_str2.str3"
-    potfilename = &
-    &set_pot_filename(agama_pot_file, "snap", 5, snapnum_agama(t_index))
-    potfilename = TRIM(initfile(levelmin))//'/'//TRIM(potfilename)
+    if (ABS(t_Myr - t_agama(t_index)).le.t_diff) then
 
-    if (t_index.gt.t_index_prev) then
+        ! Define potential filename
+        ! NB
+        ! - 'agama_pot_file' is used as as string template and is *always* required
+        ! - adjust 'snap' and the width (5) if necessary; the settings below are appropriate for a template filename of the form "str1_snap00042_str2.str3"
+        potfilename = &
+        &set_pot_filename(agama_pot_file, "snap", 5, snapnum_agama(t_index))
+        potfilename = TRIM(initfile(levelmin))//'/'//TRIM(potfilename)
 
-      if (myid==1) then
-        write(*,*)'  Reading next potential file at'
-        write(*,*)'  sim time | snap time | snap number'
-        write(*,*) t_Myr, '| ', t_agama(t_index), '| ', snapnum_agama(t_index)
-      end if
+        if (t_index.gt.t_index_prev) then
 
-      t_index_prev = t_index   ! save current index
-      read_pot_file = .true.   ! update I/O flag
-      t_output = t_prev        ! save previous output time
-      t_prev = t               ! save current time
+          if (myid==1) then
+            write(*,*)'  Reading next potential file at'
+            write(*,*)'  sim time | snap time | snap number'
+            write(*,*) t_Myr, '| ', t_agama(t_index), '| ', snapnum_agama(t_index)
+          end if
 
-    end if
+          t_index_prev = t_index   ! save current index
+          read_pot_file = .true.   ! update I/O flag
+          t_output = t_prev        ! save previous output time
+          t_prev = t               ! save current time
 
+        end if ! (t_index.gt.t_index_prev)
 
-  end if
+    end if ! (ABS(t_Myr - t_agama(t_index)).le.t_diff)
+
+  end if ! (.not.stz_file_exists)
 
   ! File needs to be read only *once* per time step; the latter can be variously defined as 't_step' or determined from the 'agama_stz_file'
   if(read_pot_file) then

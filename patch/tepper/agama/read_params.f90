@@ -77,7 +77,8 @@ module agama_commons
   logical::agama_verbose     = .true.        ! output info
   integer::agama_verbose_int = 0             ! relevant to interface func's
 
-  real(dp)::t_step = 1e10                    ! sets file read frequency
+  real(dp)::t_step = 1e10                    ! sets single file read frequency
+  real(dp)::t_diff = 1e1                     ! tolerance between t & stz (Myr)
 
 end module agama_commons
 
@@ -816,7 +817,7 @@ subroutine read_agama_params(namelist_unit,nml_ok)
    namelist/agama_params/agama_pot_file,agama_stz_file &
       &,agama_scale_l,agama_scale_v,agama_scale_m &
       &,agama_debug,agama_verbose &
-      &,t_step
+      &,t_step,t_diff
 
    ! Go to the beginning of the file
    rewind(namelist_unit)
