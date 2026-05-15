@@ -6,6 +6,9 @@ Created
 
     Last Modified:
 
+    15 MAY 2026
+    Small edit to comment in read_params.f90. Added a new NML parameter, 't_diff', that controls the tolerance between t and t_agama, and sets which potential file to read from the available times in 'agama_stz_file'.
+
     01 MAY 2026
     Updated read_params.f90 to the latest changes in the main Ramses repo
 

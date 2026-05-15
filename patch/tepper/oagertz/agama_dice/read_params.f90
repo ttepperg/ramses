@@ -72,13 +72,16 @@ module agama_commons
   ! with [L]=1 kpc, [V]=1 km/s and [G]=4.3e-6 (km/s)^2 kpc/Msun
   real(dp)::dens_scale = 2.33d5
 
-  character(len=512)::agama_file = ''        ! AGAMA INI file name
+  ! it is safest to give these a dummy name rather than an empty string
+  character(len=512)::agama_pot_file = 'pot.txt'    ! AGAMA INI potential file name
+  character(len=512)::agama_stz_file = 'stz.txt'    ! AGAMA snap|time|redshift file name
 
   logical::agama_debug       = .false.       ! overrides the following if T
   logical::agama_verbose     = .true.        ! output info
   integer::agama_verbose_int = 0             ! relevant to interface func's
 
-  real(dp)::t_step = 1e10                    ! sets file read frequency
+  real(dp)::t_step = 1e10                    ! sets single file read frequency
+  real(dp)::t_diff = 1e1                     ! tolerance between t & stz (Myr)
 
 end module agama_commons
 
@@ -881,9 +884,10 @@ subroutine read_agama_params(namelist_unit,nml_ok)
    logical,intent(inout)::nml_ok
    integer::nml_err
 
-   namelist/agama_params/agama_file,agama_scale_l,agama_scale_v &
-      &,agama_scale_m,agama_debug,agama_verbose &
-      &,t_step
+   namelist/agama_params/agama_pot_file,agama_stz_file &
+      &,agama_scale_l,agama_scale_v,agama_scale_m &
+      &,agama_debug,agama_verbose &
+      &,t_step,t_diff
 
    ! Go to the beginning of the file
    rewind(namelist_unit)
@@ -895,9 +899,9 @@ subroutine read_agama_params(namelist_unit,nml_ok)
       if(myid==1)write(*,*)'Error reading namelist &AGAMA_PARAMS. Check formatting.'
       nml_ok=.false.
    else ! nml_err<0; list not found
-      if(LEN(TRIM(agama_file))==0) then
+      if(LEN(TRIM(agama_pot_file))==0) then
          if(myid==1)write(*,*)'Error in the namelist:'
-         if(myid==1)write(*,*)'Need to set agama_file in &AGAMA_PARAMS'
+         if(myid==1)write(*,*)'Need to set agama_pot_file in &AGAMA_PARAMS'
          nml_ok=.false.
       endif
    endif
