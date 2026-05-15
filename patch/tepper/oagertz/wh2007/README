@@ -6,6 +6,9 @@ Created
 
     Last modified:
 
+    15 MAY 2926
+    Due to collision with symbol 'energy' (float) declared in init_hydro.f90 (but also output_hydro.f90), renamed 'energy' (boolean) feedback.f90 to 'fb_energy'
+
     26 AUG 2025
     Replaced all files as a result of updating my Ramses fork and patches in response to the significant changes made to the main Ramses repo. See TTG_README in my fork's main dir.
     Tested in progress with model h_01_gh2_lr_ofe_wh, compiled with Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH_WH07
