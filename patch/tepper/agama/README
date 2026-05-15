@@ -6,6 +6,9 @@ Created
 
     Last Modified:
 
+    15 MAY 2026
+    Small edit to comment in read_params.f90
+
     01 MAY 2026
     Updated read_params.f90 to the latest changes in the main Ramses repo
 
@@ -23,7 +26,6 @@ Created
     Renamed agama_file to agama_pot_file to allow for more options while keeping clarity
     Renamed read_file to read_pot_file for clarity
     Removed obsolete variable infile, renamed filename to potfilename
-
 
     11 NOV 2025
     Renamed 'mass_factor' to 'dens_scale' and moved to agama_commons in read_params.f90

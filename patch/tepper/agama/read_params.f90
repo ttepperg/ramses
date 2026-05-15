@@ -71,7 +71,7 @@ module agama_commons
 
   ! it is safest to give these a dummy name rather than an empty string
   character(len=512)::agama_pot_file = 'pot.txt'    ! AGAMA INI potential file name
-  character(len=512)::agama_stz_file = 'stz.txt'    ! AGAMA snap/time/redshift file name
+  character(len=512)::agama_stz_file = 'stz.txt'    ! AGAMA snap|time|redshift file name
 
   logical::agama_debug       = .false.       ! overrides the following if T
   logical::agama_verbose     = .true.        ! output info
