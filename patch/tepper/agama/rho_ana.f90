@@ -162,7 +162,7 @@ subroutine rho_ana(x,d,dx,ncell)
   ! File needs to be read only *once* per *run*
   if(t==0.and.read_stz_file) then
 
-    ! update I/O flag: file will be read *only* at t=0
+    ! update I/O flag: file will be read only *once* at t=0
     read_stz_file = .false.
 
     if(TRIM(initfile(levelmin)).NE.' ')then
@@ -221,7 +221,7 @@ subroutine rho_ana(x,d,dx,ncell)
   ! The following block refers to the AGAMA INI potential file
 
   ! Determine the read file frequency and delete the previously allocated potential
-  if (.not.stz_file_exists) then ! do only if no snapshot-time data available
+  if (.not.stz_file_exists) then ! do only if no snap|time|z table available
 
     t_input = t_prev+t_step
     if(t.gt.t_input) then
@@ -242,7 +242,9 @@ subroutine rho_ana(x,d,dx,ncell)
     t_index = find_closest_t(t_agama,t_Myr)
 
     ! Define potential filename
-    ! NB: adjust 'snap' and the width (5) if necessary; this is for a template filename of the form "something_snap00042_some.somext"
+    ! NB
+    ! - 'agama_pot_file' is used as as string template and is *always* required
+    ! - adjust 'snap' and the width (5) if necessary; the settings below are appropriate for a template filename of the form "str1_snap00042_str2.str3"
     potfilename = &
     &set_pot_filename(agama_pot_file, "snap", 5, snapnum_agama(t_index))
     potfilename = TRIM(initfile(levelmin))//'/'//TRIM(potfilename)
@@ -252,7 +254,7 @@ subroutine rho_ana(x,d,dx,ncell)
       if (myid==1) then
         write(*,*)'  Reading next potential file at'
         write(*,*)'  sim time | snap time | snap number'
-        write(*,*) t_Myr, t_agama(t_index), snapnum_agama(t_index)
+        write(*,*) t_Myr, '| ', t_agama(t_index), '| ', snapnum_agama(t_index)
       end if
 
       t_index_prev = t_index   ! save current index
@@ -265,7 +267,7 @@ subroutine rho_ana(x,d,dx,ncell)
 
   end if
 
-  ! File needs to be read only *once* per time step; the latter can be variously defined as t_step or determined from the agama_stz_file
+  ! File needs to be read only *once* per time step; the latter can be variously defined as 't_step' or determined from the 'agama_stz_file'
   if(read_pot_file) then
 
     ! Constructing an AGAMA potential from parameters stored in an INI file
