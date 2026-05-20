@@ -316,9 +316,20 @@ subroutine rho_ana(x,d,dx,ncell)
     ! density in physical units (Msun/kpc^3)
     dummy_dp = agama_density(c_obj, xyz) * dens_scale
 
+    ! ensure positive density throughout
+    ! Explanation: because density is a spline, it may be negative at times
+    ! Find a less hacky way to do this, e.g. a smoother approach:
+    ! dummy_dp = 0.5d0*(dummy_dp + sqrt(dummy_dp**2 + eps2)) with eps ~ 1e-5
+    dummy_dp = MAX(0.0d0, dummy_dp)
+
     ! convert from physical units to code units
     d(i) = dummy_dp * (agama_scale_m / agama_scale_l**3) / scale_d
 
   end do
+
+  if (agama_debug) then
+    if (myid==1) write(*,'(A,2ES20.10)') 'rho_ana min/max = ', MINVAL(d), MAXVAL(d)
+    if (myid==1) write(*,*) (x(MAXLOC(d,dim=1),1:3) - x_c(1:3))
+  end if
 
 end subroutine rho_ana

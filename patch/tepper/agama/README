@@ -6,10 +6,15 @@ Created
 
     Last Modified:
 
+    20 MAY 2026
+    Added hard clipping to density in rho_ana.f90 to avoid negative values; these were causing CIC in rho_fine.f90/cic_cell() to fail.
+    TO DO: add a smooth clipping instead (snippet already included but commented out for now)
+    TESTED SUCCESSFULLY with model mmw_m1_a_hyb_pc
+
     15 MAY 2026
     Small edit to comment in read_params.f90. Cosmetic edits to rho_ana.f90.
     Fixed bug in rho_ana.f90 to take nrestart into account. Added a new NML  parameter, 't_diff', that controls the tolerance between t and t_agama, and sets which potential file to read from the available times in 'agama_stz_file'.
-    SUCCESSFULLY tested with agama_std
+    TESTED SUCCESSFULLY with model agama_std
 
     01 MAY 2026
     Updated read_params.f90 to the latest changes in the main Ramses repo
@@ -84,7 +89,7 @@ Usage
     See Notes below.
 
 Notes
-    - 'agama_pot_file' is either an INI file with [Potential] section, either specifing an analytic potential or with a potential approximation and derivatives (with its coefficients, etc.)
+    - 'agama_pot_file' is a INI file with a [Potential] section, either specifing an analytic potential, or with a potential approximation and derivatives (with its coefficients, etc.)
     - 'agama_verbose' provides output to stdout about when and which INI file is read
     - the file is read at every 't_step'; the default value of t_step = 1e10 means the file is only read at t = 0.
 
