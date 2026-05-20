@@ -612,7 +612,7 @@ subroutine cic_amr(ind_cell,ind_part,ind_grid_part,x0,ng,np,ilevel)
      end do
   end do
   if(error)then
-     write(*,*)'problem in cic'
+     write(*,*)'cic_amr: problem in cic'
      do idim=1,ndim
         do j=1,np
            if(x(j,idim)<0.5D0.or.x(j,idim)>5.5D0)then
@@ -1284,7 +1284,7 @@ subroutine cic_cell(ind_grid,ngrid,ilevel)
         end do
      end do
      if(error)then
-        write(*,*)'problem in cic'
+        write(*,*)'cic_cell: problem in cic'
         do idim=1,ndim
            do j=1,np
               if(x(j,idim)<0.5D0.or.x(j,idim)>5.5D0)then
