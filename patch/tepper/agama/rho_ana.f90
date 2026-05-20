@@ -318,9 +318,9 @@ subroutine rho_ana(x,d,dx,ncell)
 
     ! ensure positive density throughout
     ! Explanation: because density is a spline, it may be negative at times
-    ! Find a less hacky way to do this, e.g. a smoother approach:
-    ! dummy_dp = 0.5d0*(dummy_dp + sqrt(dummy_dp**2 + eps2)) with eps ~ 1e-5
-    dummy_dp = MAX(0.0d0, dummy_dp)
+    ! dummy_dp = MAX(0.0d0, dummy_dp)
+    ! A smoother approach that -> the above when smallr->0 (now: smallr=1e-10):
+    dummy_dp = 0.5d0*(dummy_dp + sqrt(dummy_dp*dummy_dp + smallr*smallr))
 
     ! convert from physical units to code units
     d(i) = dummy_dp * (agama_scale_m / agama_scale_l**3) / scale_d

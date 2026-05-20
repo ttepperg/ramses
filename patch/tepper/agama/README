@@ -8,7 +8,7 @@ Created
 
     20 MAY 2026
     Added hard clipping to density in rho_ana.f90 to avoid negative values; these were causing CIC in rho_fine.f90/cic_cell() to fail.
-    TO DO: add a smooth clipping instead (snippet already included but commented out for now)
+    Then: changed hard clipping to a smooth clipping
     TESTED SUCCESSFULLY with model mmw_m1_a_hyb_pc
 
     15 MAY 2026
