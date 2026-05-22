@@ -99,9 +99,9 @@ subroutine rho_ana(x,d,dx,ncell)
   use hydro_parameters
   use poisson_parameters
   use constants
-  use agama_utils
 
   ! AGAMA patch
+  use agama_utils
   use agama_commons
 
   implicit none
