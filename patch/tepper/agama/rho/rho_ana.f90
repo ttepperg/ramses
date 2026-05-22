@@ -271,7 +271,6 @@ subroutine rho_ana(x,d,dx,ncell)
 
   end if ! (.not.stz_file_exists)
 
-
   ! File needs to be read only *once* per time step; the latter can be variously defined as 't_step' or determined from the 'agama_stz_file'
   !
   if(read_pot_file) then
