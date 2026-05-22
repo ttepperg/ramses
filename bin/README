@@ -6,6 +6,20 @@ Created
 
     Last modified:
 
+    22 MAY 2025
+    Pre-appended patch path:
+
+        ../patch/tepper/agama/rho:
+
+    to PATCH variable in:
+
+        Makefile_AGAMA_MULTIPATCH
+        Makefile_AGAMA_DICE_MULTIPATCH Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH
+        Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH_WH07
+
+    04 NOV 2025
+    Added Makefiles to link dice and oagertz with the AGAMA library
+
     09 OCT 2025
     Updated agama patch path
 
