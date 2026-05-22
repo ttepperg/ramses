@@ -314,7 +314,7 @@ subroutine rho_ana(x,d,dx,ncell)
     ! taking centre shift into account
     xyz(1:3) = (x(i,1:3) - x_c(1:3)) * scale_l / agama_scale_l
 
-    ! density in astrophysical units (Msun/kpc^3)
+    ! density in physical units (Msun/kpc^3)
     dummy_dp = agama_density(c_obj, xyz) * dens_scale
 
     ! ensure positive density throughout
