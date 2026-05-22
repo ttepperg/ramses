@@ -9,7 +9,9 @@
 !
 !
 ! Notes:
-!   This file is intended to be used in conjunction with agama_wrapper.cpp. !   These two files demonstrate how to add functionality to an existing AGAMA !   installation without the need to modify its source and recompile.
+!   This file is intended to be used in conjunction with agama_wrapper.cpp.
+!   These two files demonstrate how to add functionality to an existing AGAMA
+!   installation without the need to modify its source and recompile.
 
 module agama_interface
   use iso_c_binding
