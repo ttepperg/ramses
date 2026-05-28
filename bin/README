@@ -6,6 +6,9 @@ Created
 
     Last modified:
 
+    23 MAY 2025
+    Added Makefiles to allow the use of gravana.f90 (rather than rho_ana.f90) when linking to the AGAMA library
+
     22 MAY 2025
     Pre-appended patch path:
 
