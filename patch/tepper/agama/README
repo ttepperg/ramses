@@ -6,6 +6,9 @@ Created
 
     Last Modified:
 
+    28 MAY 2026
+    Added more information to the 'Usage' section in this README
+
     23 MAY 2026
     Added the option to use gravana.f90 rather than rho_ana.f90 to include
     the effect of the AGAMA potential. This will bypass the potentially numerical unstable steps:
@@ -79,6 +82,7 @@ Usage
 
         - Makefile_AGAMA_MULTIPATCH
         - Makefile_AGAMA_DICE_MULTIPATCH
+        - Makefile_AGAMA_GRAV_DICE_MULTIPATCH
 
     In the NML, include the following block:
 
@@ -86,15 +90,29 @@ Usage
     &AGAMA_PARAMS
     agama_pot_file = 'some_agama_potential.ini'
     agama_stz_file = 'some_table_name.dat'
+    agama_debug = .false. ! (default: .false.)
     agama_verbose = .false. ! (default: .true.)
     t_step = 0.0            ! controls the file read frequency (default: 1e10)
+    t_diff = 2.0            ! tolerance between t and t_agama  (default: 10 Myr)
     /
 
-    ALSO IMPORTANT: Requires gravity_type < 0
+    ALSO IMPORTANT:
 
+    !rho/ patch requires:
     &POISSON_PARAMS
-    gravity_type=-1
+    self_gravity=.true.
+    gravity_rho_ana_type=1
+    gravity_force_ana_type=0
     /
+
+    !grav/ patch requires:
+    &POISSON_PARAMS
+    self_gravity=.true.
+    gravity_rho_ana_type=0
+    gravity_force_ana_type=1
+    /
+
+    See mmw_m1_a_hyb_pc.nml and mmw_m1_a_hyb_pcg.nml for NML examples of each usage, respectively.
 
     Furthermore, MAY NEED TO ADJUST mass_sph in REFINE_PARAMS to match a fully responsive analogue.
 
@@ -106,7 +124,7 @@ Notes
     - the file is read at every 't_step'; the default value of t_step = 1e10 means the file is only read at t = 0.
 
 
-To-DO
+To-Do
     - Make sure IG_rho is small but > 0 (otherwise ekin = NAN)
     - Move c_obj5 to agama_commons in read_params.f90 (?)
 
