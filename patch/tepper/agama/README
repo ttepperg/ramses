@@ -6,9 +6,17 @@ Created
 
     Last Modified:
 
+    23 MAY 2026
+    Added the option to use gravana.f90 rather than rho_ana.f90 to include
+    the effect of the AGAMA potential. This will bypass the potentially numerical unstable steps:
+        potential (AGAMA) -> density (AGAMA)-> potential (RAMSES)-> force (RAMSES)
+    by doing instead:
+        potential (AGAMA) -> force (AGAMA) = force (RAMSES)
+    Required adding new directory grav/, and additions to the agama_params block in read_params.f90
+    TESTED SUCCESSFULLY with model mmw_m1_a_hyb_pcg
+
     22 MAY 2026
     Moved rho_ana.f90 to new directory rho/, to allow for other options (grav, comming soon!). Adjusted relevant Makefiles in directory bin/.
-
 
     20 MAY 2026
     Added hard clipping to density in rho_ana.f90 to avoid negative values; these were causing CIC in rho_fine.f90/cic_cell() to fail.
