@@ -67,10 +67,17 @@ module agama_commons
   real(dp)::agama_scale_v = 1.0D0            ! km/s
   real(dp)::agama_scale_m = 1.988409871D33   ! Msun in g
 
-  ! Factor to transform density in AGAMA units (G=1, V=1km/s, L=1kpc, T~1Gyr) to Msun/kpc^3; potential is directly given in (km/s)^2. It follows from:
+  ! Factor to transform from AGAMA units (G=1, V=1km/s, L=1kpc, T~1Gyr) to:
+  ! density:    Msun/kpc^3
+  ! force:      (Msun/kpc)(km/s)^2
+  ! They follows from, respectively
   ! [M] = [L][V]^2/[G]
+  ! [F] = [M][V]^2/[L]
   ! with [L]=1 kpc, [V]=1 km/s and [G]=4.3e-6 (km/s)^2 kpc/Msun
+  ! The AGAMA potential is directly given in (km/s)^2
+  ! Because [V] and [L] are unity, these both factors end up having the same numerical value (but different units of course)
   real(dp)::dens_scale = 2.33d5
+  real(dp)::force_scale = 2.33d5
 
   ! it is safest to give these a dummy name rather than an empty string
   character(len=512)::agama_pot_file = 'pot.txt'    ! AGAMA INI potential file name

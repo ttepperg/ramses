@@ -6,6 +6,9 @@ Created
 
     Last Modified:
 
+    23 MAY 2026
+    Added parameters to the agama_params block in read_params.f90, in response to the new agama/grav patch.
+
     15 MAY 2026
     Small edit to comment in read_params.f90. Added a new NML parameter, 't_diff', that controls the tolerance between t and t_agama, and sets which potential file to read from the available times in 'agama_stz_file'.
 
