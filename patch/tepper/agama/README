@@ -125,8 +125,9 @@ Notes
 
 
 To-Do
+    - DO NOT silently clip reconstructed density in rho_ana -> inform user!
     - Make sure IG_rho is small but > 0 (otherwise ekin = NAN)
-    - Move c_obj5 to agama_commons in read_params.f90 (?)
+    - Move c_obj5 to agama_commons in read_params.f90? NOT.
 
 
 Bugs/Issues

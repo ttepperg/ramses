@@ -319,8 +319,9 @@ subroutine rho_ana(x,d,dx,ncell)
 
     ! ensure positive density throughout
     ! Explanation: because density is a spline, it may be negative at times
+    ! HARD clipping:
     ! dummy_dp = MAX(0.0d0, dummy_dp)
-    ! A smoother approach that -> the above when smallr->0 (now: smallr=1e-10):
+    ! A smoother approach that ->the above when smallr->0 (now: smallr=1e-10):
     dummy_dp = 0.5d0*(dummy_dp + sqrt(dummy_dp*dummy_dp + smallr*smallr))
 
     ! convert from physical units to code units
