@@ -120,6 +120,8 @@ subroutine rho_ana(x,d,dx,ncell)
 
   ! ----------- AGAMA patch BELOW this line --------------------
 
+  ! IMPORTANT: All explicitly initialised variables are given an implicit 'save' attribute -> DANGEROUS! Make it explicit!
+
   ! Functions provided by the AGAMA library
   real(dp)::agama_potential ! not used here, but to remind me of it
   real(dp)::agama_density
@@ -132,6 +134,8 @@ subroutine rho_ana(x,d,dx,ncell)
   logical,save::stz_file_exists
   real(dp),dimension(1:3)::xyz
   real(dp)::dummy_dp
+  logical::negative_density=.false. ! flag if negative densities appear
+  logical::report_neg_dens=.true.   ! flag if negative densities to stdout
   real(dp),dimension(1:3)::x_c      ! potential's centre coordinates
   logical::read_pot_file=.true.     ! ensure pot file read at t_step
   logical::read_stz_file=.true.     ! ensure stz file read at t_step
@@ -227,6 +231,7 @@ subroutine rho_ana(x,d,dx,ncell)
     t_input = t_prev+t_step
     if(t.gt.t_input) then
       read_pot_file = .true.   ! update I/O flag
+      report_neg_dens = .true. ! update stdout flag
       t_output = t_prev        ! save previous output time
       t_prev = t               ! save current time
     end if
@@ -245,7 +250,7 @@ subroutine rho_ana(x,d,dx,ncell)
     if (ABS(t_Myr - t_agama(t_index)).le.t_diff) then
 
         ! Define potential filename
-        ! NB
+        ! NOTES:
         ! - 'agama_pot_file' is used as as string template and is *always* required
         ! - adjust 'snap' and the width (5) if necessary; the settings below are appropriate for a template filename of the form "str1_snap00042_str2.str3"
         potfilename = &
@@ -262,6 +267,7 @@ subroutine rho_ana(x,d,dx,ncell)
 
           t_index_prev = t_index   ! save current index
           read_pot_file = .true.   ! update I/O flag
+          report_neg_dens = .true. ! update stdout flag
           t_output = t_prev        ! save previous output time
           t_prev = t               ! save current time
 
@@ -271,7 +277,7 @@ subroutine rho_ana(x,d,dx,ncell)
 
   end if ! (.not.stz_file_exists)
 
-  ! File needs to be read only *once* per time step; the latter can be variously defined as 't_step' or determined from the 'agama_stz_file'
+  ! File needs to be read only *once* per t_step; its value can be variously defined through input parameter 't_step' or determined from the 'agama_stz_file'
   !
   if(read_pot_file) then
 
@@ -319,6 +325,9 @@ subroutine rho_ana(x,d,dx,ncell)
 
     ! ensure positive density throughout
     ! Explanation: because density is a spline, it may be negative at times
+    ! IMPORTANT: DO NOT do this silently, but no need to record every instance
+    if ((dummy_dp.lt.0.0d0).and.(.not.negative_density)) &
+    & negative_density = .true.
     ! HARD clipping:
     ! dummy_dp = MAX(0.0d0, dummy_dp)
     ! A smoother approach that ->the above when smallr->0 (now: smallr=1e-10):
@@ -332,6 +341,12 @@ subroutine rho_ana(x,d,dx,ncell)
   if (agama_debug) then
     if (myid==1) write(*,'(A,2ES20.10)') 'rho_ana min/max = ', MINVAL(d), MAXVAL(d)
     if (myid==1) write(*,*) (x(MAXLOC(d,dim=1),1:3) - x_c(1:3))
+  end if
+
+  if (negative_density.and.report_neg_dens) then
+     if (myid==1) write(*,*) 'Negative density(ies) in AGAMA estimate (clipped)'
+      negative_density = .false. ! reset flag
+      report_neg_dens = .false. ! update stdout flag
   end if
 
 end subroutine rho_ana

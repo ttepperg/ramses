@@ -6,6 +6,10 @@ Created
 
     Last Modified:
 
+    23 JUN 2026
+    Notify user of negative densities in the AGAMA estimate in rho_ana()
+    TESTED SUCCESSFULLY with model agama_std
+
     28 MAY 2026
     Added more information to the 'Usage' section in this README
 
@@ -125,7 +129,6 @@ Notes
 
 
 To-Do
-    - DO NOT silently clip reconstructed density in rho_ana -> inform user!
     - Make sure IG_rho is small but > 0 (otherwise ekin = NAN)
     - Move c_obj5 to agama_commons in read_params.f90? NOT.
 
