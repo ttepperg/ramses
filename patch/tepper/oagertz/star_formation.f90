@@ -5,7 +5,7 @@ subroutine star_formation(ilevel)
   use hydro_commons
   use poisson_commons
   use cooling_module, ONLY: XH=>X
-  use constants, only: Myr2sec, Gyr2sec, kpc2cm, mH, pi, rhoc, twopi, M_sun
+  use constants, only: Myr2sec, Gyr2sec, mH, pi, rhoc, twopi, kB, factG_in_cgs, M_sun
   use random
   use mpi_mod
   use tracer_utils, only: attach_tracer
@@ -51,6 +51,7 @@ subroutine star_formation(ilevel)
   real(dp)::dx,dx_loc,scale,vol_loc,dx_min,vol_min,d1,d2,d3,d4,d5,d6
   real(dp)::mdebris
   real(dp),dimension(1:nvector)::sfr_ff
+  real(dp)::polytropic_constant
   integer ,dimension(1:ncpu,1:IRandNumSize)::allseed
   integer ,dimension(1:nvector),save::ind_grid,ind_cell,ind_cell2,nstar
   integer ,dimension(1:nvector),save::ind_grid_new,ind_cell_new,ind_part
@@ -552,10 +553,17 @@ subroutine star_formation(ilevel)
               if(d<=d0)ok(i)=.false.
            end do
            ! Temperature criterion
+           if(jeans_ncells > 0)then
+              polytropic_constant=factG_in_cgs*(boxlen*jeans_ncells*0.5d0**dble(nlevelmax)*scale_l/aexp)**2/ pi / gamma
+           endif
            do i=1,ngrid
               T2=uold(ind_cell(i),5)*scale_T2*(gamma-1.0d0)
               nH=max(uold(ind_cell(i),1),smallr)*scale_nH
-              T_poly=T2_star*(nH/nISM)**(g_star-1.0d0)
+              if(jeans_ncells > 0)then
+                 T_poly=nH*polytropic_constant*mH**2/XH/kB
+              else
+                 T_poly=T2_star*(nH/nISM)**(g_star-1.0d0)
+              endif
               T2=T2-T_poly
               if(T2>temp_star)ok(i)=.false.
            end do
