@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    08 JUL 2026
+    Fixed bug (missing kpc2cm) in star_formation.f90
+
     07 JUL 2026
     Updated star_formation.f90 to the latest changes in the main Ramses repo
 

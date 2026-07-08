@@ -5,7 +5,7 @@ subroutine star_formation(ilevel)
   use hydro_commons
   use poisson_commons
   use cooling_module, ONLY: XH=>X
-  use constants, only: Myr2sec, Gyr2sec, mH, pi, rhoc, twopi, kB, factG_in_cgs, M_sun
+  use constants, only: Myr2sec, Gyr2sec, kpc2cm, mH, pi, rhoc, twopi, kB, factG_in_cgs, M_sun
   use random
   use mpi_mod
   use tracer_utils, only: attach_tracer
@@ -738,7 +738,7 @@ subroutine star_formation(ilevel)
            tg=uold(ind_cell_new(i),5)*(gamma-1)*scale_T2
            if(metal)then
               iii=0
-              do imet=1,nmetals                 
+              do imet=1,nmetals
                  zg(imet)=uold(ind_cell_new(i),imetal+iii)
                  iii=iii+1
               enddo
@@ -763,14 +763,14 @@ subroutine star_formation(ilevel)
                  zp(ind_part(i),imet) = zg(imet)  ! Initial star metallicity
               end do
            endif
-              
+
            ! --- Write to logfile
-           if(SFdiagnostics)then 
+           if(SFdiagnostics)then
               write(SFunit_out,'(I7,I10,I3,7e14.5)') nstep,index_star,ilevel,d*scale_nH, &
                  & x*scale_l/kpc2cm,y*scale_l/kpc2cm,z*scale_l/kpc2cm, &
                  & n*mstar*scale_m,birth_epoch*scale_t,aexp
            endif
-           
+
 
            ! Set GMC particle variables
            if(f_w>0)then
