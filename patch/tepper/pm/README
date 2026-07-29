@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    29 JUL 2026
+    Updated pm_parameters.f90, sink_particle.f90 to the latest changes in the main Ramses repo
+
     07 JUL 2026
     Updated star_formation.f90 to the latest changes in the main Ramses repo
 
