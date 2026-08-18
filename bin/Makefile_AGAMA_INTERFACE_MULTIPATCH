@@ -45,7 +45,7 @@ ifeq ($(HOST_DOMAIN),gadi.nci.org.au)
 endif
 
 # AGAMA INTERFACE
-# The following is required to deteer make from stopping after agama_patch
+# The following is required to deter make from stopping after agama_patch
 all: agama_patch ramses
 
 # Create custom inferface objects
@@ -261,7 +261,7 @@ endif
 MODOBJ += poisson_commons.o hydro_parameters.o hydro_commons.o \
           cooling_module.o bisection.o sparse_mat.o clfind_commons.o \
           gadgetreadfile.o write_makefile.o write_patch.o write_gitinfo.o \
-          sink_sn_feedback.o
+          sink_sn_feedback.o dice_commons.o
 ifeq ($(RT),1)
    MODOBJ += rt_parameters.o rt_hydro_commons.o coolrates_module.o \
              rt_spectra.o rt_cooling_module.o rt_flux_module.o
@@ -302,6 +302,15 @@ RTOBJ = rt_init_hydro.o rt_init_xion.o rt_init.o rt_init_flow_fine.o \
 TURBOBJ = turb_force_utils.o read_turb_params.o init_turb.o mpi_share_turb_fields.o \
           turb_next_field.o turb_check_time.o write_turb_fields.o read_turb_fields.o \
           add_turb_forcing.o
+
+
+# Patch objects that require special treatment
+# IMPORTANT: The following is to avoid inserting files from the dice patch that are not needed
+DICE_PATH = ../patch/tepper/dice
+dice_commons.o: $(DICE_PATH)/dice_commons.f90
+	$(F90) $(FFLAGS_BASE) $(FFLAGS_OPT) -c $< -o $@ $(LIBS_OBJ) $(LIBS_OBJ_TURB)
+
+
 # Patch objects
 sinclude $(PATCH)/Makefile
 

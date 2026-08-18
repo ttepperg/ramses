@@ -7,6 +7,7 @@ Created
     Last Modified:
 
     18 AUG 2026
+    Removed declaration of module dice_commons, as it is now included via the tepper/dice patch as a separate file during compilation (requires changes to the corresponding Makefiles)
     Updated read_params.f90 to the latest changes in the main Ramses repo
 
     23 JUN 2026
