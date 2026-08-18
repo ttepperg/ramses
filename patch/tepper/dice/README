@@ -7,6 +7,7 @@ Created
 	Last modified:
 
     18 AUG 2026
+    Split module dice_commons into a separate file, dice_commons.f90, in preparation for the commit to merges DICE with the main repo
     Updated init_flow_fine.f90, read_params.f90 to the latest changes in the main Ramses repo
 
     20 MAY 2026
