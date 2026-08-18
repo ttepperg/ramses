@@ -7,6 +7,7 @@ Created
     Last modified:
 
     18 AUG 2026
+    Added dice_commons.o and dice_restart_commons.o to MODOBJ in *DICEMULTIPATCH, *DICEMULTIPATCH_GAS, *DICE_RESTARTMULTIPATCH, and *DICE_RESTARTMULTIPATCH_GAS, and succesfully tested compilation
     Updated all Makefiles to harmonise with the latest changes to the default Makefile of the main Ramses repo
 
     23 MAY 2025
