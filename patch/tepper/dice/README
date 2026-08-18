@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    18 AUG 2026
+    Updated init_flow_fine.f90, read_params.f90 to the latest changes in the main Ramses repo
+
     20 MAY 2026
     Added the corresponding routine's name to the error output 'problem in cic', which appears in two different ones: cic_amr() and cic_cell()
 

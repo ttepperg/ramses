@@ -6,6 +6,9 @@ Created
 
     Last Modified:
 
+    18 AUG 2026
+    Updated read_params.f90 to the latest changes in the main Ramses repo
+
     23 JUN 2026
     Notify user of negative densities in the AGAMA estimate in rho_ana()
     TESTED SUCCESSFULLY with model agama_std

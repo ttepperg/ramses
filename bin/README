@@ -6,6 +6,9 @@ Created
 
     Last modified:
 
+    18 AUG 2026
+    Updated all Makefiles to harmonise with the latest changes to the default Makefile of the main Ramses repo
+
     23 MAY 2025
     Added Makefiles to allow the use of gravana.f90 (rather than rho_ana.f90) when linking to the AGAMA library
 

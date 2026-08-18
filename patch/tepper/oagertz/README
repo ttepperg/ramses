@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    18 AUG 2026
+    Updated adaptive_loop.f90, cooling_fine.f90, read_params.f90 to the latest changes in the main Ramses repo
+
     29 JUL 2026
     Updated pm_parameters.f90 to the latest changes in the main Ramses repo
 
