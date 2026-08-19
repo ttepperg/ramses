@@ -44,7 +44,7 @@ subroutine rho_fine(ilevel,icount)
   !-------------------------------------------------------
   ! Initialize rho to analytical and baryon density field
   !-------------------------------------------------------
-  if(dice_init.and.amr_struct) then
+  if(nexus_init.and.amr_struct) then
     if(hydro)call multipole_from_current_level(ilevel)
     call cic_from_multipole(ilevel)
     ! Update boundaries
@@ -747,7 +747,7 @@ subroutine cic_amr(ind_cell,ind_part,ind_grid_part,x0,ng,np,ilevel)
 
      do j=1,np
         ok(j)=(igrid(j,ind)>0).and.is_not_tracer(fam(j))
-        if(dice_init) ok(j)=ok(j).and.(idp(ind_part(j)).ne.1)
+        if(nexus_init) ok(j)=ok(j).and.(idp(ind_part(j)).ne.1)
         vol2(j)=mmm(j)*vol(j,ind)/vol_loc
      end do
 

@@ -76,7 +76,7 @@ subroutine add_free(ind_part,np)
      end do
   end if
   ! DICE patch
-  if(dice_init) then
+  if(nexus_init) then
      do j=1,np
         up(ind_part(j))=0.0
      end do
@@ -152,7 +152,7 @@ subroutine add_free_cond(ind_part,ok,np)
      end do
   end if
   ! DICE patch
-  if(dice_init) then
+  if(nexus_init) then
      do j=1,np
         if(ok(j))then
            up(ind_part(j))=0.0

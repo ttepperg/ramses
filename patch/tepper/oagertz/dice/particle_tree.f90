@@ -826,7 +826,7 @@ subroutine virtual_tree_fine(ilevel)
   particle_data_width=particle_data_width+1
 #endif
   ! DICE patch / gas temperature
-  if(dice_init) particle_data_width=particle_data_width+2
+  if(nexus_init) particle_data_width=particle_data_width+2
 
   ! Allocate communication buffer in emission
   do icpu=1,ncpu
@@ -1362,7 +1362,7 @@ subroutine fill_comm(ind_part,ind_com,ind_list,np,ilevel,icpu)
   end if
 
   ! DICE patch / gas temperature
-  if(dice_init) then
+  if(nexus_init) then
      do i=1,np
         reception(icpu,ilevel)%up(ind_com(i),current_property)=up(ind_part(i))
      end do
@@ -1584,7 +1584,7 @@ subroutine empty_comm(ind_com,np,ilevel,icpu)
   end if
 
   ! DICE patch / gas temperature
-  if(dice_init) then
+  if(nexus_init) then
      do i=1,np
        up(ind_part(i))=emission(icpu,ilevel)%up(ind_com(i),current_property)
      end do

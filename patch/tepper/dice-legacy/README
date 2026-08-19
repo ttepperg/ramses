@@ -8,11 +8,12 @@ Created
 
     19 AUG 2026
     MAJOR CHANGES
+    Changed filetype 'dice' to 'nexus', and 'dice_init' to 'nexus_init', to avoid clash with new Ramses+DICE
     Renamed folder 'dice' to 'dice-legacy'
     Renamed dice_commons to nexus_commons
 
     18 AUG 2026
-    Split module dice_commons into a separate file, dice_commons.f90, in preparation for the commit to merges DICE with the main repo
+    Split module dice_commons into a separate file, dice_commons.f90, in preparation for the commit to merge DICE with the main repo (Ramses+DICE)
     Updated init_flow_fine.f90, read_params.f90 to the latest changes in the main Ramses repo
 
     20 MAY 2026

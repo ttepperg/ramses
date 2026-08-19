@@ -165,7 +165,7 @@ subroutine init_refine_2
         enddo
         eps_star=eps_star2
      endif
-     dice_init=.false.
+     nexus_init=.false.
   ! ----------
   endif ! if .not. 'grafic'
 

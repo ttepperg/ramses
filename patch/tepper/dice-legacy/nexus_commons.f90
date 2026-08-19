@@ -41,7 +41,7 @@ module nexus_commons
   real(dp)::gadget_scale_t = 1.0D6*365*24*3600
   real(dp),allocatable,dimension(:)::up
   real(dp),allocatable,dimension(:)::maskp
-  logical::dice_init       = .false.
+  logical::nexus_init       = .false.
   logical::amr_struct      = .false.
   ! magnetic
   integer,parameter::MAXGAL= 32

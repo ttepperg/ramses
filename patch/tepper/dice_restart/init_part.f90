@@ -311,7 +311,7 @@ subroutine init_part
         call load_ascii
      case ('gadget')
         call load_gadget
-     case ('dice')
+     case ('nexus')
         call load_dice
      case ('ramses_dice')
         call load_ramses_dice
@@ -1237,7 +1237,7 @@ contains
   subroutine load_dice
     use dice_restart_commons, only: dice_restart_init
 !!! DICE
-    dice_init=.true.
+    nexus_init=.true.
     ! Conversion factor from user units to cgs units
     call units(scale_l,scale_t,scale_d,scale_v,scale_nH,scale_T2)
     scale_m = scale_d*scale_l**3
@@ -1896,7 +1896,7 @@ contains
     ! Initialisation
 
     dice_restart_init = .true. ! <- VERY important if additional ICs loaded
-    dice_init    = .true. ! <- VERY important
+    nexus_init    = .true. ! <- VERY important
 
     ! avoid adding a hot 'atmosphere' <- VERY important
     IG_rho=0.0D0                 ! IGM gas density (default 1.0d-5)

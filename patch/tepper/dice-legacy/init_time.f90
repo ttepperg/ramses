@@ -563,7 +563,7 @@ subroutine init_cosmo
      xoff3(levelmin)=0
      dxini(levelmin) = boxlen_ini/(nx*2**levelmin*(h0/100))
 
-  CASE ('dice')
+  CASE ('nexus')
      if (verbose) write(*,*)'Reading in gadget format from'//TRIM(initfile(levelmin))//'/'//TRIM(ic_file)
      call gadgetreadheader(TRIM(initfile(levelmin))//'/'//TRIM(ic_file), 0,gadgetheader, ok)
      if(.not.ok) call clean_stop
