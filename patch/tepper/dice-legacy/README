@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    19 AUG 2026
+    MAJOR CHANGE: Renamed folder 'dice' to 'dice-legacy'
+
     18 AUG 2026
     Split module dice_commons into a separate file, dice_commons.f90, in preparation for the commit to merges DICE with the main repo
     Updated init_flow_fine.f90, read_params.f90 to the latest changes in the main Ramses repo
