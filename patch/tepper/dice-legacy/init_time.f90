@@ -415,7 +415,7 @@ subroutine init_cosmo
   use pm_commons
   use gadgetreadfilemod
   use mpi_mod
-  use dice_commons
+  use nexus_commons
   implicit none
   !------------------------------------------------------
   ! Read cosmological and geometrical parameters

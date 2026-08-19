@@ -5,7 +5,7 @@
 subroutine init_refine
   use amr_commons
   use pm_commons
-  use dice_commons
+  use nexus_commons
   implicit none
   !-------------------------------------------
   ! This routine builds the initial AMR grid
@@ -61,7 +61,7 @@ subroutine init_refine_2
 #endif
   use pm_commons
   use poisson_commons
-  use dice_commons
+  use nexus_commons
   implicit none
   integer::ilevel,i,ivar
   real(dp)::eps_star2

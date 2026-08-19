@@ -9,7 +9,7 @@ subroutine rho_fine(ilevel,icount)
   use poisson_commons
   use cooling_module
   use mpi_mod
-  use dice_commons
+  use nexus_commons
   implicit none
 #ifndef WITHOUTMPI
   integer::info
@@ -527,7 +527,7 @@ subroutine cic_amr(ind_cell,ind_part,ind_grid_part,x0,ng,np,ilevel)
   use pm_commons
   use pm_parameters, only:nlevelmax_sink
   use poisson_commons
-  use dice_commons
+  use nexus_commons
   use hydro_commons, ONLY: mass_sph
   implicit none
   integer::ng,np,ilevel

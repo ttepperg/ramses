@@ -3,7 +3,7 @@ subroutine init_part
   use pm_commons
   use clfind_commons
   ! DICE patch
-  use dice_commons
+  use nexus_commons
   use cooling_module
   use gadgetreadfilemod
   use iso_fortran_env, only: int8 ! <- VERY important

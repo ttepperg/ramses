@@ -6,7 +6,7 @@
 subroutine init_flow
   use amr_commons
   use hydro_commons, ONLY: nvar_all, uold
-  use dice_commons
+  use nexus_commons
   implicit none
 
   integer::ilevel,ivar
@@ -59,7 +59,7 @@ subroutine init_flow_fine(ilevel)
 #if USE_TURB==1
   use turb_commons
 #endif
-  use dice_commons
+  use nexus_commons
   implicit none
 #ifndef WITHOUTMPI
   integer::info,info2,dummy_io
@@ -647,7 +647,7 @@ end subroutine region_condinit
 subroutine reset_uold(ilevel)
   use amr_commons
   use hydro_commons
-  use dice_commons
+  use nexus_commons
   implicit none
   integer::ilevel
   !--------------------------------------------------------------------------
@@ -689,7 +689,7 @@ end subroutine reset_uold
 subroutine init_uold(ilevel)
   use amr_commons
   use hydro_commons
-  use dice_commons
+  use nexus_commons
   implicit none
   integer::ilevel
   !--------------------------------------------------------------------------
@@ -778,7 +778,7 @@ subroutine condinit_loc(ilevel)
   use pm_commons
   use hydro_commons
   use poisson_commons
-  use dice_commons
+  use nexus_commons
   implicit none
   integer::ilevel
   !------------------------------------------------------------------
@@ -916,7 +916,7 @@ subroutine init_gas_cic(ind_cell,ind_part,ind_grid_part,x0,ng,np,ilevel)
   use amr_commons
   use pm_commons
   use hydro_commons
-  use dice_commons
+  use nexus_commons
   use cooling_module
   implicit none
   integer::ng,np,ilevel
@@ -1150,7 +1150,7 @@ subroutine init_gas_ngp(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   use pm_commons
   use hydro_commons
   use random
-  use dice_commons
+  use nexus_commons
   implicit none
   integer::ng,np,ilevel
   integer,dimension(1:nvector)::ind_grid
@@ -1291,7 +1291,7 @@ subroutine mag_constant(ilevel)
   ! constant background magnetic field
   use amr_commons
   use hydro_commons
-  use dice_commons
+  use nexus_commons
   implicit none
   integer::i,ind,iskip,ilevel
 
@@ -1308,7 +1308,7 @@ subroutine mag_compute(ilevel)
   use amr_commons
   !use pm_commons
   use hydro_commons
-  use dice_commons
+  use nexus_commons
   !use random
   implicit none
   integer::i,j,ilevel,icell
@@ -1464,7 +1464,7 @@ subroutine mag_compute(ilevel)
 end subroutine mag_compute
 
 subroutine mag_toroidal(pos,dir,A)
-  use dice_commons
+  use nexus_commons
   use amr_parameters, ONLY: boxlen
   implicit none
   real(dp)::r,h

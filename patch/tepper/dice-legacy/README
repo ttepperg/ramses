@@ -7,7 +7,9 @@ Created
 	Last modified:
 
     19 AUG 2026
-    MAJOR CHANGE: Renamed folder 'dice' to 'dice-legacy'
+    MAJOR CHANGES
+    Renamed folder 'dice' to 'dice-legacy'
+    Renamed dice_commons to nexus_commons
 
     18 AUG 2026
     Split module dice_commons into a separate file, dice_commons.f90, in preparation for the commit to merges DICE with the main repo

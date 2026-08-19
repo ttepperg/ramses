@@ -734,7 +734,7 @@ end subroutine read_poisson_params
 ! DICE patch
 subroutine read_dice_params(namelist_unit,nml_ok)
    use amr_commons, only:myid
-   use dice_commons
+   use nexus_commons
    implicit none
    integer,intent(in)::namelist_unit
    logical,intent(inout)::nml_ok
