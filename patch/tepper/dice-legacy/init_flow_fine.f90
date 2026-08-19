@@ -475,7 +475,7 @@ subroutine init_flow_fine(ilevel)
        ic_mag_axis_z(i) = ic_mag_axis_z(i) / axlen
     enddo
 
-    ! Initialise uold with values from the DICE_PARAMS namelist
+    ! Initialise uold with values from the NEXUS_PARAMS namelist
     call reset_uold(ilevel)
     ! Update the grid using the gas particles read from the Gadget1 file
     ! NGP scheme is used

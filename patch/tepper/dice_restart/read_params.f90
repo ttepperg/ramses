@@ -152,7 +152,7 @@ subroutine read_params
 
   ! DEV INFO: add here your call for new namelist blocks
   ! DICE patch
-  call read_dice_params(1,nml_ok)
+  call read_nexus_params(1,nml_ok)
   ! DICE_RESTART patch
   call read_dice_restart_params(1,nml_ok)
 
@@ -732,7 +732,7 @@ end subroutine read_poisson_params
 !###############################################################
 !###############################################################
 ! DICE patch
-subroutine read_dice_params(namelist_unit,nml_ok)
+subroutine read_nexus_params(namelist_unit,nml_ok)
    use amr_commons, only:myid
    use nexus_commons
    implicit none
@@ -740,7 +740,7 @@ subroutine read_dice_params(namelist_unit,nml_ok)
    logical,intent(inout)::nml_ok
    integer::nml_err
 
-   namelist/dice_params/ ic_file,ic_nfile,ic_format,IG_rho,IG_T2,IG_metal &
+   namelist/nexus_params/ ic_file,ic_nfile,ic_format,IG_rho,IG_T2,IG_metal &
        & ,ic_head_name,ic_pos_name,ic_vel_name,ic_id_name,ic_mass_name &
        & ,ic_u_name,ic_metal_name,ic_age_name &
        & ,ic_tag_name &
@@ -756,14 +756,14 @@ subroutine read_dice_params(namelist_unit,nml_ok)
    rewind(namelist_unit)
 
    ! Read namelist
-   read(namelist_unit,NML=dice_params,IOSTAT=nml_err)
+   read(namelist_unit,NML=nexus_params,IOSTAT=nml_err)
 
    if(nml_err>0)then
-      if(myid==1)write(*,*)'Error reading namelist &DICE_PARAMS. Check formatting.'
+      if(myid==1)write(*,*)'Error reading namelist &NEXUS_PARAMS. Check formatting.'
       nml_ok=.false.
    endif
 
-end subroutine read_dice_params
+end subroutine read_nexus_params
 !###############################################################
 !###############################################################
 !###############################################################

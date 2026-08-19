@@ -8,6 +8,7 @@ Created
 
     19 AUG 2026
     MAJOR CHANGES
+    Renamed *dice_params to *nexus_params
     Renamed dice_commons to nexus_commons
     Split module dice_commons into a separate file, ../dice/nexus_commons.f90, in preparation for the commit to merges DICE with the main repo
 
