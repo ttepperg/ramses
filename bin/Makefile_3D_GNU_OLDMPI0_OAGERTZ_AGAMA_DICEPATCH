@@ -27,7 +27,7 @@ SOLVER = hydro
 # IMPORTANT: The ORDER matters! If files with the same name are present,
 # only the first found is considered! Therefore, my patched versions of files are included last. PATCH has priority over standard location
 # Also, directories are NOT looked into recursively!
-PATCH = ../patch/tepper/oagertz/agama_dice:../patch/tepper/agama/rho:../patch/tepper/agama:../patch/tepper/oagertz/dice:../patch/tepper/dice:../patch/tepper/oagertz:../patch/tepper/amr:../patch/tepper/hydro:../patch/tepper/pm:../patch/tepper/poisson
+PATCH = ../patch/tepper/oagertz/agama_dice:../patch/tepper/agama/rho:../patch/tepper/agama:../patch/tepper/oagertz/dice:../patch/tepper/dice-legacy:../patch/tepper/oagertz:../patch/tepper/amr:../patch/tepper/hydro:../patch/tepper/pm:../patch/tepper/poisson
 # NOTE 1: On some systems, the -rpath flag may not work and you need to add the AGAMA_PATH to DYLD_LIBRARY_PATH (Mac) or LD_LIBRARY_PATH (Linux)
 # NOTE 2: The -l:agama.so syntax means link to agama.so literally, rather than libagama.so
 # NOTE 3: Must set correct lib path on a host-by-host basis

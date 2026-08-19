@@ -27,7 +27,7 @@ SOLVER = hydro
 # IMPORTANT: The ORDER matters! If files with the same name are present,
 # only the first found is considered! Therefore, my patched versions of files are included last. PATCH has priority over standard location
 # Also, directories are NOT looked into recursively!
-PATCH = ../patch/tepper/oagertz/dice:../patch/tepper/dice:../patch/tepper/oagertz:../patch/tepper/amr:../patch/tepper/hydro:../patch/tepper/pm:../patch/tepper/poisson
+PATCH = ../patch/tepper/oagertz/dice:../patch/tepper/dice-legacy:../patch/tepper/oagertz:../patch/tepper/amr:../patch/tepper/hydro:../patch/tepper/pm:../patch/tepper/poisson
 # Use RT? 1=Yes, 0=No
 RT = 0
 # Use turbulence? 1=Yes, 0=No (requires fftw3)
