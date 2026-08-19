@@ -44,12 +44,12 @@ ifeq ($(HOST_DOMAIN),gadi.nci.org.au)
   LIBAGAMA = -L${AGAMA_PATH} ${LIB_FLAGS}${AGAMA_PATH} -l:agama.so
 endif
 
-# The following is required to deter make from trying to compile dice_commons.o first, which will fail, because none of the other module objects exist yet, starting with amr_commons.o, etc.
+# The following is required to deter make from trying to compile nexus_commons.o first, which will fail, because none of the other module objects exist yet, starting with amr_commons.o, etc.
 all: ramses
 
 # The following is to avoid inserting files from the dice patch that are not needed
 DICE_PATH = ../patch/tepper/dice-legacy
-dice_commons.o: $(DICE_PATH)/dice_commons.f90
+nexus_commons.o: $(DICE_PATH)/nexus_commons.f90
 	$(F90) $(FFLAGS_BASE) $(FFLAGS_OPT) -c $< -o $@ $(LIBS_OBJ) $(LIBS_OBJ_TURB)
 
 
@@ -251,7 +251,7 @@ endif
 MODOBJ += poisson_commons.o hydro_parameters.o hydro_commons.o \
           cooling_module.o bisection.o sparse_mat.o clfind_commons.o \
           gadgetreadfile.o write_makefile.o write_patch.o write_gitinfo.o \
-          sink_sn_feedback.o dice_commons.o
+          sink_sn_feedback.o nexus_commons.o
 ifeq ($(RT),1)
    MODOBJ += rt_parameters.o rt_hydro_commons.o coolrates_module.o \
              rt_spectra.o rt_cooling_module.o rt_flux_module.o
