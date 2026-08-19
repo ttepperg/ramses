@@ -727,7 +727,7 @@ subroutine virtual_tree_fine(ilevel)
   use amr_commons
   use hydro_parameters,only: nmetals ! ERIC
   use mpi_mod
-  use dice_commons
+  use nexus_commons
   implicit none
   integer::ilevel
   !-----------------------------------------------------------------------
@@ -1216,7 +1216,7 @@ subroutine fill_comm(ind_part,ind_com,ind_list,np,ilevel,icpu)
   use pm_commons
   use amr_commons
   use hydro_parameters,only: nmetals ! ERIC
-  use dice_commons
+  use nexus_commons
   implicit none
   !-----------------------------------------------------------------------
   ! This subroutine is called by virtual_tree_fine. It fills the communication
@@ -1392,7 +1392,7 @@ subroutine empty_comm(ind_com,np,ilevel,icpu)
   use pm_commons
   use amr_commons
   use hydro_parameters,only: nmetals ! ERIC
-  use dice_commons
+  use nexus_commons
   implicit none
   !-----------------------------------------------------------------------
   ! This subroutine is called by virtual_tree_fine. It transfers particle

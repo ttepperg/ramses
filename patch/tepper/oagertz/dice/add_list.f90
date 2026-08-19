@@ -43,7 +43,7 @@ subroutine add_free(ind_part,np)
   use amr_commons
   use pm_commons
   use hydro_parameters,only: nmetals ! ERIC
-  use dice_commons
+  use nexus_commons
   implicit none
   integer, intent(in)::np
   integer,dimension(1:nvector), intent(in)::ind_part
@@ -115,7 +115,7 @@ subroutine add_free_cond(ind_part,ok,np)
   use amr_commons
   use pm_commons
   use hydro_parameters,only: nmetals ! ERIC
-  use dice_commons
+  use nexus_commons
   implicit none
   integer::np
   integer,dimension(1:nvector)::ind_part

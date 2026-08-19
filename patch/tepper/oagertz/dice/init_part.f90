@@ -4,7 +4,7 @@ subroutine init_part
   use clfind_commons
   use hydro_parameters,only: nmetals ! ERIC
   ! DICE patch
-  use dice_commons
+  use nexus_commons
   use cooling_module
   use gadgetreadfilemod
   use iso_fortran_env, only: int8 ! <- VERY important

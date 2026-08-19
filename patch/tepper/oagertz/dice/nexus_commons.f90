@@ -1,4 +1,4 @@
-module dice_commons
+module nexus_commons
   use amr_commons
   use hydro_commons
 
@@ -58,4 +58,4 @@ module dice_commons
   real(dp),dimension(1:MAXGAL)::ic_mag_scale_H  = 1.0
   real(dp),dimension(1:MAXGAL)::ic_mag_scale_B  = 0.0
 
-end module dice_commons
+end module nexus_commons
