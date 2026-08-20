@@ -27,7 +27,7 @@ SOLVER = hydro
 # IMPORTANT: The ORDER matters! If files with the same name are present,
 # only the first found is considered. PATCH has priority over standard location
 # Also, directories are NOT looked into recursively!
-PATCH = ../patch/init/dice
+PATCH = ../patch/tepper/dice
 # Use RT? 1=Yes, 0=No
 RT = 0
 # Use turbulence? 1=Yes, 0=No (requires fftw3)
