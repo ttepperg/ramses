@@ -6,6 +6,9 @@ Created
 
     Last modified:
 
+    19 AUG 2026
+    Renamed dice_commons.o to nexus_commons.o to reflect the changes in my dice patches.
+
     18 AUG 2026
     Added dice_commons.o to Makefile_OAGERTZ*DICE*
 
