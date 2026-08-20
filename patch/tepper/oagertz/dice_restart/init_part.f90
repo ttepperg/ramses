@@ -321,7 +321,7 @@ subroutine init_part
      case ('gadget')
         call load_gadget
      case ('nexus')
-        call load_dice
+        call load_nexus
      case ('ramses_dice')
         call load_ramses_dice
 
@@ -1243,7 +1243,7 @@ contains
     if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
   end subroutine load_ascii
 
-  subroutine load_dice
+  subroutine load_nexus
     use dice_restart_commons, only: dice_restart_init
 !!! DICE
     nexus_init=.true.
@@ -1774,7 +1774,7 @@ contains
     endif
 
     ! DICE patch
-  end subroutine load_dice
+  end subroutine load_nexus
 
   ! DICE_RESTART patch
   subroutine load_ramses_dice
@@ -3055,7 +3055,7 @@ contains
 	! load additional DICE ICs
 	if(add_dice_ic)then
 	   if(myid==1)write(*,*)'Loading additional DICE ICs...'
-	   call load_dice
+	   call load_nexus
 	endif
 
   end subroutine load_ramses_dice

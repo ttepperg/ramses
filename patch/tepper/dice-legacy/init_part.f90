@@ -312,7 +312,7 @@ subroutine init_part
      case ('gadget')
         call load_gadget
      case ('nexus')
-        call load_dice
+        call load_nexus
 
      case DEFAULT
         write(*,*) 'Unsupported format file ' // filetype
@@ -1232,7 +1232,7 @@ contains
     if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
   end subroutine load_ascii
 
-  subroutine load_dice
+  subroutine load_nexus
 !!! DICE
     nexus_init=.true.
     ! Conversion factor from user units to cgs units
@@ -1744,7 +1744,7 @@ contains
     ifout = ic_ifout
     t = ic_t_restart
     ! DICE patch
-  end subroutine load_dice
+  end subroutine load_nexus
 
 
 end subroutine init_part

@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    20 AUG 2026
+    Renamed subroutine 'load_dice' to 'load_nexus'
+
     19 AUG 2026
     MAJOR CHANGES
     Renamed *dice_params to *nexus_params
