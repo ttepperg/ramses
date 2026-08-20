@@ -1,0 +1,51 @@
+Author
+    Dr. Thorsten Tepper Garcia
+
+Created
+    20 AUG 2026
+
+	Last modified:
+
+
+About
+
+    This folder contains the main repo files that now provide the DICE patch as part of the main code, rather than an actual patch, previously in patch/init/dice, now deprecated and deleted.
+    I've kept the old patch here as 'dice-legacy', since it is the foundation of most of my Nexus framework. In time, I shall replace that by this new dice patch.
+
+    The corresponding files have been copied from the main code here by visual inspection of the corresponding commit (00f593cd); see here:
+    https://github.com/ramses-organisation/ramses/pull/280/files#diff-1fd97222012c2e0a2d401816dafc19c9171222d7e59166c87c49335a92185714
+
+    They are listed in the file src_files.txt, for convenience.
+
+    IMPORTANT:
+    init_dice.f90 used to be init_flow_fine.f90. Now these have been split into two. init_dice.f90 appears to include a number of new routines (dice_mag_constant, dice_mag_compute, dice_mag_toroidal),
+    plus routines previously spread across other patch's files:
+        * rho_fine.f90:
+            ngp_amr_gas(), multipole_from_current_level()
+        * init_refine.f90:
+            kill_gas_part()
+        * init_flow_fine.f90, the following, renamed:
+            reset_uold -> dice_reset_uold
+            init_old -> dice_init_uold
+            condinit_loc -> condinit_dice
+            mag_constant -> dice_mag_constant
+            mag_compute -> dice_mag_compute
+            mag_toroidal -> dice_mag_toroidal
+    dice_commons.f90 was previously declared inside read_params.f90
+
+Usage (*)
+
+Notes
+    N/A
+
+
+To-Do
+    N/A
+
+
+Bugs
+    N/A
+
+
+Modifications
+    N/A
