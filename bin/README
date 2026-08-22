@@ -6,6 +6,9 @@ Created
 
     Last modified:
 
+    22 AUG 2026
+    Added init_dice.o to Makefile_3D_GNU_OLDMPI0_OAGERTZPATCH
+
     19 AUG 2026
     Renamed dice_commons.o to nexus_commons.o to reflect the changes in my dice patches.
 

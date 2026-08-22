@@ -6,6 +6,12 @@ Created
 
 	Last modified:
 
+    22 AUG 2026
+    Added and modified init_dice.f90 (which resides in hydro/ in the main code).
+    This file is not actually used at runtime, but it is needed because the main code's hydro/init_flow_fine.f90 includes several routines from this file, which are however not used unless the NEW dice machinery (now part of the main code) is used.
+    The modifications to init_dice.f90 consist in the use of vatriable 'zp' with the appropriate rank, and the necessary addition of variable 'imet'.
+    Code SUCCESSFULLY tested with model fgas10_ramses_fork.nml
+
     18 AUG 2026
     Updated adaptive_loop.f90, cooling_fine.f90, read_params.f90 to the latest changes in the main Ramses repo
 
