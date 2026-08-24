@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    24 AUG 2026
+    Moved some routines from init_flow_fine.f90, init_refine.f90, and rho_fine.f90 to new file init_nexus.f90, to conform with the new Ramses+DICE patch. In the latter, the corresponding file is called init_dice.f90
+
     20 AUG 2026
     Renamed subroutine 'load_dice' to 'load_nexus'
 
