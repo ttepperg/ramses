@@ -6,6 +6,10 @@ Created
 
     Last modified:
 
+    24 AUG 2026
+    Added dice_commons.o, init_dice.o to Makefile_3D_GNU_OLDMPI0_DICEPATCH. The code compiles but it has not been tested at runtime
+
+
     22 AUG 2026
     Added init_dice.o to Makefile_3D_GNU_OLDMPI0_OAGERTZPATCH
 
