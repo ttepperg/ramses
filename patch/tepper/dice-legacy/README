@@ -7,6 +7,8 @@ Created
 	Last modified:
 
     24 AUG 2026
+    Removed obsolete patched gadgetreadfile.f90 (provided by main code's pm/), but kept as backup.
+    Code SUCCESFULLY tested with hbd_10_gd0_sink_4
     Moved some routines from init_flow_fine.f90, init_refine.f90, and rho_fine.f90 to new file init_nexus.f90, to conform with the new Ramses+DICE patch. In the latter, the corresponding file is called init_dice.f90
 
     20 AUG 2026
