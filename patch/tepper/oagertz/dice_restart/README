@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    25 AUG 2026
+    Updated read_params.f90 to the latest changes in the main Ramses repo
+
     20 AUG 2026
     Renamed subroutine 'load_dice' to 'load_nexus'
 

@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    25 AUG 2026
+    Updated particle_tree.f90, read_hydro_params.f90, read_params.f90 to the latest changes in the main Ramses repo
+
     22 AUG 2026
     Added and modified init_dice.f90 (which resides in hydro/ in the main code).
     This file is not actually used at runtime, but it is needed because the main code's hydro/init_flow_fine.f90 includes several routines from this file, which are however not used unless the NEW dice machinery (now part of the main code) is used.

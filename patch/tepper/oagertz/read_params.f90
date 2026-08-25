@@ -150,6 +150,7 @@ subroutine read_params
   call read_turb_params(nml_ok)
 #endif
 #endif
+  call read_dice_params(1,nml_ok)
 
   ! DEV INFO: add here your call for new namelist blocks
 
@@ -269,6 +270,7 @@ subroutine read_params
 #ifndef WITHOUTMPI
   call MPI_BCAST(nrestart,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 #endif
+
 
   ! Send the token
 #ifndef WITHOUTMPI
@@ -531,8 +533,8 @@ subroutine read_output_params(namelist_unit,nml_ok)
 
    ! Parameters to specify when to write an output
    namelist/output_params/noutput,foutput,aout,tout &
-   & ,tend,delta_tout,aend,delta_aout,gadget_output,walltime_hrs,minutes_dump,output_to_log &
-   & ,write_conservative,read_conservative,exact_output_time &
+   & ,tend,delta_tout,aend,delta_aout,gadget_output,walltime_hrs,minutes_dump &
+   & ,output_to_log,write_conservative,read_conservative,exact_output_time &
    & ,output_dir
 
    ! Go to the beginning of the file
@@ -604,6 +606,10 @@ subroutine read_output_params(namelist_unit,nml_ok)
       noutput=noutput+1
       aout(noutput)=aend
    endif
+
+   ! if no output time was requested at all, keep a single HUGE entry in the list
+   if(noutput==0)noutput=1
+
    ! set periodic output params
    tout_next=delta_tout
    aout_next=delta_aout
@@ -783,3 +789,37 @@ subroutine read_poisson_params(namelist_unit,nml_ok)
    endif
 
 end subroutine read_poisson_params
+!###############################################################
+!###############################################################
+!###############################################################
+subroutine read_dice_params(namelist_unit,nml_ok)
+   use amr_commons, only:myid
+   use dice_commons
+   implicit none
+   integer,intent(in)::namelist_unit
+   logical,intent(inout)::nml_ok
+   integer::nml_err
+
+   namelist/dice_params/ ic_file,ic_nfile,ic_format,IG_rho,IG_T2,IG_metal &
+       & ,ic_head_name,ic_pos_name,ic_vel_name,ic_id_name,ic_mass_name &
+       & ,ic_u_name,ic_metal_name,ic_age_name &
+       & ,gadget_scale_l, gadget_scale_v, gadget_scale_m ,gadget_scale_t &
+       & ,ic_scale_pos,ic_scale_vel,ic_scale_mass,ic_scale_u,ic_scale_age &
+       & ,ic_scale_metal,ic_center,ic_ifout,amr_struct,ic_t_restart,ic_mag_const &
+       & ,ic_mag_center_x,ic_mag_center_y,ic_mag_center_z &
+       & ,ic_mag_axis_x,ic_mag_axis_y,ic_mag_axis_z &
+       & ,ic_mag_scale_R,ic_mag_scale_H,ic_mag_scale_B,cosmo_add_gas_index,ic_skip_type &
+       & ,ic_mask_ivar,ic_mask_min,ic_mask_max,ic_mask_ptype
+
+   ! Go to the beginning of the file
+   rewind(namelist_unit)
+
+   ! Read namelist
+   read(namelist_unit,NML=dice_params,IOSTAT=nml_err)
+
+   if(nml_err>0)then
+      if(myid==1)write(*,*)'Error reading namelist &DICE_PARAMS. Check formatting.'
+      nml_ok=.false.
+   endif
+
+end subroutine read_dice_params

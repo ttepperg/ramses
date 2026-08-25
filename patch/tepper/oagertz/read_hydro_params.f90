@@ -103,8 +103,8 @@ subroutine read_hydro_params(nml_ok)
   namelist/sf_params/m_star,n_star,T2_star,g_star,del_star &
        & ,eps_star,jeans_ncells,sf_virial,sf_trelax,sf_tdiss,sf_model&
        & ,sf_log_properties,sf_imf,sf_compressive,randomize_sf &
-       & ,mstarparticle,temp_star,SFdiagnostics &
-       & ,PoissMeanMult
+       & ,PoissMeanMult &
+       & ,mstarparticle,temp_star,SFdiagnostics
 
   ! Units parameters
   namelist/units_params/units_density,units_time,units_length
@@ -182,11 +182,21 @@ subroutine read_hydro_params(nml_ok)
     ischeme = 0
   CASE ('induction')
     ischeme = 1
-
   CASE DEFAULT
     write(*,*)'unknown scheme'
     nml_ok=.false.
   END SELECT
+
+  ! Force interpol_var==1 for induction scheme.
+  ! This scheme re-imposes the total energy analytically by forcing P=1,
+  ! so total energy is not conserved anyway and interpol_var=0 is meaningless.
+  ! Worse, it makes the coarse-fine magnetic energy correction end up in the
+  ! thermal energy, which spoils the imposed pressure.
+  ! Only relevant when AMR is enabled (otherwise interpol_var in namelist not read).
+  if(ischeme==1.and.nlevelmax>levelmin.and.interpol_var.ne.1)then
+     if(myid==1)write(*,*)'Error: the induction scheme requires interpol_var=1'
+     nml_ok=.false.
+  endif
   !------------------------------------------------
   ! set iriemann
   !------------------------------------------------
@@ -234,6 +244,17 @@ subroutine read_hydro_params(nml_ok)
   ! account for staggered mesh representation
   !--------------------------------------------------
   nexpand_bound=2
+#else
+  !------------------------------------------------
+  ! check the hydro scheme name
+  !------------------------------------------------
+  SELECT CASE (scheme)
+  CASE ('muscl')
+  CASE ('plmde')
+  CASE DEFAULT
+    if(myid==1)write(*,*)'Error: unknown scheme, the hydro solver accepts muscl or plmde'
+    nml_ok=.false.
+  END SELECT
 #endif
 
   !--------------------------------------------------

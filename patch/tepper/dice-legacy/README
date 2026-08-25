@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    25 AUG 2026
+    Updated particle_tree.f90, read_params.f90 to the latest changes in the main Ramses repo
+
     24 AUG 2026
     Removed obsolete patched gadgetreadfile.f90 (provided by main code's pm/), but kept as backup.
     Code SUCCESFULLY tested with hbd_10_gd0_sink_4
