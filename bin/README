@@ -92,3 +92,5 @@ Test cases
     Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH_WH07 with model mmw_m1_a_hyb
     Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH with model hizb_05_lr_s7
     Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS wih model hbd_10_gd0_sink_4
+    Makefile_OAGERTZ_AGAMA_DICEPATCH_WH07 with model mmw_m1_a_hyb_pc
+    Makefile_OAGERTZPATCH with model fgas10_ramses_fork (with condinit.f90!)
