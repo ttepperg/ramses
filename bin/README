@@ -15,32 +15,18 @@ Created
         Makefile_AGAMA_DICE_MULTIPATCH
         Makefile_AGAMA_GRAV_DICE_MULTIPATCH
         Makefile_AGAMA_INTERFACE_DICE_MULTIPATCH
+        Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH
+        Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH_WH07
+        Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICE_RESTARTPATCH_WH07
+        Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICE_RESTARTPATCH
+        Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_GRAV_DICEPATCH_WH07
+        Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_GRAV_DICEPATCH
+        Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH_WH07
+        Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH
     Added dice_commons.o, init_dice.o to
         Makefile_3D_GNU_OLDMPI0_DICEPATCH
         Makefile_AGAMA_MULTIPATCH
         Makefile_AGAMA_INTERFACE_MULTIPATCH
-    *Note the following*
-    COMPILED WITH MODIFICATIONS (TESTED):
-        Makefile_AGAMA_MULTIPATCH with model agama_std
-        Makefile_AGAMA_INTERFACE_MULTIPATCH with model agama_inter
-        Makefile_AGAMA_DICE_MULTIPATCH with model hbd_26_hyb
-        Makefile_AGAMA_INTERFACE_DICE_MULTIPATCH with model hbd_26_hyb
-    COMPILED W/O MODIFICATIONS (TESTED):
-        Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH with model hizb_05_lr_s7
-        Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS wih model hbd_10_gd0_sink_4
-        Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH_WH07 with model mmw_m1_a_hyb
-        Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_GRAV_DICEPATCH_WH07 with model mmw_m1_a_pcg_hyr
-        Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH_WH07 with model h_00_gh0_lr_ofe_wh_q
-    COMPILED WITH MODIFICATIONS (NOT TESTED!!!):
-        Makefile_3D_GNU_OLDMPI0_DICEPATCH
-        Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH
-        Makefile_3D_GNU_OLDMPI0_DICE_RESTARTMULTIPATCH_GAS
-        Makefile_AGAMA_GRAV_DICE_MULTIPATCH
-    COMPILED W/O MODIFICATIONS (NOT TESTED!!!):
-        Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH
-        Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH
-        Makefile_AGAMA_DICE_MULTIPATCH
-        Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICE_RESTARTPATCH_WH07
 
     22 AUG 2026
     Added init_dice.o to Makefile_3D_GNU_OLDMPI0_OAGERTZPATCH
@@ -90,3 +76,16 @@ About
 
     This directory contains a number of Makefiles specific to my patches (patch/tepper), in addition to the standard Makefile.
     The NML files in patch/tepper/namelist indicate in their header which Makefile is appropriate to use when running the corresponding simulation.
+
+Test cases
+
+    Makefile_AGAMA_MULTIPATCH with model agama_std
+    Makefile_AGAMA_INTERFACE_MULTIPATCH with model agama_inter
+    Makefile_AGAMA_DICE_MULTIPATCH with model hbd_26_hyb
+    Makefile_AGAMA_INTERFACE_DICE_MULTIPATCH with model hbd_26_hyb
+    Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH with model hizb_07_lr_fgas20_star
+    Makefile_3D_GNU_OLDMPI0_OAGERTZ_DICEPATCH_WH07 with model h_00_gh0_lr_ofe_wh_q
+    Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_GRAV_DICEPATCH_WH07 with model mmw_m1_a_pcg_hyr
+    Makefile_3D_GNU_OLDMPI0_OAGERTZ_AGAMA_DICEPATCH_WH07 with model mmw_m1_a_hyb
+    Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH with model hizb_05_lr_s7
+    Makefile_3D_GNU_OLDMPI0_DICEMULTIPATCH_GAS wih model hbd_10_gd0_sink_4
