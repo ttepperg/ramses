@@ -854,7 +854,7 @@ subroutine mag_toroidal(pos,dir,A)
     ! vector in cartesian frame
     A = A + Ah*gaxis(dir)
   end do
-end subroutine
+end subroutine mag_toroidal
 #endif
 
 
