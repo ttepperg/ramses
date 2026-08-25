@@ -282,7 +282,7 @@ subroutine init_part
      case ('gadget')
         call load_gadget
      case ('dice')
-        call load_nexus
+        call load_dice
 
      case DEFAULT
         write(*,*) 'Unsupported format file ' // filetype
@@ -1200,7 +1200,7 @@ contains
     if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
   end subroutine load_ascii
 
-  subroutine load_nexus
+  subroutine load_dice
     integer::j,type_index
     integer::dummy_int,blck_size,jump_blck,blck_cnt,stat,ifile
     integer::head_blck,pos_blck,vel_blck,id_blck,mass_blck,u_blck,metal_blck,age_blck
@@ -1695,7 +1695,7 @@ contains
     if(debug)write(*,*)'npart=',npart,'/',npart_cpu(ncpu)
     ifout = ic_ifout
     t = ic_t_restart
-  end subroutine load_nexus
+  end subroutine load_dice
 
 
 end subroutine init_part
