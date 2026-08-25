@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    25 AUG 2026
+    Created init_nexus.f90 from init_flow_fine.f90, and deleted the latter as it is identical to dice-legacy/init_flow_fine.f90
+
     20 AUG 2026
     Renamed subroutine 'load_dice' to 'load_nexus'
 
