@@ -7,6 +7,7 @@ Created
 	Last modified:
 
     25 AUG 2026
+    Removed references to dice-related routines in read_params.f90, particle_tree.f90 to avoid clash with nexus-related routines
     Updated particle_tree.f90, read_params.f90 to the latest changes in the main Ramses repo
     Created init_nexus.f90 from init_flow_fine.f90, and deleted the latter as it is identical to dice-legacy/init_flow_fine.f90
 
