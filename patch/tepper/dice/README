@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    25 AUG 2026
+    Sync'd files with source (see src_files.txt), using:
+         cat src_files.txt | awk '{print $2,$3,$4,$5}' | sh
 
 About
 
