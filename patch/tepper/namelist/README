@@ -6,6 +6,9 @@ Created
 
     Last modified:
 
+    25 AUG 2026
+    Remove string '_3D_GNU_OLDMPI0' from Makefile filenames in in-file comments
+
     26 AUG 2025
     NML files are no longer tracked with Git, since they are subject to frequent changes (e.g. testing, restarting, changing destination dir, etc.) that make its tracking tedious. Tracking may not be necessary as they are saved with each simulation's output.
 
