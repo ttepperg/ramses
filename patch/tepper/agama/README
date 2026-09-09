@@ -148,9 +148,11 @@ To-Do
 
 
 Bugs/Issues
-    N/A
+    Potential bug in gravana.f90 at restart when / if potential file is not present. Code 'crashes' (clean_stop) after reading the STZ file, just below the line 'if(read_pot_file) then ...'.
+    Reproduce bug with model mmw_m1_a_pcg_hyr, restart at output_00227
 
-Modifications
+
+Initial Modifications (later modifications are documented above)
 
     rho_ana.f90:
     - Added variable declarations relevant to the AGAMA patch
