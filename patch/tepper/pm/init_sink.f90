@@ -14,7 +14,8 @@ subroutine init_sink
   real(dp)::scale_nH,scale_T2,scale_l,scale_d,scale_t,scale_v,scale_m
   real(dp),parameter::km2cm=1.0d+5
   integer::isink, nsinkold
-  logical::eof, csv_sink = .false., ic_sink=.false.,ic_sink_restart=.false.
+  logical::eof,ic_sink=.false.
+  logical::csv_sink=.false.,ic_sink_restart=.false.
   character(LEN=80)::filename
   character(LEN=80)::fileloc
   character(LEN=5)::nchar,ncharcpu

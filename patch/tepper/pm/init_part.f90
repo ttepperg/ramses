@@ -2,7 +2,7 @@ subroutine init_part
   use amr_commons
   use pm_commons
   use clfind_commons
-
+  use tracer_utils, only: initialize_skip_loc
 #ifdef RT
   use rt_parameters,only: convert_birth_times
 #endif
@@ -58,6 +58,7 @@ subroutine init_part
   character(LEN=20)::filetype_loc
   character(LEN=5)::nchar,ncharcpu
 
+
   if(verbose)write(*,*)'Entering init_part'
 
   if(verbose)write(*,*)'WARNING: NEVER USE FAMILY CODES / TAGS > 127.'
@@ -67,6 +68,8 @@ subroutine init_part
      if(verbose)write(*,*)'Initial conditions already set'
      return
   end if
+
+  if (MC_tracer) call initialize_skip_loc
 
   ! Allocate particle variables
   allocate(xp    (npartmax,ndim))
@@ -78,11 +81,12 @@ subroutine init_part
      allocate(move_flag(npartmax))
      move_flag = 0
   end if
-  allocate(nextp (npartmax))
-  allocate(prevp (npartmax))
-  allocate(levelp(npartmax))
-  allocate(idp   (npartmax))
-  allocate(typep (npartmax))
+  allocate(dumpedp(npartmax))
+  allocate(nextp  (npartmax))
+  allocate(prevp  (npartmax))
+  allocate(levelp (npartmax))
+  allocate(idp    (npartmax))
+  allocate(typep  (npartmax))
 #ifdef OUTPUT_PARTICLE_POTENTIAL
   allocate(ptcl_phi(npartmax))
 #endif

@@ -6,6 +6,14 @@ Created
 
 	Last modified:
 
+    09 SEP 2026
+    Updated
+        init_part.f90
+        output_part.f90
+    to the latest changes in the main Ramses repo.
+    Split declaration of logical variables in init_sink.f90
+    IMPORTANT: I did not update init_sink.f90 to the latest changes in the main repo, as these are incompatible with my patch.
+
     29 JUL 2026
     Updated pm_parameters.f90, sink_particle.f90 to the latest changes in the main Ramses repo
 

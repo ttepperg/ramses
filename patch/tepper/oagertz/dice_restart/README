@@ -6,6 +6,11 @@ Created
 
 	Last modified:
 
+    09 SEP 2026
+    Updated
+        init_part.f90
+    to the latest changes in the main Ramses repo
+
     25 AUG 2026
     Removed references to dice-related routines in read_params.f90 to avoid clash with nexus-related routines
     Updated read_params.f90 to the latest changes in the main Ramses repo

@@ -6,6 +6,15 @@ Created
 
 	Last modified:
 
+    09 SEP 2026
+    Updated
+        init_part.f90
+        output_part.f90
+        pm_commons.f90
+        tracer_utils.f90
+    to the latest changes in the main Ramses repo
+
+
     25 AUG 2026
     Updated particle_tree.f90, read_hydro_params.f90, read_params.f90 to the latest changes in the main Ramses repo
 
