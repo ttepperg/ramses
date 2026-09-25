@@ -6,6 +6,10 @@ Created
 
 	Last modified:
 
+    25 SEP 2026
+    Updated read_params.f90
+    to the latest changes in the main Ramses repo
+
     09 SEP 2026
     Updated
         init_part.f90
