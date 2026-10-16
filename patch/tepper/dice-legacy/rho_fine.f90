@@ -44,13 +44,15 @@ subroutine rho_fine(ilevel,icount)
   !-------------------------------------------------------
   ! Initialize rho to analytical and baryon density field
   !-------------------------------------------------------
-  if(nexus_init.and.amr_struct) then
+#if NDIM==3
+  if(dice_init.and.amr_struct) then
     if(hydro)call multipole_from_current_level(ilevel)
     call cic_from_multipole(ilevel)
     ! Update boundaries
     call make_virtual_reverse_dp(rho(1),ilevel)
     call make_virtual_fine_dp   (rho(1),ilevel)
   else
+#endif
      if(ilevel==levelmin.or.icount>1)then
         do i=nlevelmax,ilevel,-1
            ! Compute mass multipole
@@ -62,8 +64,9 @@ subroutine rho_fine(ilevel,icount)
            call make_virtual_fine_dp   (rho(1),i)
         end do
      end if
+#if NDIM==3
   endif
-
+#endif
   !--------------------------
   ! Initialize fields to zero
   !--------------------------
@@ -430,7 +433,7 @@ subroutine cic_amr(ind_cell,ind_part,ind_grid_part,x0,ng,np,ilevel)
            endif
         end do
      end do
-     stop
+     call clean_stop
   end if
 
   ! CIC at level ilevel (dd: right cloud boundary; dg: left cloud boundary)
@@ -655,7 +658,6 @@ subroutine multipole_fine(ilevel)
   use amr_commons
   use hydro_commons
   use poisson_commons
-  use mpi_mod
   implicit none
   integer::ilevel
   !-------------------------------------------------------------------
@@ -814,7 +816,6 @@ subroutine cic_from_multipole(ilevel)
   use amr_commons
   use hydro_commons
   use poisson_commons
-  use mpi_mod
   implicit none
   integer::ilevel
   !-------------------------------------------------------------------
@@ -993,7 +994,7 @@ subroutine cic_cell(ind_grid,ngrid,ilevel)
               endif
            end do
         end do
-        stop
+        call clean_stop
      end if
 
      ! Compute cloud volumes
@@ -1564,7 +1565,7 @@ subroutine tsc_cell(ind_grid,ngrid,ilevel)
               endif
            end do
         end do
-        stop
+        call clean_stop
      end if
 
      ! Compute cloud volumes

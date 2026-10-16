@@ -6,6 +6,13 @@ Created
 
 	Last modified:
 
+    16 OCT 2026
+    Updated feedback.f90, init_part.f90, output_part.f90, sink_particle.f90, star_formation.f90
+    to the latest changes in the main Ramses repo
+    ---------
+    IMPORTANT: Due to a weird circumstance this and the ramses_fork/pm copy of feedback.f90 makes use of f_esn, while the copy ramses/pm does not, even though both where pulled the same day from the main repo. No idea why.
+    I kept my copy as is since f_esn = 1 by default, and it appears to be part of read_hydro_parameters.f90 still.
+
     25 SEP 2026
     Updated output_sink.f90, sink_particle.f90
     to the latest changes in the main Ramses repo.

@@ -6,6 +6,9 @@ Created
 
     Last modified:
 
+    16 OCT 2026
+    Updated all custom Makefiles to harmonise with the new Makefile
+
     25 AUG 2026
     Removed string '_3D_GNU_OLDMPI0' from Makefile filenames
 

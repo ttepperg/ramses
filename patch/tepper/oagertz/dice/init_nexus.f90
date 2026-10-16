@@ -31,7 +31,11 @@ subroutine reset_uold(ilevel)
      iskip=ncoarse+(ind-1)*ngridmax
      do ivar=1,nvar_all
         do i=1,reception(icpu,ilevel)%ngrid
+#ifdef LIGHT_MPI_COMM
+           uold(reception(icpu,ilevel)%pcomm%igrid(i)+iskip,ivar)=0D0
+#else
            uold(reception(icpu,ilevel)%igrid(i)+iskip,ivar)=0D0
+#endif
         end do
      end do
   end do
@@ -129,7 +133,11 @@ subroutine init_uold(ilevel)
      iskip=ncoarse+(ind-1)*ngridmax
      do ivar=1,nvar_all
         do i=1,reception(icpu,ilevel)%ngrid
+#ifdef LIGHT_MPI_COMM
+           uold(reception(icpu,ilevel)%pcomm%igrid(i)+iskip,ivar)=0.0
+#else
            uold(reception(icpu,ilevel)%igrid(i)+iskip,ivar)=0.0
+#endif
         end do
      end do
   end do
@@ -234,11 +242,15 @@ subroutine condinit_loc(ilevel)
                  do i=1,ig
                     ind_cell(i)=father(ind_grid(i))
                  end do
+#if NDIM==3
                  if(amr_struct) then
                     call init_gas_ngp(ind_grid,ind_part,ind_grid_part,ig,ip,ilevel)
                  else
+#endif
                     call init_gas_cic(ind_cell,ind_part,ind_grid_part,x0,ig,ip,ilevel)
+#if NDIM==3
                  endif
+#endif
                  ip=0
                  ig=0
               end if
@@ -262,11 +274,15 @@ subroutine condinit_loc(ilevel)
         do i=1,ig
            ind_cell(i)=father(ind_grid(i))
         end do
+#if NDIM==3
         if(amr_struct) then
            call init_gas_ngp(ind_grid,ind_part,ind_grid_part,ig,ip,ilevel)
         else
+#endif
            call init_gas_cic(ind_cell,ind_part,ind_grid_part,x0,ig,ip,ilevel)
+#if NDIM==3
         endif
+#endif
      end if
 
   end do
@@ -351,7 +367,7 @@ subroutine init_gas_cic(ind_cell,ind_part,ind_grid_part,x0,ng,np,ilevel)
            endif
         end do
      end do
-     stop
+     call clean_stop
   end if
 
   ! CIC at level ilevel (dd: right cloud boundary; dg: left cloud boundary)
@@ -518,6 +534,7 @@ subroutine init_gas_cic(ind_cell,ind_part,ind_grid_part,x0,ng,np,ilevel)
 
 end subroutine init_gas_cic
 
+#if NDIM==3
 subroutine init_gas_ngp(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   use amr_commons
   use pm_commons
@@ -665,6 +682,7 @@ subroutine init_gas_ngp(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   end do
 
 end subroutine init_gas_ngp
+#endif
 
 #ifdef SOLVERmhd
 subroutine mag_constant(ilevel)
@@ -885,7 +903,7 @@ end subroutine mag_toroidal
 
 ! Routines related to dumping the gas on the grid
 
-
+#if NDIM==3
 subroutine multipole_from_current_level(ilevel)
   use amr_commons
   use pm_commons
@@ -943,7 +961,11 @@ subroutine multipole_from_current_level(ilevel)
         iskip=ncoarse+(ind-1)*ngridmax
         do idim=1,ndim+1
            do j=1,reception(icpu,ilevel)%ngrid
+#ifdef LIGHT_MPI_COMM
+              unew(reception(icpu,ilevel)%pcomm%igrid(j)+iskip,idim)=0.0D0
+#else
               unew(reception(icpu,ilevel)%igrid(j)+iskip,idim)=0.0D0
+#endif
            end do
         end do
      end do
@@ -1186,7 +1208,7 @@ subroutine ngp_amr_gas(ind_cell,ind_part,ind_grid_part,x0,ng,np,ilevel)
 
 
 end subroutine ngp_amr_gas
-
+#endif
 !###########################################################
 !###########################################################
 !###########################################################
@@ -1205,11 +1227,14 @@ subroutine kill_gas_part(ilevel)
   ! initially present in the gadget1 DICE output
   !--------------------------------------------------------
   integer::igrid,jgrid,ipart,jpart,next_part
-  integer::ig,ip,npart1,npart2,icpu,info
+  integer::ig,ip,npart1,npart2,icpu
   integer,dimension(1:nvector)::ind_grid,ind_part,ind_grid_part
   logical,dimension(1:nvector)::ok=.true.
   integer::npart_all
   integer,dimension(1:ncpu)::npart_cpu,npart_cpu_all
+#ifndef WITHOUTMPI
+  integer:: info
+#endif
 
   npart_cpu = 0
   npart_all = 0

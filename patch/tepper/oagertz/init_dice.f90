@@ -32,7 +32,11 @@ subroutine dice_reset_uold(ilevel)
      iskip=ncoarse+(ind-1)*ngridmax
      do ivar=1,nvar_all
         do i=1,reception(icpu,ilevel)%ngrid
+#ifdef LIGHT_MPI_COMM
+           uold(reception(icpu,ilevel)%pcomm%igrid(i)+iskip,ivar)=0D0
+#else
            uold(reception(icpu,ilevel)%igrid(i)+iskip,ivar)=0D0
+#endif
         end do
      end do
   end do
@@ -120,7 +124,11 @@ subroutine dice_init_uold(ilevel)
      iskip=ncoarse+(ind-1)*ngridmax
      do ivar=1,nvar_all
         do i=1,reception(icpu,ilevel)%ngrid
+#ifdef LIGHT_MPI_COMM
+           uold(reception(icpu,ilevel)%pcomm%igrid(i)+iskip,ivar)=0.0
+#else
            uold(reception(icpu,ilevel)%igrid(i)+iskip,ivar)=0.0
+#endif
         end do
      end do
   end do
@@ -350,7 +358,7 @@ subroutine init_gas_cic(ind_cell,ind_part,ind_grid_part,x0,ng,np,ilevel)
            endif
         end do
      end do
-     stop
+     call clean_stop
   end if
 
   ! CIC at level ilevel (dd: right cloud boundary; dg: left cloud boundary)
@@ -943,7 +951,11 @@ subroutine multipole_from_current_level(ilevel)
         iskip=ncoarse+(ind-1)*ngridmax
         do idim=1,ndim+1
            do j=1,reception(icpu,ilevel)%ngrid
+#ifdef LIGHT_MPI_COMM
+              unew(reception(icpu,ilevel)%pcomm%igrid(j)+iskip,idim)=0.0D0
+#else
               unew(reception(icpu,ilevel)%igrid(j)+iskip,idim)=0.0D0
+#endif
            end do
         end do
      end do
@@ -1205,11 +1217,14 @@ subroutine kill_gas_part(ilevel)
   ! initially present in the gadget1 DICE output
   !--------------------------------------------------------
   integer::igrid,jgrid,ipart,jpart,next_part
-  integer::ig,ip,npart1,npart2,icpu,info
+  integer::ig,ip,npart1,npart2,icpu
   integer,dimension(1:nvector)::ind_grid,ind_part,ind_grid_part
   logical,dimension(1:nvector)::ok=.true.
   integer::npart_all
   integer,dimension(1:ncpu)::npart_cpu,npart_cpu_all
+#ifndef WITHOUTMPI
+  integer:: info
+#endif
 
   npart_cpu = 0
   npart_all = 0

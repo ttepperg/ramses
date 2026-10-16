@@ -2,7 +2,6 @@ subroutine read_hydro_params(nml_ok)
   use amr_commons
   use hydro_commons
   use cooling_module, only:X,Y
-  use mpi_mod
   use dump_utils, only : met_keys
   implicit none
   logical::nml_ok
