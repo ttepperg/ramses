@@ -45,7 +45,7 @@ subroutine rho_fine(ilevel,icount)
   ! Initialize rho to analytical and baryon density field
   !-------------------------------------------------------
 #if NDIM==3
-  if(dice_init.and.amr_struct) then
+  if(nexus_init.and.amr_struct) then
     if(hydro)call multipole_from_current_level(ilevel)
     call cic_from_multipole(ilevel)
     ! Update boundaries
