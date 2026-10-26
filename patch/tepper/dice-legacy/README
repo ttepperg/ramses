@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    26 OCT 2026
+    Fixed bug dice_init -> nexus_init in rho_fine.f90
+
     16 OCT 2026
     Updated init_nexus.f90, init_part.f90, init_time.f90, particle_tree.f90, read_params.f90, rho_fine.f90
     to the latest changes in the main Ramses repo
