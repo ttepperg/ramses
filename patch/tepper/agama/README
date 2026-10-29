@@ -6,6 +6,9 @@ Created
 
     Last Modified:
 
+    29 OCT 2026
+    Updated read_params.f90 paths to prepend TRIM(output_dir) when constructing output directory paths.
+
     26 OCT 2026
     Added a new NML parameter, 't_offset', that controls the offset between t=0 and the first t_agama. Some cosmetic changes to gravana.f90
 

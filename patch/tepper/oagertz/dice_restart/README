@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    29 OCT 2026
+    Updated read_params.f90 paths to prepend TRIM(output_dir) when constructing output directory paths.
+
     16 OCT 2026
     Updated init_part.f90, read_params.f90 
     to the latest changes in the main Ramses repo

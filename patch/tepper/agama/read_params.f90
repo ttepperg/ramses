@@ -176,12 +176,12 @@ endif
 ! otherwise look for earlier outputs
 if (myid==1 .and. nrestart .gt. 0) then
    call title(nrestart,nchar)
-   info_file='output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
+   info_file=TRIM(output_dir)//'output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
    inquire(file=info_file, exist=info_ok)
    do while(.not. info_ok .and. nrestart .gt. 1)
       nrestart = nrestart - 1
       call title(nrestart,nchar)
-      info_file='output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
+      info_file=TRIM(output_dir)//'output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
       inquire(file=info_file, exist=info_ok)
    enddo
 endif
