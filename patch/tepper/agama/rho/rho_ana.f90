@@ -129,7 +129,8 @@ subroutine rho_ana(x,d,dx,ncell)
   ! The following is not an actual string, but a placeholder to keep the pointer to the C++ object
   character(len=8),save::c_obj     ! <- VERY important to save
 
-  character(len=80)::potfilename, stzfilename
+  character(len=80)::potfilename = 'default_pot.ini'
+  character(len=80)::stzfilename = 'default_stz.txt'
   logical::pot_file_exists
   logical,save::stz_file_exists
   real(dp),dimension(1:3)::xyz
@@ -243,6 +244,7 @@ subroutine rho_ana(x,d,dx,ncell)
 
     ! Determine which potential file to read depending on t
     t_Myr = t * (scale_t / Myr2sec)
+    t_Myr = t_Myr + t_offset
 
     ! IMPORTANT: May need to use dt_agama rather than t_agama -> TO CHECK
     t_index = find_closest_t(t_agama,t_Myr)
@@ -261,7 +263,7 @@ subroutine rho_ana(x,d,dx,ncell)
 
           if (myid==1) then
             write(*,*)'  Reading next potential file at'
-            write(*,*)'  sim time | snap time | snap number'
+            write(*,*)'  sim time (w offset) | snap time | snap number'
             write(*,*) t_Myr, '| ', t_agama(t_index), '| ', snapnum_agama(t_index)
           end if
 

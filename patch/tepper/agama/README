@@ -12,9 +12,10 @@ Created
       call read_amr_params(1,nml_ok)
       call read_output_params(1,nml_ok)
     before nrestart block as otherwise output_dir is ignored
+    Added a new NML parameter, 't_offset', to rho_ana.f90 that controls the offset between t=0 and the first t_agama. Some cosmetic changes to gravana.f90
 
     26 OCT 2026
-    Added a new NML parameter, 't_offset', that controls the offset between t=0 and the first t_agama. Some cosmetic changes to gravana.f90
+    Added a new NML parameter, 't_offset', to gravana.f90 that controls the offset between t=0 and the first t_agama. Some cosmetic changes to gravana.f90
 
     16 OCT 2026
     Updated read_params.f90
