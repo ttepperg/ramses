@@ -8,6 +8,10 @@ Created
 
     29 OCT 2026
     Updated read_params.f90 paths to prepend TRIM(output_dir) when constructing output directory paths.
+    Moved
+      call read_amr_params(1,nml_ok)
+      call read_output_params(1,nml_ok)
+    before nrestart block as otherwise output_dir is ignored
 
     26 OCT 2026
     Added a new NML parameter, 't_offset', that controls the offset between t=0 and the first t_agama.

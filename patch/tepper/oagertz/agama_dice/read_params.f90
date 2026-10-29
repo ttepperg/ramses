@@ -163,6 +163,9 @@ subroutine read_params
   ! Read parameter blocks
   call read_run_params(1,nml_ok)  !should be read first
 
+  call read_amr_params(1,nml_ok)
+  call read_output_params(1,nml_ok)
+
   !-------------------------------------------------
   ! Read optional nrestart command-line argument
   !-------------------------------------------------
@@ -180,6 +183,7 @@ if (myid==1 .and. nrestart .gt. 0) then
    info_file=TRIM(output_dir)//'output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
    inquire(file=info_file, exist=info_ok)
    do while(.not. info_ok .and. nrestart .gt. 1)
+      write(*,*) info_file
       nrestart = nrestart - 1
       call title(nrestart,nchar)
       info_file=TRIM(output_dir)//'output_'//TRIM(nchar)//'/info_'//TRIM(nchar)//'.txt'
@@ -202,8 +206,6 @@ endif
   call MPI_BCAST(nrestart,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 #endif
 
-  call read_amr_params(1,nml_ok)
-  call read_output_params(1,nml_ok)
   call read_movie_params(1,nml_ok)
   call read_lightcone_params(1,nml_ok)
   call read_tracer_params(1,nml_ok)

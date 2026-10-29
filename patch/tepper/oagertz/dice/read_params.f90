@@ -130,6 +130,9 @@ subroutine read_params
   ! Read parameter blocks
   call read_run_params(1,nml_ok)  !should be read first
 
+  call read_amr_params(1,nml_ok)
+  call read_output_params(1,nml_ok)
+
   !-------------------------------------------------
   ! Read optional nrestart command-line argument
   !-------------------------------------------------
@@ -169,8 +172,6 @@ endif
   call MPI_BCAST(nrestart,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 #endif
 
-  call read_amr_params(1,nml_ok)
-  call read_output_params(1,nml_ok)
   call read_movie_params(1,nml_ok)
   call read_lightcone_params(1,nml_ok)
   call read_tracer_params(1,nml_ok)
