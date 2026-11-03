@@ -176,4 +176,10 @@ module hydro_parameters
   integer::ichem=imetal
   integer::nmetals=2 !for Fe and O, =8 for EDGE, but 2 here. Hardcoded. 1=Fe, 2=O, 3=N, 4=Mg, 5=Al, 6=Si, 7=Eu, 8=C
 
+  ! Artificial viscosity
+  logical :: add_viscosity = .false.
+  character(LEN=20)::viscosity_kind='constant_uniform' ! 'constant_uniform'
+  real(dp) :: nu_viscosity_shear = 0.001d0 ! Shear viscosity coefficient for constant uniform viscosity
+  real(dp) :: nu_viscosity_bulk = 0.0d0 ! Bulk viscosity coefficient for constant uniform viscosity
+
 end module hydro_parameters
