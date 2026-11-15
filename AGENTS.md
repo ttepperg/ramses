@@ -10,7 +10,7 @@ upstream developments while preserving their intended
 scientific behaviour.
 
 ## Patch documentation
-Read .aeon/PATCHES.md before proposing upstream updates.
+Read .agents/PATCHES.md before proposing upstream updates.
 This file documents the purpose, implementation, and
 dependencies of the custom modifications, in addition to critcal unresolved issued (also documented in each patches README).
 
