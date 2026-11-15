@@ -1,0 +1,16 @@
+I maintain this fork of RAMSES, which contains custom modifications relative to the upstream repository.
+
+Before we attempt any updates, I want you to understand the nature of these modifications.
+
+Please:
+
+1. Identify the upstream repository and determine the relevant common ancestor.
+2. Examine the differences between my fork and upstream, in particular the contents of patch/tepper (ignore the folder namelist)
+3. Identify and group the custom modifications into logical patches.
+4. Explain, albeit briefly, the purpose and implementation of each patch, including its dependencies and interactions with the original code.
+5. Distinguish intentional custom modifications from changes inherited from upstream.
+6. Propose a PATCHES.md document capturing your findings; this shall be stored in the folder .aeon, specifically created for you.
+
+For now, this is an exploration task only. Do not modify any files, merge branches, rebase, or run tests.
+
+Discuss your findings with me before creating the documentation.
