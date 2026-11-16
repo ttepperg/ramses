@@ -66,7 +66,7 @@ Do not rebase the published `dev` branch unless explicitly directed. This fork h
 After the upstream merge, update overlays against the newly synchronized source. Keep this work in a separate commit from the upstream merge:
 
 - Update only the necessary overlay files, carefully carrying forward both upstream changes and the intended custom behavior. Avoid wholesale replacement when it would discard custom logic.
-- For the DICE mirror in `patch/tepper/dice`, follow the file list and commands in [`src_files.txt`](../patch/tepper/dice/src_files.txt) to synchronize it with the newly updated source.
+- For the DICE mirror in `patch/tepper/dice`, review [`src_files.txt`](../patch/tepper/dice/src_files.txt), then preview and run [`sync.sh`](../patch/tepper/dice/sync.sh) from any directory with `bash patch/tepper/dice/sync.sh --dry-run` and `bash patch/tepper/dice/sync.sh`. The script resolves the repository root, checks all listed sources before copying, and uses the manifest paths as source data rather than shell commands.
 - Update affected custom Makefiles for source additions, module ordering, compiler options, and selected patch combinations.
 - Keep unrelated refactoring out of the upstream sync. Track cleanup work separately in `TODO.md`.
 - Update the affected patch README and [PATCHES.md](PATCHES.md) when behavior, dependencies, or known issues change. Preserve the README audit work as a distinct maintenance task where broader review is needed.

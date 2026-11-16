@@ -37,6 +37,7 @@ tests/coverage_*/*
 .vscode
 *bck*
 *txt
+!patch/tepper/dice/src_files.txt
 *.nml
 TTG_README
 HOW_TO_GIT

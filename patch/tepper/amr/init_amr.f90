@@ -240,6 +240,9 @@ subroutine init_amr
      allocate(tailp(1:ngridmax))
      allocate(numbp(1:ngridmax))
      headp=0; tailp=0; numbp=0
+     allocate(newgridp(1:npartmax))
+     allocate(nmovep(1:ngridmax))
+     newgridp=0; nmovep=0
   endif
 
   ! Initialize AMR grid linked list

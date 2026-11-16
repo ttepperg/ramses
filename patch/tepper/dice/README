@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    16 NOV 2026
+    Synced the manifest-listed DICE mirror files with current upstream/dev. Added sync.sh for future synchronization; its dry-run was verified.
+
     16 OCT 2026
     Sync'd files with source (see src_files.txt), using:
          cat src_files.txt | awk '{print $2,$3,$4,$5}' | sh

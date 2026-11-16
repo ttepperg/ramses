@@ -6,8 +6,8 @@ This document summarizes the custom patch set in `patch/tepper` and how it relat
 
 - Fork remote: `origin` → `git@github.com:ttepperg/ramses.git`.
 - Upstream remote: `upstream` → `https://github.com/ramses-organisation/ramses.git`.
-- Compared branch: local `dev` (`dfa6c612`), against local `upstream/dev` (`a3c73ae4`, 26 October 2026).
-- Relevant common ancestor: `a3c73ae4f9250ec23399139337b4ebef934f8518` (`Artificial viscosity as a source term (#259)`). This commit is an ancestor of the current fork `dev` and is the current local `upstream/dev` tip.
+- Compared branch: local `dev` (`7981357`, after merging upstream), against local `upstream/dev` (`386c7742`, 9 November 2026).
+- Relevant common ancestor: `386c774258c5316418c5038c429e8dcb91e08832` (`Add more namelist checks for hydro parameters (#341)`). This commit is the current local `upstream/dev` tip and is included in the fork's merge commit.
 
 The branch history includes repeated merges from upstream. In the direct source comparison against `upstream/dev`, the only difference outside the patch and build additions is `pm/feedback.f90`: two supernova energy expressions are multiplied by `f_esn`. The current evidence establishes the code difference, but not its origin or whether it was intended as a fork-specific change; see [TODO.md](TODO.md), item 1. Do not assume it is a custom behavior until that is traced.
 
@@ -21,7 +21,7 @@ See [amr/README](../patch/tepper/amr/README), [hydro/README](../patch/tepper/hyd
 
 ### Particle, sink, and restart behavior
 
-The `pm` overlay extends sink particle initialization and evolution: it adds optional sink mass damping, support for adding sinks at restart, input scaling, and sink CSV output. It also updates particle output and routes relevant files through `output_dir`. `pm/init_sink.f90` is explicitly noted as not synchronized with current upstream because the upstream changes were incompatible with this patch; compatibility with upstream sink settings remains to be checked.
+The `pm` overlay extends sink particle initialization and evolution: it adds optional sink mass damping, support for adding sinks at restart, input scaling, and sink CSV output. It also updates particle output and routes relevant files through `output_dir`. The current sync carries forward upstream's per-level AGN feedback reservoir and optional gas/particle dynamical-friction support while retaining those custom sink settings. Compatibility with the custom restart path and runtime behavior still needs validation; see [TODO.md](TODO.md).
 
 The standalone `dice_restart` overlay adds a `ramses_dice` restart loader and can optionally add DICE-format initial-condition particles to a restart. It depends on particle, restart, and DICE/Nexus code paths and must be combined through the appropriate Makefile. The related `oagertz/dice_restart` is a combined variant built on the Oagertz and Nexus/DICE overlays.
 
@@ -49,6 +49,8 @@ Subdirectories select combinations or variants:
 - `oagertz/agama_dice` combines the AGAMA and DICE paths.
 - `oagertz/wh2007` selects Woosley & Weaver (2007) Type II supernova O/Fe yields in place of the default yield functions.
 - `oagertz/src_orig` holds reference copies used in the documented synchronization workflow; it is not an active patch directory to compile.
+
+The standalone and DICE Oagertz particle-tree overlays retain their custom particle-property communication while following upstream's deferred linked-list move updates. The shared Oagertz `pm_commons` declares the move-tracking arrays, allocated by `patch/tepper/amr/init_amr.f90`. The Oagertz hydro-parameter reader follows upstream's split solver/refinement readers while retaining its custom feedback and star-formation parameters.
 
 Some overlay interactions are delicate. The READMEs document a `star`/`sink` plus `metal` conditional issue and warn to preserve allocation, loop, and preprocessor logic when updating files. Known Oagertz and restart issues are recorded in the subpatch READMEs and tracked at a high level in [TODO.md](TODO.md).
 

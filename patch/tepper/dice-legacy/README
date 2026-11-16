@@ -6,6 +6,10 @@ Created
 
 	Last modified:
 
+    16 NOV 2026
+    Updated add_list.f90, init_nexus.f90, and particle_tree.f90 for the upstream linked-list API and deferred particle moves, preserving Nexus-specific initialization and particle state.
+    Not tested.
+
     29 OCT 2026
     Updated read_params.f90 paths to prepend TRIM(output_dir) when constructing output directory paths.
 
