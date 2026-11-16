@@ -7,6 +7,7 @@
 5. [ ] Audit the patch READMEs against their corresponding upstream source files. For each overlay, verify that the README accurately describes the custom differences from upstream (separating them from synchronized upstream code), and update it where needed. Include relevant dependencies/interactions and any known issues, without duplicating details unnecessarily.
 6. [ ] Resolve the sink.and.star + metal conflicting declarations
 7. [ ] Address bugs reported in READMEs
+8. [ ] Automate upstream-update inventory and compile coverage: take the upstream changed-path list, find candidate overlay copies throughout `patch/tepper` independently of Makefile references, then map candidates to representative custom Makefiles by `PATCH` composition. Build in isolated trees or clean between configurations because `bin` artifacts are shared, and capture per-configuration results. Keep model-specific smoke simulations manual until representative remote test cases and feature settings are defined.
 
 ## Future tasks
 

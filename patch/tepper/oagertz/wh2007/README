@@ -6,6 +6,10 @@ Created
 
     Last modified:
 
+    16 NOV 2026
+    Updated the remove_list call in feedback.f90 for the upstream linked-list API.
+    User-reported: Makefile_OAGERTZ_DICE_RESTARTPATCH_WH07 compiled and passed a short runtime smoke check.
+
     15 MAY 2926
     Due to collision with symbol 'energy' (float) declared in init_hydro.f90 (but also output_hydro.f90), renamed 'energy' (boolean) feedback.f90 to 'fb_energy'
 

@@ -6,6 +6,9 @@ Created
 
 	Last modified:
 
+    16 NOV 2026
+    User-reported: Makefile_OAGERTZ_DICE_RESTARTPATCH_WH07 compiled and passed a short runtime smoke check. This does not resolve the documented stellar restart issue.
+
     29 OCT 2026
     Updated read_params.f90 paths to prepend TRIM(output_dir) when constructing output directory paths.
     Moved

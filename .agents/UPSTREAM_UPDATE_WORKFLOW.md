@@ -25,17 +25,21 @@ git log --oneline --decorate HEAD..upstream/dev
 git diff --name-status "$(git merge-base HEAD upstream/dev)" upstream/dev
 ```
 
-Inspect the relevant upstream commit diffs, not just commit subjects or file names. If the local remote-tracking ref was already current, say so and continue using that ref. Do not infer the contents of new upstream commits from an outdated local ref.
+Inspect the relevant upstream commit diffs, not just commit subjects or file names. Keep this changed-path list as the authoritative inventory for overlay discovery; retain it in the update notes before merging, since the comparison range changes after the merge. If the local remote-tracking ref was already current, say so and continue using that ref. Do not infer the contents of new upstream commits from an outdated local ref.
 
 ## 3. Trace interactions with the overlays
 
-For every changed upstream file:
+For every path in the changed-path inventory, search all of `patch/tepper` for corresponding overlay files, regardless of whether a current Makefile references them. Match the relative source path where possible; when overlays use different directory layouts, search by basename and relevant routine or symbol names, then verify each candidate by content and purpose. Do not use the current Makefiles to filter this discovery step.
 
-1. Check whether a corresponding copy or related implementation exists under `patch/tepper` or is selected by a custom Makefile.
-2. Compare the incoming upstream version with both the fork's main-tree version and its overlay copy.
-3. Read the relevant overlay README and follow cross-package dependencies documented in [PATCHES.md](PATCHES.md).
-4. Separate upstream behavior from fork-specific behavior. In particular, do not assume a whole overlay file is custom; some overlays are synchronized source copies.
-5. Consider interactions among combined variants such as Oagertz + Nexus/DICE + restart + AGAMA, not only each file in isolation.
+For each candidate overlay:
+
+1. Compare the incoming upstream version with the fork's main-tree version and the overlay copy.
+2. Read its README and follow cross-package dependencies documented in [PATCHES.md](PATCHES.md).
+3. Separate upstream behavior from fork-specific behavior. In particular, do not assume a whole overlay file is custom; some overlays are synchronized source copies.
+4. Consider interactions among combined variants such as Oagertz + Nexus/DICE + restart + AGAMA, not only each file in isolation.
+5. Record whether the candidate is active in a current Makefile, appears only in a legacy or alternate overlay, or has no current Makefile reference. Use Makefile `PATCH` order after discovery to establish which copy each configuration selects and to design build coverage; an absent or outdated Makefile must not hide an overlay candidate.
+
+For each affected source, record the upstream change to carry forward, all corresponding overlay candidates found, the custom routines/data/conditional structure to preserve, and which Makefiles select each candidate. Treat patch READMEs and other documented references as evidence of custom intent; do not replace an overlay wholesale when it contains research-specific behavior. Preserve any user-identified structures pending later review, including the split `if (star.or.sink)` and `if (metal)` conditionals.
 
 Ignore the contents of `patch/tepper/oagertz/src_orig` and `patch/tepper/namelist`; they are outside the tracked overlay review.
 
@@ -75,6 +79,10 @@ After the upstream merge, update overlays against the newly synchronized source.
 ## 7. Verify when authorized
 
 Once both commits are in place, do not run tests, builds, or simulations automatically. Agree on suitable checks for the affected patch combinations and representative models, then run them only when authorized. Report exactly what was run, the result, and any checks not performed. Compilation alone does not establish scientific correctness; state remaining uncertainty plainly.
+
+Choose a small coverage matrix from the discovered overlay candidates and the actual `PATCH` combinations in the custom Makefiles. Include a broad integration configuration and separate configurations for affected candidates that the broad one does not select. Makefiles share object and module outputs in `bin`; clean between configurations or use isolated build trees so stale artifacts do not hide configuration-specific errors. For each smoke run, record the Makefile, model, duration/steps, and relevant feature flags. A passing run only covers optional code paths that were enabled and reached.
+
+When verification runs on another system, record the commands and outcomes as user-reported results; do not describe them as locally run. Keep build/smoke evidence distinct from scientific validation and leave unresolved paths open in `TODO.md`.
 
 ## 8. Close out
 
