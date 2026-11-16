@@ -37,6 +37,8 @@ For every changed upstream file:
 4. Separate upstream behavior from fork-specific behavior. In particular, do not assume a whole overlay file is custom; some overlays are synchronized source copies.
 5. Consider interactions among combined variants such as Oagertz + Nexus/DICE + restart + AGAMA, not only each file in isolation.
 
+Ignore the contents of `patch/tepper/oagertz/src_orig` and `patch/tepper/namelist`; they are outside the tracked overlay review.
+
 Record which overlays are unaffected, which need synchronization, and which have a possible behavior conflict. Call out unresolved provenance or scientific uncertainty instead of guessing.
 
 ## 4. Report findings and propose changes
@@ -50,22 +52,29 @@ Before changing code, summarize:
 
 Follow the project instructions in the root [AGENTS.md](../AGENTS.md): do not modify code, merge, or rebase without approval. If the request already authorizes a specific implementation, work within that scope; otherwise, wait for approval before making those changes.
 
-## 5. Update overlays and build integration
+## 5. Integrate upstream (first commit)
 
-After the implementation is authorized:
+After the upstream changes and compatibility concerns have been reviewed and the integration is authorized, merge `upstream/dev` into `dev` as a distinct commit. Keep this commit focused on synchronizing the fork's main source tree with upstream; do not include patch-overlay synchronization in it.
+
+- Preserve existing fork-specific changes while resolving conflicts; report uncertain behavior rather than silently discarding it.
+- Review the merge result and commit it separately from all overlay changes.
+
+Do not rebase the published `dev` branch unless explicitly directed. This fork has a history of merging `upstream/dev`, so a merge is generally the straightforward way to preserve that history.
+
+## 6. Update overlays and build integration (second commit)
+
+After the upstream merge, update overlays against the newly synchronized source. Keep this work in a separate commit from the upstream merge:
 
 - Update only the necessary overlay files, carefully carrying forward both upstream changes and the intended custom behavior. Avoid wholesale replacement when it would discard custom logic.
+- For the DICE mirror in `patch/tepper/dice`, follow the file list and commands in [`src_files.txt`](../patch/tepper/dice/src_files.txt) to synchronize it with the newly updated source.
 - Update affected custom Makefiles for source additions, module ordering, compiler options, and selected patch combinations.
 - Keep unrelated refactoring out of the upstream sync. Track cleanup work separately in `TODO.md`.
 - Update the affected patch README and [PATCHES.md](PATCHES.md) when behavior, dependencies, or known issues change. Preserve the README audit work as a distinct maintenance task where broader review is needed.
-
-## 6. Integrate upstream
-
-Once compatibility changes have been reviewed, choose and approve an integration strategy. This fork has a history of merging `upstream/dev`; merging is generally the straightforward way to preserve that history. Do not rebase the published `dev` branch unless explicitly directed. Resolve conflicts with the overlay analysis in view, and inspect the resulting tree and history before considering integration complete.
+- Review and commit the overlay changes separately from the upstream merge.
 
 ## 7. Verify when authorized
 
-Do not run tests, builds, or simulations automatically. Agree on suitable checks for the affected patch combinations and representative models, then run them only when authorized. Report exactly what was run, the result, and any checks not performed. Compilation alone does not establish scientific correctness; state remaining uncertainty plainly.
+Once both commits are in place, do not run tests, builds, or simulations automatically. Agree on suitable checks for the affected patch combinations and representative models, then run them only when authorized. Report exactly what was run, the result, and any checks not performed. Compilation alone does not establish scientific correctness; state remaining uncertainty plainly.
 
 ## 8. Close out
 
