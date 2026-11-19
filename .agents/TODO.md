@@ -6,7 +6,14 @@
 4. [ ] Refactor patches, removing unnecessary duplicates, e.g. read_params.f90, by expanding the patch's root read_params.f90; modify Makefiles accordingly
 5. [ ] Audit the patch READMEs against their corresponding upstream source files. For each overlay, verify that the README accurately describes the custom differences from upstream (separating them from synchronized upstream code), and update it where needed. Include relevant dependencies/interactions and any known issues, without duplicating details unnecessarily.
 6. [ ] Resolve the sink.and.star + metal conflicting declarations
-7. [ ] Address bugs reported in READMEs
+7. [ ] Address additional bugs and uncertain behavior reported in READMEs:
+   - [ ] `pm`: Restarting with a sink when the previous run had no sinks reportedly fails if the expected `sink_XXXXX.csv` file is absent. The README says attempted changes may have fixed this; verify.
+   - [ ] `dice_restart`: Check why two snapshots may be written immediately after restart when only one is expected.
+   - [ ] `dice_restart`: Determine whether resetting `mcons` and `econs` to zero on restart is a bug or intended behavior.
+   - [ ] `oagertz`: Check whether the `S*unit_out` variables are defined when `SNdiagnostics = .false.`; the README says they may not be.
+   - [ ] `oagertz`: Verify whether `kinetic_feedback` should always use `zp(...,1)` for `ZSN`.
+   - [ ] `agama`: Reproduce the reported `gravana.f90` restart failure when no potential file is present (model `mmw_m1_a_pcg_hyr`, restart at `output_00227`) and determine whether the `clean_stop` is expected.
+   - [ ] `agama/interface`: Investigate the small reported memory increase (less than 0.1 MB per `agama_initfromfile()` call) despite deleting the potential object.
 8. [ ] Automate upstream-update inventory and compile coverage: take the upstream changed-path list, find candidate overlay copies throughout `patch/tepper` independently of Makefile references, then map candidates to representative custom Makefiles by `PATCH` composition. Build in isolated trees or clean between configurations because `bin` artifacts are shared, and capture per-configuration results. Keep model-specific smoke simulations manual until representative remote test cases and feature settings are defined.
 
 ## Future tasks
